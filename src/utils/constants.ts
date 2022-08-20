@@ -11,7 +11,8 @@ export const NETWORKS: SimpleProvider[] = [{
   id: "bittensor-nakamoto-mainnet",
   client: "Light client",
   endpoints: [
-    "ws://159.223.185.195:9944",
+    " wss://explorernode.nakamoto.opentensor.ai"
+    //"ws://159.223.185.195:9944",
     //"ws://192.81.211.21:9944",
     //"ws://208.68.36.46:9944",
     //"ws://subtensor.fairchild.dev:9944",
