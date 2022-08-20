@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "lib": ["es6", "dom"],
+    "module": "es6",
+    "target": "ES2015",
+    "types": [],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*"]
+}
