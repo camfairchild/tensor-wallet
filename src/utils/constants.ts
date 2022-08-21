@@ -15,7 +15,7 @@ export const NETWORKS: SimpleProvider[] = [{
     //"ws://159.223.185.195:9944",
     //"ws://192.81.211.21:9944",
     //"ws://208.68.36.46:9944",
-    //"wss://tensor-ping.fairchild.dev:9944",
+    "wss://sub.tensor-wallet.tensorswap.com:9443",
   ],
 }, {
   name: "Bittensor Nobunaga",
