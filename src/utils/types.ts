@@ -1,10 +1,8 @@
 import { Balance, Index, RefCount } from "@polkadot/types/interfaces"
 import { u32 } from "@polkadot/types"
 import { Codec } from "@polkadot/types/types"
-import { ApiPromise } from "@polkadot/api"
-import { KeyringPair, KeyringPair$Json } from "@polkadot/keyring/types"
-
-import type { InjectedExtension, InjectedMetadataKnown, MetadataDef } from '@polkadot/extension-inject/types';
+import { ApiPromise } from "@polkadot/api/promise/Api"
+import { KeyringPair } from "@polkadot/keyring/types"
 
 export interface Option {
   network: string

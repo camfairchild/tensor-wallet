@@ -1,27 +1,24 @@
-import { FunctionComponent, useState, useContext, MouseEvent, useEffect, useMemo, useRef, useCallback } from "react"
+import { useState, useContext, MouseEvent, useCallback } from "react"
 
 import { grey } from "@material-ui/core/colors"
-import {
-  Typography,
-  makeStyles,
-  Theme,
-  createStyles,
-  IconButton,
-  ListItem,
-  Menu,
-  MenuItem,
-} from "@material-ui/core"
+import Typography from "@mui/material/Typography"
+import Menu from "@mui/material/Menu"
+import MenuItem from "@mui/material/MenuItem"
+import IconButton from "@mui/material/IconButton"
+import ListItem from "@mui/material/ListItem"
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
+import { Theme } from "@mui/material"
+import { makeStyles, createStyles} from "@material-ui/core/styles"
+
 import { BurnrDivider } from "."
 
 import { AccountContext } from "../utils/contexts"
-import { openInNewTab, downloadFile } from "../utils/utils"
-import { POLKA_ACCOUNT_ENDPOINTS, NETWORKS } from "../utils/constants"
-import { useApi } from "../hooks"
+import { openInNewTab } from "../utils/utils"
+import { POLKA_ACCOUNT_ENDPOINTS } from "../utils/constants"
 
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
+const { opentensorexplorer } = POLKA_ACCOUNT_ENDPOINTS
 
-import type { InjectedExtension, InjectedMetadataKnown, MetadataDef } from '@polkadot/extension-inject/types';
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
+import type { InjectedAccountWithMeta, MetadataDef } from "@polkadot/extension-inject/types"
 import useExtensions from "../hooks/useExtensions";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,8 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const { opentensorexplorer } = POLKA_ACCOUNT_ENDPOINTS
-
 interface Props {
   accounts: InjectedAccountWithMeta[]
 }
@@ -48,8 +43,7 @@ interface Props {
 export default function AccountMenu({accounts}: Props) {
   const classes = useStyles()
   const [opentensorexplorerUri] = useState(`https://${opentensorexplorer}/#/explorer/`)
-  const { account, setCurrentAccount } = useContext(AccountContext)
-  const { setNetwork, api } = useApi();
+  const { setCurrentAccount } = useContext(AccountContext)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)

@@ -7,7 +7,6 @@ import {
   Dispatch,
 } from "react"
 import { Button, Grid, TextField, Box, InputAdornment } from "@material-ui/core"
-import { useApi } from "../hooks"
 import { BN } from "@polkadot/util"
 
 interface Props {

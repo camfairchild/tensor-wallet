@@ -5,7 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-  mode: "production",
+  mode: "development",
   entry: "./src/index.tsx",
   devtool: "inline-source-map",
   devServer: {

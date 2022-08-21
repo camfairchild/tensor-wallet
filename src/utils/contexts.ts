@@ -9,8 +9,6 @@ import {
   ApiCtx
 } from "./types"
 
-import { ApiPromise } from "@polkadot/api"
-
 const BalanceVisibleContext = createContext<BalanceVisibilityCtx>({
   balanceVisibility: true,
   setBalanceVisibility: () => console.log(),

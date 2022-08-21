@@ -9,7 +9,7 @@ import {
 import {
   makeStyles,
   Theme,
-} from "@material-ui/core"
+} from "@material-ui/core/styles"
 
 import Box from "@mui/material/Box";
 import Typography from '@mui/material/Typography';

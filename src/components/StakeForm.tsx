@@ -15,7 +15,7 @@ import React, {
     Box,
   } from "@material-ui/core"
   import Stack from "@mui/material/Stack"
-  import { Keyring } from "@polkadot/api"
+  import { Keyring } from "@polkadot/keyring"
   import { AccountContext } from "../utils/contexts"
   import { InputFunds } from "."
   import { useBalance, useApi, useLocalStorage } from "../hooks"

@@ -8,7 +8,7 @@ import {
 import { SubstrateLight, SubstrateDark } from "../themes"
 import { useLocalStorage } from "../hooks"
 
-import { Logo, ThemeButton } from "."
+import { Logo } from "."
 
 const useStyles = makeStyles((theme) => ({
   root: {

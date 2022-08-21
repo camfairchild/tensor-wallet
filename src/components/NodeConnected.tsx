@@ -2,10 +2,10 @@ import { useState, useEffect, ReactElement } from "react"
 
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles"
 import { Typography, Box } from "@material-ui/core"
-import { ApiPromise } from "@polkadot/api"
+import { ApiPromise } from "@polkadot/api/promise/Api"
 
 import { NETWORKS, BURNR_WALLET } from "../utils/constants"
-import { useApi, useLocalStorage } from "../hooks"
+import { useApi } from "../hooks"
 import { logger } from "@polkadot/util"
 
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord"

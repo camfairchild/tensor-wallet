@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { ApiPromise } from "@polkadot/api";
-import { logger } from "@polkadot/util";
+import { ApiPromise } from "@polkadot/api/promise/Api";
+import { ScProvider } from '@polkadot/rpc-provider/substrate-connect';
+import { logger } from "@polkadot/util/logger";
 import { WsProvider } from "@polkadot/rpc-provider/ws";
 import { NETWORKS, BURNR_WALLET } from "../../utils/constants";
 import { useIsMountedRef } from "./useIsMountedRef";
 import { ApiCtx } from "../../utils/types";
-import {} from "@polkadot/extension-dapp";
+
+import jsonCustomSpec from './nakamotoChainSpecRaw.json';
+import { healthChecker, SmoldotHealth } from "@polkadot/rpc-provider/substrate-connect/Health";
+// Create the provider for the custom chain
+const customSpec = JSON.stringify(jsonCustomSpec);
 
 const l = logger(BURNR_WALLET);
 
@@ -17,17 +22,45 @@ export const useApiCreate = (defaultnetwork: string): ApiCtx => {
   useEffect((): void => {
     const choseSmoldot = async (endpoints: string[]): Promise<void> => {
       try {
-        const provider = new WsProvider(endpoints);
+        //const provider = new ScProvider(customSpec);
+        const backupProvider = new WsProvider(endpoints);
+        
+        // not connected to the provider
+        backupProvider.on('connected', async () => {
+          const backupapi = await ApiPromise.create({
+            provider: backupProvider,
+          });
+          l.log(`TensorWallet is now connected to the backup provider`);
+          //if (!provider.isConnected) {
+            setApi(backupapi);
+          //} else {
+          //  await backupapi.disconnect();
+          //}
+        })
+
+        // try to connect to the sc provider
+        /*
+        Substrate connect isn't working with the nakamoto nodes yet
+
         await provider.connect();
-        const api = await ApiPromise.create({ provider });
-        l.log(`TensorWallet is now connected`);
-        mountedRef.current && setApi(api);
+        // wait for connected
+        provider.on('connected', (): void => {
+            // probably good?
+            // replace the old api with the new one
+            ApiPromise.create({
+              provider: provider,
+            }).then(async (api_: ApiPromise): Promise<void> => {
+              setApi(api_);
+              // disconnect the old api
+              await backupProvider.disconnect();
+            });
+        });*/
       } catch (err) {
         l.error("Error:", err);
       }
     };
 
-    void choseSmoldot(NETWORKS[parseInt(network)].endpoints);
+    mountedRef.current && void choseSmoldot(NETWORKS[parseInt(network)].endpoints);
   }, [mountedRef, network]);
 
   return {

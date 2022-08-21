@@ -1,22 +1,12 @@
-import { ApiPromise } from "@polkadot/api"
+import { ApiPromise } from "@polkadot/api/promise/Api";
 import { Account, LocalStorageAccountCtx } from "./types"
-import { uniqueNamesGenerator, Config, starWars } from "unique-names-generator"
-import { mnemonicGenerate } from "@polkadot/util-crypto"
-import { Keyring } from "@polkadot/api"
-import { decodeAddress, encodeAddress } from "@polkadot/keyring"
-import { hexToU8a, isHex } from "@polkadot/util"
-import { KeyringPair$Json } from "@polkadot/keyring/types"
-import { formatBalance } from "@polkadot/util"
-import { BN } from "@polkadot/util"
+import { Keyring, decodeAddress, encodeAddress } from "@polkadot/keyring"
+import { hexToU8a, isHex, formatBalance, BN } from "@polkadot/util"
 import type { Balance } from "@polkadot/types/interfaces"
 import { NETWORKS } from "./constants"
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
 
 const keyring = new Keyring({ type: "sr25519" })
-
-const config: Config = {
-  dictionaries: [starWars],
-}
 
 export const getName = (account: Account): string => `${account.name}`
 
