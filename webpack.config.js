@@ -46,9 +46,6 @@ module.exports = {
     new CopyPlugin({
       patterns: [{ from: "src/assets", to: "./assets" }],
     }),
-    new CopyPlugin({
-      patterns: [{ from: "public/CNAME", to: "./" }],
-    }),
     new webpack.DefinePlugin({
       process: {
         env: {
