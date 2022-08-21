@@ -12,7 +12,7 @@ export const NETWORKS: SimpleProvider[] = [{
   client: "Light client",
   endpoints: [
     "wss://sub0.tensorswap.com",
-    "ws://sub1.tensorswap.com",
+    "wss://sub1.tensorswap.com",
   ],
 }, {
   name: "Bittensor Nobunaga",
