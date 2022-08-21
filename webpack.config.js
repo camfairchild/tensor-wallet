@@ -5,7 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: "./src/index.tsx",
   devtool: "inline-source-map",
   devServer: {
@@ -45,6 +45,9 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [{ from: "src/assets", to: "./assets" }],
+    }),
+    new CopyPlugin({
+      patterns: [{ from: "public/CNAME", to: "./" }],
     }),
     new webpack.DefinePlugin({
       process: {
