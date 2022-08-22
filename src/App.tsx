@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { BrowserRouter } from "react-router-dom" // Pages
 import { makeStyles } from "@material-ui/core/styles"
 import { ApiContext, AccountContext } from "./utils/contexts"
@@ -7,8 +7,6 @@ import { useApiCreate, useLocalStorage } from "./hooks"
 import { createAccountFromInjected } from "./utils/utils"
 import { NETWORKS } from "./utils/constants"
 
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 import {
   web3Accounts,
   web3AccountsSubscribe,

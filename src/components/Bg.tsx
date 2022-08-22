@@ -1,6 +1,9 @@
 import { FunctionComponent } from "react"
 
-import { makeStyles, createStyles, Theme, Divider } from "@material-ui/core"
+import Divider from "@mui/material/Divider"
+import createStyles from "@material-ui/core/styles/createStyles"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import { Theme } from "@material-ui/core/styles/createTheme"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

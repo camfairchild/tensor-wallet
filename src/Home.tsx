@@ -1,13 +1,15 @@
 import { useState, useEffect, FunctionComponent, useContext } from "react"
 import {
-  Paper,
-  IconButton,
-  Box,
-  makeStyles,
-  CircularProgress,
-} from "@material-ui/core"
-import VisibilityIcon from "@material-ui/icons/Visibility"
-import VisibilityOffIcon from "@material-ui/icons/VisibilityOff"
+  makeStyles
+} from "@material-ui/core/styles"
+
+import Paper from "@mui/material/Paper"
+import Box from "@mui/material/Box"
+import IconButton from "@mui/material/IconButton"
+import CircularProgress from "@mui/material/CircularProgress"
+import VisibilityIcon from "@mui/icons-material/Visibility"
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
+
 import {
   NavTabs,
   AccountCard,

@@ -7,7 +7,7 @@ import { NETWORKS, BURNR_WALLET } from "../../utils/constants";
 import { useIsMountedRef } from "./useIsMountedRef";
 import { ApiCtx } from "../../utils/types";
 
-import jsonCustomSpec from './nakamotoChainSpecRaw.json';
+//import jsonCustomSpec from './nakamotoChainSpecRaw.json';
 // Create the provider for the custom chain
 //const customSpec = JSON.stringify(jsonCustomSpec);
 
@@ -28,8 +28,7 @@ export const useApiCreate = (defaultnetwork: string): ApiCtx => {
           provider: backupProvider,
         });
         l.log(`TensorWallet is now connected to the backup provider`);
-        setApi(backupapi);
-
+        mountedRef.current && setApi(backupapi);
 
         // not connected to the provider
         /* TODO: Substrate connect isn't working with the nakamoto nodes yet
@@ -66,7 +65,7 @@ export const useApiCreate = (defaultnetwork: string): ApiCtx => {
       }
     };
 
-    mountedRef.current && void choseSmoldot(NETWORKS[parseInt(network)].endpoints);
+    void choseSmoldot(NETWORKS[parseInt(network)].endpoints);
   }, [mountedRef, network]);
 
   return {

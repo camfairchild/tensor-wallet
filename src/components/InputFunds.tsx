@@ -6,7 +6,12 @@ import {
   SetStateAction,
   Dispatch,
 } from "react"
-import { Button, Grid, TextField, Box, InputAdornment } from "@material-ui/core"
+import Button from "@mui/material/Button"
+import Grid from "@mui/material/Grid"
+import TextField from "@mui/material/TextField"
+import Box from "@mui/material/Box"
+
+import { InputAdornment } from "@material-ui/core"
 import { BN } from "@polkadot/util"
 
 interface Props {
@@ -93,7 +98,7 @@ const InputFunds: FunctionComponent<Props> = ({
                 <Button
                   onClick={(e) => handleChange(e, true)}
                   variant="outlined"
-                  color={focus ? "primary" : "default"}
+                  color={focus ? "primary" : undefined}
                   size="small"
                   value={item.value}
                 >

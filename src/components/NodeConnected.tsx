@@ -1,6 +1,9 @@
 import { useState, useEffect, ReactElement } from "react"
 
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles"
+import createStyles from "@material-ui/core/styles/createStyles"
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import { Theme } from "@material-ui/core/styles/createTheme"
+
 import { Typography, Box } from "@material-ui/core"
 import { ApiPromise } from "@polkadot/api/promise/Api"
 

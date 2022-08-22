@@ -1,14 +1,16 @@
 import { useState, useContext, MouseEvent, useCallback } from "react"
 
-import { grey } from "@material-ui/core/colors"
+import grey from "@mui/material/colors/grey"
 import Typography from "@mui/material/Typography"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import IconButton from "@mui/material/IconButton"
 import ListItem from "@mui/material/ListItem"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import { Theme } from "@mui/material"
-import { makeStyles, createStyles} from "@material-ui/core/styles"
+import { Theme } from "@mui/material/styles/createTheme"
+
+import makeStyles from "@material-ui/core/styles/makeStyles"
+import createStyles from "@material-ui/core/styles/createStyles"
 
 import { BurnrDivider } from "."
 

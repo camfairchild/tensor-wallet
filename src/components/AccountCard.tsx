@@ -1,7 +1,11 @@
 import { FunctionComponent, useState } from "react"
 import Identicon from "@polkadot/react-identicon"
-import { Typography, Snackbar, Box } from "@material-ui/core"
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert"
+
+import Typography from "@mui/material/Typography"
+import Box from "@mui/material/Box"
+import Snackbar from "@mui/material/Snackbar"
+
+import MuiAlert, { AlertProps } from "@mui/material/Alert"
 import { Account } from "../utils/types"
 import { copyToClipboard } from "../utils/utils"
 
@@ -48,9 +52,9 @@ const AccountCard: FunctionComponent<Props> = ({
           ml={1}
         >
           {account.name !== "" && (
-            <Typography variant="h4">{account.name}</Typography>
+            <Typography variant="h6">{account.name}</Typography>
           )}
-          <Typography variant="subtitle2">
+          <Typography variant="caption">
             {addressFormat === "Full"
               ? account.address
               : account.address.slice(0, 4) +

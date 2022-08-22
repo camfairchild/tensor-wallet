@@ -3,6 +3,8 @@
 const webpack = require("webpack")
 const CopyPlugin = require("copy-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const tsImportPluginFactory = require('ts-import-plugin');
 
 module.exports = {
   mode: "development",
@@ -21,11 +23,30 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
+            presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
+            plugins: [
+              [
+                'babel-plugin-direct-import',
+                { modules: ['@mui/material', '@mui/icons-material', '@material-ui/core'] },
+              ],
+            ],
           },
         },
       },
-      { test: /\.tsx?$/, loader: "ts-loader" },
+      {
+        test: /\.(tsx|ts)$/,
+        loader: 'ts-loader',
+        options: {
+          transpileOnly: true,
+          getCustomTransformers: () => ({
+            before: [tsImportPluginFactory(/** options */)],
+          }),
+          compilerOptions: {
+            module: 'es2022',
+          },
+        },
+        exclude: /node_modules/,
+      },
       {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
@@ -43,8 +64,12 @@ module.exports = {
     },
   },
   plugins: [
+    //new BundleAnalyzerPlugin(),
     new CopyPlugin({
       patterns: [{ from: "src/assets", to: "./assets" }],
+    }),
+    new CopyPlugin({
+      patterns: [{ from: "public/CNAME", to: "./" }],
     }),
     new webpack.DefinePlugin({
       process: {

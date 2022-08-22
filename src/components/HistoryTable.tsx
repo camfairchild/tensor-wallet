@@ -1,15 +1,16 @@
 import { FunctionComponent, useContext } from "react"
 
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Theme,
   makeStyles,
   alpha as fade,
-} from "@material-ui/core"
+} from "@material-ui/core/styles"
+
+import Table from "@mui/material/Table"
+import TableBody from "@mui/material/TableBody"
+import TableCell from "@mui/material/TableCell"
+import TableHead from "@mui/material/TableHead"
+import TableRow from "@mui/material/TableRow"
 
 import { AccountContext } from "../utils/contexts"
 import { HistoryTableRow } from "."
