@@ -52,7 +52,7 @@ export default function AccountMenu({accounts}: Props) {
   }
   const [chainInfo, setChainInfo] = useState<MetadataDef>({} as MetadataDef)
 
-  const { extensions } = useExtensions();
+  /*const { extensions } = useExtensions();
 
   const _updateMetadata = useCallback(
     (): void => {
@@ -66,7 +66,7 @@ export default function AccountMenu({accounts}: Props) {
         });
       }
     }, [chainInfo, extensions]
-  );
+  );*/
 
 
   return (
