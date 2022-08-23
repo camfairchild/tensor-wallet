@@ -30,11 +30,13 @@ export default function Banner() {
           sx={{ mb: 2 }}
         >
             <AlertTitle>Legal Disclaimer</AlertTitle>
-            This website is not affiliated with the Opentensor Foundation.
+            This website is not affiliated with the Opentensor Foundation and is accepted “as is” with no representation or warranty of any kind.
             <br />
-            By using this website you agree that we, the authors of this software, are <strong>NOT</strong> liable for any loss of funds.
+            By using this website and all the services it provides, the consumer acknowledges that the “authors” of this software, shall <strong>NOT</strong> be held liable for any loss of funds.
             <br />
-            This website is <strong>NOT</strong> audited and you are fully responsible for any risks you may incur.
+            The authors have no obligation to indemnify, defend, or hold harmless consumer, including without limitation against claims related to liability or infringement of intellectual property rights.
+            <br />
+            This website is <strong>NOT</strong> audited and the consumer accepts wholly the responsibilities associated with any risks incurred.
         </Alert>
       </Modal>
     )
