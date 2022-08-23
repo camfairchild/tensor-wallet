@@ -1,7 +1,12 @@
 # Tensor Wallet
-A light-client-based, non-custodial, in-browser wallet for Bittensor.  
+A non-custodial, in-browser wallet for TAO (bittensor).  
 Based on [burnr by PartiyTech](https://github.com/paritytech/substrate-connect/blob/830994056ba905f8bc7096ead1821b88efad94f7/projects/burnr/)  
 
+# Legal Disclaimer
+This software is not affiliated with the Opentensor Foundation.  
+By using this software you agree to the terms of the LICENSE.  
+You also agree that I, <i>Cameron Fairchild</i>, am <strong>NOT</strong> liable for any loss of funds.    
+This software is <strong>NOT</strong> audited and you are fully responsible for any risks you may incur.  
 # Usage
 You will need one of either:
 - [Talisman](https://talisman.xyz/), or
