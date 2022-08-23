@@ -38,6 +38,7 @@ import { useApi } from "../hooks"
 import { AccountContext } from "../utils/contexts"
 import { CreateAccountCtx, StakeData } from "../utils/types"
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef"
+import { Codec } from "@polkadot/types/types";
 
 interface TabPanelProps {
   children?: ReactNode
@@ -90,10 +91,18 @@ const NavTabs: FunctionComponent = () => {
   const [value, setValue] = useState(0)
   const { account } = useContext<CreateAccountCtx>(AccountContext)
   const mountedRef = useIsMountedRef();
+  // for first load of page
+  const [loaded, setLoaded] = useState(false)
   
   const apiCtx = useApi();
 
   const handleChange = (event: ChangeEvent<unknown>, newValue: number) => {
+    if (newValue === 3 && !loaded) {
+      // refresh the page when the tab is clicked
+      // but only do this once
+      refreshMeta();
+      setLoaded(true)
+    }
     setValue(newValue)
   }
 
@@ -101,31 +110,45 @@ const NavTabs: FunctionComponent = () => {
   const [rows, setRows] = useState<StakeData[]>([])
   const [loader, setLoader] = useState<boolean>(true)
   
+  const getNeurons = (i: number, pageSize: number): Promise<Codec[]> => {
+    return new Promise<Codec[]>((resolve, reject) => {
+      const indexStart = i * pageSize;
+      (apiCtx.api.query.subtensorModule.neurons.multi(
+        Array.from(new Array(pageSize), (x, i) => i + indexStart)
+      ))
+      .then(resolve)
+      .catch(err => {
+        console.log(err)
+        reject(err);
+      });
+    })
+  };
+                  
 
   const refreshMeta = async () => {
       const getMeta = async () => {
         setLoader(true)
         const numNeurons = ((await apiCtx.api.query.subtensorModule.n()) as any).words[0];
-              let _neurons: Neuron[] = [];
-              const pageSize = Math.ceil(numNeurons / 4);
-              for (let i = 0; i < 4; i++) {
-                  const indexStart = i * pageSize;
-                  const results = ((await apiCtx.api.query.subtensorModule.neurons.multi(
-                      [...Array(pageSize).keys()].map(i => i + indexStart)
-                  )) as any)
-                  let neurons_ = results.map((result: any, j: number) => {
-                      const neuron = result.value;
-                      return {
-                          hotkey: (neuron.hotkey as any).toString(),
-                          coldkey: (neuron.coldkey as any).toString(),
-                          stake: (neuron.stake as any).toNumber(),
-                          uid: j + indexStart
-                      };
-                  });
-                  _neurons.push(...neurons_);
-              }
 
-              return _neurons;
+        let _neurons: Neuron[] = [];
+        const numPages = 16;
+        const pageSize = Math.ceil(numNeurons / numPages);
+
+        for (let i = 0; i < numPages; i++) {
+          const result = await getNeurons(i, pageSize)
+          let neurons_ = result.map((result: any, j: number) => {
+              const indexStart = i * pageSize;
+              const neuron = result.value;
+              return {
+                  hotkey: (neuron.hotkey as any).toString(),
+                  coldkey: (neuron.coldkey as any).toString(),
+                  stake: (neuron.stake as any).toNumber(),
+                  uid: j + indexStart
+              };
+          });
+          _neurons = _neurons.concat(neurons_);
+        }
+        return _neurons;
       }
 
       account && getMeta().then((_neurons) => {
@@ -137,14 +160,13 @@ const NavTabs: FunctionComponent = () => {
   const refreshStake = async ( hotkeyAddr?: string ) => {
       const getStake = async (neurons_: Neuron[]) => {
         // get the uids of the neurons that are linked to the account
-        const neuron_uids = neurons_.filter(neuron => {
-                if (hotkeyAddr) {
-                    return neuron.hotkey === hotkeyAddr && neuron.coldkey === account.accountAddress
+        const neuron_uids = neurons_.flatMap(neuron => {
+                if ((hotkeyAddr && neuron.hotkey === hotkeyAddr && neuron.coldkey === account.accountAddress) ||
+                    neuron.coldkey === account.accountAddress) {
+                    return [neuron.uid];
                 }
-                return neuron.coldkey === account.accountAddress
-            }).flatMap(neuron => {
-                return neuron.uid
-            })
+                return [];
+            });
             
         // get the stake of each neuron that is linked to the account
         const results = ((await apiCtx.api.query.subtensorModule.neurons.multi(
@@ -197,9 +219,9 @@ const NavTabs: FunctionComponent = () => {
 
   } , [account, mountedRef, neurons])
 
-  useEffect(() => {
+  /*useEffect(() => {
     mountedRef.current && refreshMeta();
-  } , [mountedRef, apiCtx])
+  } , [mountedRef, apiCtx])*/
 
   return (
     <>
