@@ -73,7 +73,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
           {columns.map((column) => {
             const value: string | number = row[column.id]
             return (
-              <React.Fragment>
+              <React.Fragment key={column.id}>
                 {column.id === "address" && (
                   <AccountCard account={{ address: value.toString(), name: "" }} addressFormat="Full" />
                 )}
