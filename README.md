@@ -21,9 +21,9 @@ You will be asked to sign transactions for a transfer or a stake/unstake, when y
 This is normal.   
 Be sure to verify the transaction sign request is coming from Tensor Wallet and not a different website.  
 
-## Substrate Connect
+<!-- ## Substrate Connect
 Ideally, you should install the [substrate-connect](https://substrate.io/developers/substrate-connect/) browser extension.  
-This will speed up the wallet and potentially reduce overhead if you use other light-client webapps for bittensor.  
+This will speed up the wallet and potentially reduce overhead if you use other light-client webapps for bittensor.  -->
 
 
 
