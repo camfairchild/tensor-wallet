@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { BrowserRouter } from "react-router-dom" // Pages
 import { makeStyles } from "@material-ui/core/styles"
 import { ApiContext, AccountContext } from "./utils/contexts"
 import { ApiCtx, LocalStorageAccountCtx } from "./utils/types"
 import { useApiCreate, useLocalStorage } from "./hooks"
 import { createAccountFromInjected } from "./utils/utils"
 import { NETWORKS } from "./utils/constants"
+import Banner from "./components/Banner"
 
 import {
   web3Accounts,
@@ -24,6 +24,7 @@ import {
   BurnrDivider,
 } from "./components"
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
+import Stack from "@mui/material/Stack"
 
 interface Props {
   className?: string
@@ -86,7 +87,8 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
   }, [apiCtx?.api])
 
   return (
-    <BrowserRouter>
+    <Stack spacing={0} direction="column">
+      <Banner />
       <div className={`${classes.root} ${className}`}>
         <ThemeToggleProvider>
           <AccountContext.Provider value={{ account, setCurrentAccount }}>
@@ -104,7 +106,7 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
           </AccountContext.Provider>
         </ThemeToggleProvider>
       </div>
-    </BrowserRouter>
+    </Stack>
   )
 }
 
