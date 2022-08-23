@@ -75,7 +75,12 @@ export default function StakeTab({ rows, loader, refreshStake }: PropsStakeTab) 
     <Stack spacing={2} direction="column" divider={<Divider orientation="vertical" flexItem />}>
     {loader ? (
       <Paper className={classes.loadingPaper}>
-        <CircularProgress color="primary" />
+        <Stack spacing={2} direction="column" justifyContent="center">
+          <Box>
+            <CircularProgress color="primary" />
+          </Box>
+          <Typography variant="body2">Syncing the Metagraph</Typography>
+        </Stack>
       </Paper>
     ) : 
   <React.Fragment>
