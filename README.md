@@ -5,7 +5,7 @@ Based on [burnr by PartiyTech](https://github.com/paritytech/substrate-connect/b
 # Legal Disclaimer
 This software is not affiliated with the Opentensor Foundation.  
 By using this software you agree to the terms of the LICENSE.  
-You also agree that I, <i>Cameron Fairchild</i>, am <strong>NOT</strong> liable for any loss of funds.    
+You also agree that we, the authors of this software, are <strong>NOT</strong> liable for any loss of funds.    
 This software is <strong>NOT</strong> audited and you are fully responsible for any risks you may incur.  
 # Usage
 You will need one of either:

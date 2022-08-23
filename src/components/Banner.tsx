@@ -32,7 +32,7 @@ export default function Banner() {
             <AlertTitle>Legal Disclaimer</AlertTitle>
             This website is not affiliated with the Opentensor Foundation.
             <br />
-            By using this website you agree that I, <i>Cameron Fairchild</i>, am <strong>NOT</strong> liable for any loss of funds.
+            By using this website you agree that we, the authors of this software, are <strong>NOT</strong> liable for any loss of funds.
             <br />
             This website is <strong>NOT</strong> audited and you are fully responsible for any risks you may incur.
         </Alert>
