@@ -1,0 +1,4 @@
+import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+import { Typography, Box, Link, Grid } from "@material-ui/core";
+const AppFooter = () => (_jsx(Box, { paddingBottom: 2, children: _jsx(Typography, { variant: "body2", component: "div", children: _jsxs(Grid, { container: true, spacing: 1, children: [_jsx(Grid, { item: true, children: _jsxs(Link, { href: "https://fairchild.dev/", underline: "hover", color: "textPrimary", children: ["\u00A9 ", new Date().getFullYear(), " Cameron Fairchild"] }) }), _jsx(Grid, { item: true, children: _jsx(Typography, { variant: "body2", color: "textPrimary", children: "Donation address: 5CSWAPCCDxAtjV2vy38VSNYchQWCsiWA9pW6yZCydQ7dGyYC" }) }), _jsx(Grid, { item: true, children: _jsx(Link, { href: "https://github.com/camfairchild/tensor-wallet/issues", underline: "hover", target: "_blank", rel: "noreferrer", color: "textPrimary", children: "Report an issue" }) })] }) }) }));
+export default AppFooter;
