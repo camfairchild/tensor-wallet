@@ -118,14 +118,14 @@ export default function AccountMenu({accounts}: Props) {
             { name }
           </MenuItem>
         ))}*/}
-
+      {/*
         <ListItem dense autoFocus={false} selected={false}>
           <Typography variant="overline">Update Metadata</Typography>
         </ListItem>
         <MenuItem onClick={() => _updateMetadata()}>
           Update
         </MenuItem>
-          
+      */}
         
       </Menu>
     </>
