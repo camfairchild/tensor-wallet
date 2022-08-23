@@ -248,7 +248,7 @@ import React, {
     }, [amount, stake])
   
     useEffect(() => {
-      if (!parseInt(amount)) {
+      if (!!amount && !parseInt(amount)) {
         setErrorMsg("Specify an amount")
       } else {
         setErrorMsg("")

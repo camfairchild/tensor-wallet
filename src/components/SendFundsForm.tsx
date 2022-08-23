@@ -235,10 +235,8 @@ const SendFundsForm: FunctionComponent = () => {
   }, [amount, fee, maxAmountFull])
 
   useEffect(() => {
-    if (!isValidAddressPolkadotAddress(address)) {
+    if (!!address && !isValidAddressPolkadotAddress(address)) {
       setErrorMsg("Invalid Destination address")
-    } else if (!parseInt(amount)) {
-      setErrorMsg("Specify an amount")
     } else if (fundsIssue) {
       setErrorMsg("Insufficient funds")
     } else {
