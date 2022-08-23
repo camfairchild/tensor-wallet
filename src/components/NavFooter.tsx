@@ -31,6 +31,11 @@ const AppFooter: FunctionComponent = () => (
             Report an issue
           </Link>
         </Grid>
+        <Grid item>
+        <span id="made-with-love">
+          Made with &#10084;&#65039; in <a href="https://www.google.com/maps/place/Toronto,+ON/" target="_blank">Toronto</a>
+        </span>
+        </Grid>
       </Grid>
     </Typography>
   </Box>
