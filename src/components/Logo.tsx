@@ -21,7 +21,7 @@ const Logo: FunctionComponent<Props> = ({ theme }: Props) => {
     <div className={classes.root}>
       <img
         alt="Tensor Wallet Logo"
-        src="./assets/images/logo.png"
+        src="./assets/images/logo_dark.svg"
       />
     </div>
   )
