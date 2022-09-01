@@ -9,6 +9,8 @@ import IconButton from "@mui/material/IconButton"
 import CircularProgress from "@mui/material/CircularProgress"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
+import Typography from "@mui/material/Typography"
+import Stack from "@mui/material/Stack"
 
 import {
   NavTabs,
@@ -62,47 +64,58 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
 
   return loader ? (
     <Paper className={classes.loadingPaper}>
-      <CircularProgress />
+      <Stack spacing={2} direction="column" justifyContent="center">
+          <Box>
+            <CircularProgress color="primary" />
+          </Box>
+          <Typography variant="body2">Finding Accounts</Typography>
+        </Stack>
     </Paper>
-  ) : (
-    <BalanceVisibleContext.Provider
-      value={{ balanceVisibility, setBalanceVisibility }}
-    >
-      <Paper square className={classes.paperAccount}>
-        <Box paddingY={1} paddingX={2} display="flex" alignItems="center">
-          <Box width="50%" display="flex">
-            {account?.accountAddress && (
-              <>
-                <AccountCard
-                  account={{
-                    address: account?.accountAddress,
-                    name: account?.accountName,
-                  }}
-                />
-                <AccountMenu accounts={accounts}/>
-              </>
-            )}
-          </Box>
-          <Box width="50%" display="flex" alignItems="center">
-            <BalanceValue
-              isVisible={balanceVisibility}
-              unit={balanceArr[3]}
-              value={balanceArr[1]}
-              size="large"
-              style={{ width: "100%", justifyContent: "flex-end" }}
-            />
-            <IconButton
-              style={{ borderRadius: 4 }}
-              onClick={() => setBalanceVisibility(!balanceVisibility)}
-            >
-              {balanceVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
-            </IconButton>
-          </Box>
-        </Box>
+  ) : ( 
+      accounts.length === 0 ? (
+      <Paper className={classes.loadingPaper}>
+        <Typography variant="body2">No Accounts Found</Typography>
       </Paper>
-      <BurnrDivider />
-      <NavTabs />
-    </BalanceVisibleContext.Provider>
+    ) : (
+      <BalanceVisibleContext.Provider
+        value={{ balanceVisibility, setBalanceVisibility }}
+      >
+        <Paper square className={classes.paperAccount} key={accounts.length > 0}>
+          <Box paddingY={1} paddingX={2} display="flex" alignItems="center">
+            <Box width="50%" display="flex">
+              {account?.accountAddress && (
+                <>
+                  <AccountCard
+                    account={{
+                      address: account?.accountAddress,
+                      name: account?.accountName,
+                    }}
+                  />
+                  <AccountMenu accounts={accounts}/>
+                </>
+              )}
+            </Box>
+            <Box width="50%" display="flex" alignItems="center">
+              <BalanceValue
+                isVisible={balanceVisibility}
+                unit={balanceArr[3]}
+                value={balanceArr[1]}
+                size="large"
+                style={{ width: "100%", justifyContent: "flex-end" }}
+              />
+              <IconButton
+                style={{ borderRadius: 4 }}
+                onClick={() => setBalanceVisibility(!balanceVisibility)}
+              >
+                {balanceVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </Box>
+          </Box>
+        </Paper>
+        <BurnrDivider />
+        <NavTabs />
+      </BalanceVisibleContext.Provider>
+    )
   )
 }
 

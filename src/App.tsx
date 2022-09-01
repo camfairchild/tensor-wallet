@@ -69,7 +69,7 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
           setAccounts(allAccounts);
           await web3AccountsSubscribe(accounts => {
             setAccounts(accounts)
-            if (!!!account && accounts.length > 0) {
+            if ((!!!account || !!!accounts.filter(act => act.address === account.accountAddress).length) && accounts.length > 0) {
               const userTmp = createAccountFromInjected(accounts)
               setCurrentAccount(userTmp)
               setLoader(false)
@@ -79,6 +79,12 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
             const userTmp = createAccountFromInjected(accounts)
             setCurrentAccount(userTmp)
             setLoader(false)
+          } else if (allAccounts.length === 0) {
+            // if there are no accounts, set the loader to false
+            setLoader(false)
+            setTimeout(() => {
+              callSetters()
+            }, 2000)
           }
         }
     }
