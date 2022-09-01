@@ -54,17 +54,16 @@ export const isEmpty = (obj: unknown): boolean =>
   obj.constructor === Object;
 
 export const copyToClipboard = (text: string): void => {
-  if (window.isSecureContext) {
-    navigator.clipboard.writeText(text);
-  } else {
-    // try normal way
-    const dummy = document.createElement("textarea");
-    document.body.appendChild(dummy );
-    dummy.value = text;
-    dummy.select();
-    document.execCommand("copy");
-    document.body.removeChild(dummy);
-  }
+  // copy to clipboard with fallback if not supported
+  navigator.clipboard.writeText(text).catch(() => {
+      // try normal way
+      const dummy = document.createElement("textarea");
+      document.body.appendChild(dummy );
+      dummy.value = text;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+  });
 };
 
 export const getKeyring = (): Keyring => keyring;
