@@ -1,75 +1,76 @@
-import { FunctionComponent, useState } from "react"
-import Identicon from "@polkadot/react-identicon"
+import { FunctionComponent, useState } from "react";
+import Identicon from "@polkadot/react-identicon";
 
-import Typography from "@mui/material/Typography"
-import Box from "@mui/material/Box"
-import Snackbar from "@mui/material/Snackbar"
-import Stack from "@mui/material/Stack"
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Snackbar from "@material-ui/core/Snackbar";
+import Stack from "@mui/material/Stack";
 
-import ErrorBoundary from "./ErrorBoundary";
-
-import MuiAlert, { AlertProps } from "@mui/material/Alert"
-import { Account } from "../utils/types"
-import { copyToClipboard } from "../utils/utils"
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { Account } from "../utils/types";
+import { copyToClipboard } from "../utils/utils";
 
 interface Props {
-  account: Account
-  addressFormat?: "Full" | "Short"
+  account: Account;
+  addressFormat?: "Full" | "Short";
 }
 
 const Alert = (props: AlertProps) => {
-  return <MuiAlert elevation={6} variant="filled" {...props} />
-}
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 const AccountCard: FunctionComponent<Props> = ({
   account,
   addressFormat,
 }: Props) => {
-  const [showCopied, setShowCopied] = useState<boolean>(false)
+  const [showCopied, setShowCopied] = useState<boolean>(false);
   return (
     <>
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={showCopied}
-        autoHideDuration={2000}
-        onClose={() => setShowCopied(false)}
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={showCopied}
+          autoHideDuration={2000}
+          onClose={() => setShowCopied(false)}
+        >
+          <Alert severity="success">Copied!</Alert>
+        </Snackbar>
+      <Stack
+        spacing={1}
+        direction={addressFormat === "Full" ? "column" : "row"}
       >
-        <Alert severity="success">Copied!</Alert>
-      </Snackbar>
-      <Stack spacing={1} direction={addressFormat === "Full" ? "column" : "row"}>
-        <ErrorBoundary>
         <Identicon
           size={32}
           theme="polkadot"
           value={account.address}
           onCopy={() => {
-            setShowCopied(true)
-            copyToClipboard(account.address)
+            setShowCopied(true);
+            copyToClipboard(account.address);
           }}
         />
-      </ErrorBoundary>
         <Box
-        height={32}
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        ml={1}
-      >
-        {account.name !== "" && (
-          <Typography variant="h6">{account.name}</Typography>
-        )}
-        <Typography variant="caption">
-          {addressFormat === "Full" ? account.address : 
-          account.address.slice(0, 4) +
-              "..." +
-              account.address.slice(
-                account.address.length - 4,
-                account.address.length,
-              )}
-        </Typography>
-      </Box></Stack>
+          height={32}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          ml={1}
+        >
+          {account.name !== "" && (
+            <Typography variant="h6">{account.name}</Typography>
+          )}
+          <Typography variant="caption">
+            {addressFormat === "Full"
+              ? account.address
+              : account.address.slice(0, 4) +
+                "..." +
+                account.address.slice(
+                  account.address.length - 4,
+                  account.address.length
+                )}
+          </Typography>
+        </Box>
+      </Stack>
     </>
-  )
-}
+  );
+};
 
-export default AccountCard
+export default AccountCard;

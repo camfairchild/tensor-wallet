@@ -13,9 +13,7 @@ const ReceiveFundsForm: FunctionComponent = () => {
   return (
     <Stack direction="column" width={600} justifyContent="center" >
       <QRCode value={account.accountAddress} includeMargin={true} size={400} style={{"justifySelf": "center"}} />
-      <ErrorBoundary>
-        <CopyAddressButton accountAddress={account.accountAddress} />
-      </ErrorBoundary>
+      <CopyAddressButton accountAddress={account.accountAddress} />
     </Stack>
   )
 }
