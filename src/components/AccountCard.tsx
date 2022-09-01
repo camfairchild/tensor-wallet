@@ -4,6 +4,7 @@ import Identicon from "@polkadot/react-identicon"
 import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
 import Snackbar from "@mui/material/Snackbar"
+import Stack from "@mui/material/Stack"
 
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -35,41 +36,38 @@ const AccountCard: FunctionComponent<Props> = ({
       >
         <Alert severity="success">Copied!</Alert>
       </Snackbar>
-
-      <Box display="flex" alignItems="center">
+      <Stack spacing={1} direction={addressFormat === "Full" ? "column" : "row"}>
         <ErrorBoundary>
-          <Identicon
-            size={32}
-            theme="polkadot"
-            value={account.address}
-            onCopy={() => {
-              setShowCopied(true)
-              copyToClipboard(account.address)
-            }}
-          />
-        </ErrorBoundary>
+        <Identicon
+          size={32}
+          theme="polkadot"
+          value={account.address}
+          onCopy={() => {
+            setShowCopied(true)
+            copyToClipboard(account.address)
+          }}
+        />
+      </ErrorBoundary>
         <Box
-          height={32}
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          ml={1}
-        >
-          {account.name !== "" && (
-            <Typography variant="h6">{account.name}</Typography>
-          )}
-          <Typography variant="caption">
-            {addressFormat === "Full"
-              ? account.address
-              : account.address.slice(0, 4) +
-                "..." +
-                account.address.slice(
-                  account.address.length - 4,
-                  account.address.length,
-                )}
-          </Typography>
-        </Box>
-      </Box>
+        height={32}
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        ml={1}
+      >
+        {account.name !== "" && (
+          <Typography variant="h6">{account.name}</Typography>
+        )}
+        <Typography variant="caption">
+          {addressFormat === "Full" ? account.address : 
+          account.address.slice(0, 4) +
+              "..." +
+              account.address.slice(
+                account.address.length - 4,
+                account.address.length,
+              )}
+        </Typography>
+      </Box></Stack>
     </>
   )
 }
