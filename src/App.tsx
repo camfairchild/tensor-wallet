@@ -91,7 +91,6 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
     console.log(account, account?.accountAddress, accounts)
     if ((!!!account || !!!accounts.filter(act => act.address === account.accountAddress).length) && accounts.length > 0) {
       const userTmp = createAccountFromInjected(accounts)
-      console.log('Changed account 1', userTmp)
       setCurrentAccount(userTmp)
       setLoader(false)
     }
