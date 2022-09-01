@@ -69,12 +69,7 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
           setAccounts(allAccounts);
           await web3AccountsSubscribe(accounts => {
             setAccounts(accounts)
-            if ((!!!account || !!!accounts.filter(act => act.address === account.accountAddress).length) && accounts.length > 0) {
-              const userTmp = createAccountFromInjected(accounts)
-              setCurrentAccount(userTmp)
-              setLoader(false)
-            }
-          })
+          });
           if (!!!Object.keys(account).length && accounts.length > 0) {
             const userTmp = createAccountFromInjected(accounts)
             setCurrentAccount(userTmp)
@@ -91,6 +86,16 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
 
     apiCtx.api && callSetters()
   }, [apiCtx?.api])
+
+  useEffect((): void => {
+    console.log(account, account?.accountAddress, accounts)
+    if ((!!!account || !!!accounts.filter(act => act.address === account.accountAddress).length) && accounts.length > 0) {
+      const userTmp = createAccountFromInjected(accounts)
+      console.log('Changed account 1', userTmp)
+      setCurrentAccount(userTmp)
+      setLoader(false)
+    }
+  }, [accounts])
 
   return (
     <Stack spacing={0} direction="column">
