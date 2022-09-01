@@ -5,6 +5,8 @@ import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
 import Snackbar from "@mui/material/Snackbar"
 
+import ErrorBoundary from "./ErrorBoundary";
+
 import MuiAlert, { AlertProps } from "@mui/material/Alert"
 import { Account } from "../utils/types"
 import { copyToClipboard } from "../utils/utils"
@@ -35,15 +37,17 @@ const AccountCard: FunctionComponent<Props> = ({
       </Snackbar>
 
       <Box display="flex" alignItems="center">
-        <Identicon
-          size={32}
-          theme="polkadot"
-          value={account.address}
-          onCopy={() => {
-            setShowCopied(true)
-            copyToClipboard(account.address)
-          }}
-        />
+        <ErrorBoundary>
+          <Identicon
+            size={32}
+            theme="polkadot"
+            value={account.address}
+            onCopy={() => {
+              setShowCopied(true)
+              copyToClipboard(account.address)
+            }}
+          />
+        </ErrorBoundary>
         <Box
           height={32}
           display="flex"
