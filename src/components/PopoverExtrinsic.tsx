@@ -40,13 +40,19 @@ const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
 
   const open = Boolean(anchorEl)
 
+  function handleClick (event: React.MouseEvent<HTMLElement, MouseEvent>) {
+    event.preventDefault()
+    if (blockHash) {
+      window.open(`https://explorer.nakamoto.opentensor.ai/#/explorer/query/${blockHash.toHex()}`, "_blank")
+    }
+  }
+
   return (
     <>
       <IconButton
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
-        href={blockHash && `https://explorer.nakamoto.opentensor.ai/#/explorer/query/${blockHash.toHex()}` || ""}
-        target="_blank"
+        onClick={handleClick}
       >
         {status === 0 && <CachedIcon color="disabled" />}
         {status === 1 && <CheckIcon color="action" />}
@@ -74,9 +80,15 @@ const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
         onClose={handlePopoverClose}
         disableRestoreFocus
       >
-        <Typography variant="body2">
-          {status === 1 && "View on Explorer"}
-        </Typography>
+        {blockHash ? (
+          <Typography variant="body2">
+            View on Explorer
+          </Typography>
+        ) : (
+          <Typography variant="body2">
+            Pending
+          </Typography>
+        )}
       </Popover>
     </>
   )

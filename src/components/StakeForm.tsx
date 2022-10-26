@@ -163,9 +163,11 @@ import { Hash } from "@polkadot/types/interfaces"
             setMessage(`Current transaction status ${result.status}`)
             if (result.status.isInBlock) {
               clearField()
+              setCountdownNo(100)
               setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
             } else if (result.status.isFinalized) {
               setRowStatus(1)
+              setCountdownNo(100)
               setTXBlockHash(result.status.asFinalized)
               setMessage(`Block hash:: ${result.status.asFinalized}.`)
               account.userHistory.unshift({
@@ -204,7 +206,7 @@ import { Hash } from "@polkadot/types/interfaces"
       try {
         e.preventDefault()
         setLoading(true)
-        setCountdownNo(200)
+        setCountdownNo(100)
         setRowStatus(3)
         setLastAction(true)
         const keyring = new Keyring({ type: "sr25519" })
@@ -216,9 +218,11 @@ import { Hash } from "@polkadot/types/interfaces"
             setMessage(`Current transaction status ${result.status}`)
             if (result.status.isInBlock) {
               clearField()
+              setCountdownNo(100)
               setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
             } else if (result.status.isFinalized) {
               setRowStatus(1)
+              setCountdownNo(100)
               setTXBlockHash(result.status.asFinalized)
               setMessage(`Block hash:: ${result.status.asFinalized}.`)
               account.userHistory.unshift({

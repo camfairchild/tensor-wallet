@@ -201,9 +201,11 @@ const SendFundsForm: FunctionComponent = () => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
             clearAmount()
+            setCountdownNo(100)
             setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
           } else if (result.status.isFinalized) {
             setRowStatus(1)
+            setCountdownNo(100)
             setTXBlockHash(result.status.asFinalized)
             setMessage(`Block hash:: ${result.status.asFinalized}.`)
             account.userHistory.unshift({
