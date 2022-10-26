@@ -17,7 +17,7 @@ import {
   Box,
 } from "@material-ui/core"
 import Stack from "@mui/material/Stack"
-import { Balance } from "@polkadot/types/interfaces"
+import { Balance, Hash } from "@polkadot/types/interfaces"
 import { Keyring } from "@polkadot/keyring"
 import { AccountContext } from "../utils/contexts"
 import { InputAddress, InputFunds } from "."
@@ -138,6 +138,7 @@ const SendFundsForm: FunctionComponent = () => {
   const [message, setMessage] = useState<string>("")
   const [countdownNo, setCountdownNo] = useState<number>(0)
   const [rowStatus, setRowStatus] = useState<number>(0)
+  const [txBlockHash, setTXBlockHash] = useState<Hash | null>(null)
   const [fee, setFee] = useState<Balance | undefined>()
   const [errorMsg, setErrorMsg] = useState<string>("")
   const [showValue, setShowValue] = useState<string>("")
@@ -188,8 +189,9 @@ const SendFundsForm: FunctionComponent = () => {
     try {
       e.preventDefault()
       setLoading(true)
-      setCountdownNo(100)
+      setCountdownNo(200)
       setRowStatus(3)
+      setTXBlockHash(null)
       const keyring = new Keyring({ type: "sr25519" })
       const sender = account.accountAddress;
       const injector = await web3FromAddress(sender);
@@ -202,12 +204,14 @@ const SendFundsForm: FunctionComponent = () => {
             setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
           } else if (result.status.isFinalized) {
             setRowStatus(1)
+            setTXBlockHash(result.status.asFinalized)
             setMessage(`Block hash:: ${result.status.asFinalized}.`)
             account.userHistory.unshift({
               withWhom: address,
               extrinsic: "Transfer",
               value: transferAmount,
               status: 1,
+              blockHash: result.status.asFinalized
             })
             setCurrentAccount(account)
           }
@@ -216,12 +220,14 @@ const SendFundsForm: FunctionComponent = () => {
     } catch (err) {
       setLoading(false)
       setRowStatus(2)
+      setTXBlockHash(null)
       setMessage(`😞 Error: ${err}`)
       account.userHistory.unshift({
         withWhom: address,
         extrinsic: "Transfer",
         value: transferAmount,
         status: 2,
+        blockHash: null
       })
       setCurrentAccount(account)
     }
@@ -312,6 +318,7 @@ const SendFundsForm: FunctionComponent = () => {
                 extrinsic: "Transfer",
                 value: amount,
                 status: rowStatus,
+                blockHash: txBlockHash
               }}
               unit={unit}
               columns={columns}

@@ -80,7 +80,7 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
       <BalanceVisibleContext.Provider
         value={{ balanceVisibility, setBalanceVisibility }}
       >
-        <Paper square className={classes.paperAccount} key={accounts.length > 0}>
+        <Paper square className={classes.paperAccount} key={accounts.length}>
           <Box paddingY={1} paddingX={2} display="flex" alignItems="center">
             <Box width="50%" display="flex">
               {account?.accountAddress && (

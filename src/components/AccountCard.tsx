@@ -57,15 +57,12 @@ const AccountCard: FunctionComponent<Props> = ({
           {account.name !== "" && (
             <Typography variant="h6">{account.name}</Typography>
           )}
-          <Typography variant="caption">
-            {addressFormat === "Full"
-              ? account.address
-              : account.address.slice(0, 4) +
-                "..." +
-                account.address.slice(
-                  account.address.length - 4,
-                  account.address.length
-                )}
+          <Typography variant="caption" sx={addressFormat === "Full" ? {} : {
+            textOverflow: "ellipsis",
+            overflowX: "clip",
+            width: "5em",
+          }}>
+            {account.address}
           </Typography>
         </Box>
       </Stack>

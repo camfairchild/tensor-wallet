@@ -1,4 +1,4 @@
-import { Balance, Index, RefCount } from "@polkadot/types/interfaces"
+import { Balance, Hash, Index, RefCount } from "@polkadot/types/interfaces"
 import { u32 } from "@polkadot/types"
 import { Codec } from "@polkadot/types/types"
 import { ApiPromise } from "@polkadot/api/promise/Api"
@@ -73,6 +73,7 @@ export interface TxEvent {
   extrinsic: string
   value: string | number
   status: string | number
+  blockHash: Hash | null
 }
 
 export type EvtTxCtx = TxEvent[]
@@ -104,6 +105,7 @@ export interface UserInfo {
 
 export interface ExtrinsicInfo {
   status: string | number
+  blockHash: Hash | null
 }
 
 export interface Data extends ExtrinsicInfo {
@@ -111,12 +113,13 @@ export interface Data extends ExtrinsicInfo {
   value: string | number
   extrinsic: string
 }
+
 export interface SizeScale {
   size?: "large" | "medium" | "small"
 }
 
 export interface Column {
-  id: "withWhom" | "extrinsic" | "value" | "status"
+  id: "withWhom" | "extrinsic" | "value" | "status" | "blockHash"
   label: string
   minWidth?: number
   maxWidth?: number

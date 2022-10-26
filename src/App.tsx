@@ -61,20 +61,21 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
   )
   const [loader, setLoader] = useState(true)
 
+  function uniqueAddresses(account: InjectedAccountWithMeta, i: number, accounts_: InjectedAccountWithMeta[]) {
+    // filters out duplicate addresses
+    return accounts_.findIndex((acc) => acc.address === account.address) === i
+  }
+
   useEffect((): void => {
     const callSetters = async () => {
         if (await apiCtx.api.isReady) {
           const allInjected = await web3Enable('Tensor Wallet');
           const allAccounts = await web3Accounts();
-          setAccounts(allAccounts);
+          setAccounts(allAccounts.filter(uniqueAddresses));
           await web3AccountsSubscribe(accounts => {
-            setAccounts(accounts)
+            setAccounts(accounts.filter(uniqueAddresses))
           });
-          if (!!!Object.keys(account).length && accounts.length > 0) {
-            const userTmp = createAccountFromInjected(accounts)
-            setCurrentAccount(userTmp)
-            setLoader(false)
-          } else if (allAccounts.length === 0) {
+          if (allAccounts.length === 0) {
             // if there are no accounts, set the loader to false
             setLoader(false)
             setTimeout(() => {
@@ -88,8 +89,7 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
   }, [apiCtx?.api])
 
   useEffect((): void => {
-    console.log(account, account?.accountAddress, accounts)
-    if ((!!!account || !!!accounts.filter(act => act.address === account.accountAddress).length) && accounts.length > 0) {
+    if ((!!!account || !accounts.some(act => act.address === account.accountAddress)) && accounts.length > 0) {
       const userTmp = createAccountFromInjected(accounts)
       setCurrentAccount(userTmp)
       setLoader(false)

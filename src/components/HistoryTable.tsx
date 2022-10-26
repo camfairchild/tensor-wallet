@@ -18,14 +18,17 @@ import { Data, Column } from "../utils/types"
 import { useBalance } from "../hooks"
 
 const columns: Column[] = [
-  { id: "withWhom", label: "", width: 160 },
+  { id: "withWhom", label: "", minWidth: 150 },
   { id: "extrinsic", label: "Extrinsic" },
-  { id: "value", label: "Value", minWidth: 170, align: "right" },
-  { id: "status", label: "Status", width: 40, align: "right" },
+  { id: "value", label: "Value", minWidth: 30 },
+  { id: "status", label: "Status", minWidth: 40, align: "right" },
+  { id: "blockHash", label: "Block Hash", maxWidth: 100, align: "right" },
 ]
 
 const useStyles = makeStyles((theme: Theme) => ({
   table: {
+    tableLayout: "fixed",
+    width: "100%",
     "& th": {
       backgroundColor: theme.palette.background.paper,
       color: theme.palette.text.disabled,

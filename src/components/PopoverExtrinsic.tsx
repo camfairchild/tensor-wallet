@@ -1,6 +1,6 @@
 import { FunctionComponent, useState } from "react"
 
-import { IconButton, Typography, CircularProgress } from "@material-ui/core"
+import { IconButton, Typography, CircularProgress, Link } from "@material-ui/core"
 import { makeStyles, Theme } from "@material-ui/core/styles"
 import Popover from "@material-ui/core/Popover"
 import CachedIcon from "@material-ui/icons/Cached"
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
   status,
+  blockHash,
 }: ExtrinsicInfo) => {
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
@@ -44,6 +45,8 @@ const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
       <IconButton
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        href={blockHash && `https://explorer.nakamoto.opentensor.ai/#/explorer/query/${blockHash.toHex()}` || ""}
+        target="_blank"
       >
         {status === 0 && <CachedIcon color="disabled" />}
         {status === 1 && <CheckIcon color="action" />}
@@ -72,7 +75,7 @@ const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
         disableRestoreFocus
       >
         <Typography variant="body2">
-          The content of the Popover, link to BlockExplorers
+          {status === 1 && "View on Explorer"}
         </Typography>
       </Popover>
     </>

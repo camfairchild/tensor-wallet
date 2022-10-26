@@ -2,7 +2,8 @@ import { FunctionComponent, useContext } from "react"
 
 import { BN } from "@polkadot/util"
 import { BalanceVisibleContext } from "../utils/contexts"
-import { Balance } from "@polkadot/types/interfaces"
+import Typography from "@mui/material/Typography";
+import { Balance, Hash } from "@polkadot/types/interfaces"
 import { TableRow, TableCell } from "@material-ui/core"
 import { Column } from "../utils/types"
 
@@ -13,6 +14,7 @@ interface rowContent {
   extrinsic: string
   value: string | number
   status: string | number
+  blockHash: Hash | null
 }
 interface Props {
   row: rowContent
@@ -29,13 +31,13 @@ const HistoryTableRow: FunctionComponent<Props> = ({
 }) => {
   const { balanceVisibility } = useContext(BalanceVisibleContext)
   return (
-    <TableRow hover key={`transaction`}>
+    <TableRow hover key={`transaction-${row.blockHash}`}>
       {columns.map((column) => {
-        const value: string | number = row[column.id]
+        const value: string | number | Hash | null = row[column.id]
         return (
           <TableCell key={`transaction-${column.id}`} align={column.align}>
             {column.id === "withWhom" && (
-              <AccountCard account={{ address: value.toString(), name: "" }} />
+              <AccountCard account={{ address: (value as number).toString(), name: "" }} />
             )}
             {column.id === "extrinsic" && value}
             {column.id === "value" && // This may look overwhelming but is just for "dump" data until page is fixed
@@ -47,8 +49,16 @@ const HistoryTableRow: FunctionComponent<Props> = ({
                 />
               )}
             {showStatus && column.id === "status" && (
-              <PopoverExtrinsic status={row.status} />
+              <PopoverExtrinsic status={row.status} blockHash={row.blockHash} />
             )}
+            <Typography variant="caption" sx={{
+              textOverflow: "ellipsis",
+              overflowX: "hidden",
+              display: "inline-block",
+              maxWidth: "100%",
+            }} >
+              {column.id === "blockHash" && value && (value as Hash).toHex()}
+            </Typography>
           </TableCell>
         )
       })}

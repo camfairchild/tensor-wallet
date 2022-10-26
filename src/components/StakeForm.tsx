@@ -13,6 +13,7 @@ import React, {
     LinearProgress,
     Table,
     Box,
+    TableBody,
   } from "@material-ui/core"
   import Stack from "@mui/material/Stack"
   import { Keyring } from "@polkadot/keyring"
@@ -25,6 +26,7 @@ import React, {
   import { web3FromAddress } from "@polkadot/extension-dapp"
   import ButtonGroup from '@mui/material/ButtonGroup';
   import Button from '@mui/material/Button';
+import { Hash } from "@polkadot/types/interfaces"
   
   const useStyles = makeStyles((theme: Theme) => ({
     errorMessage: {
@@ -108,11 +110,13 @@ import React, {
     const [message, setMessage] = useState<string>("")
     const [countdownNo, setCountdownNo] = useState<number>(0)
     const [rowStatus, setRowStatus] = useState<number>(0)
+    const [txBlockHash, setTXBlockHash] = useState<Hash | null>(null)
     const [errorMsg, setErrorMsg] = useState<string>("")
     const [showValue, setShowValue] = useState<string>("")
     
     // AddStake=false, RemoveStake=true
     const [lastAction, setLastAction] = useState<boolean>(false)
+    const [lastAmount, setLastAmount] = useState<string>("0")
 
     useEffect((): (() => void) => {
       let countdown: ReturnType<typeof setInterval>
@@ -142,11 +146,13 @@ import React, {
     const handleStake = async (e: MouseEvent) => {
       e.preventDefault()
       const stakeAmount = amount
+      setLastAmount(stakeAmount)
       try {
         e.preventDefault()
         setLoading(true)
         setCountdownNo(100)
         setRowStatus(3)
+        setTXBlockHash(null)
         const keyring = new Keyring({ type: "sr25519" })
         const sender = account.accountAddress;
         const injector = await web3FromAddress(sender);
@@ -160,12 +166,14 @@ import React, {
               setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
             } else if (result.status.isFinalized) {
               setRowStatus(1)
+              setTXBlockHash(result.status.asFinalized)
               setMessage(`Block hash:: ${result.status.asFinalized}.`)
               account.userHistory.unshift({
                 withWhom: hotkeyAddr,
                 extrinsic: "AddStake",
                 value: stakeAmount,
                 status: 1,
+                blockHash: result.status.asFinalized
               })
               setCurrentAccount(account)
             }
@@ -176,12 +184,14 @@ import React, {
       } catch (err) {
         setLoading(false)
         setRowStatus(2)
+        setTXBlockHash(null)
         setMessage(`😞 Error: ${err}`)
         account.userHistory.unshift({
           withWhom: hotkeyAddr,
           extrinsic: "AddStake",
           value: stakeAmount,
           status: 2,
+          blockHash: null
         })
         setCurrentAccount(account)
       }
@@ -190,10 +200,11 @@ import React, {
     const handleUnstake = async (e: MouseEvent) => {
       e.preventDefault()
       const unstakeAmount = amount
+      setLastAmount(unstakeAmount)
       try {
         e.preventDefault()
         setLoading(true)
-        setCountdownNo(100)
+        setCountdownNo(200)
         setRowStatus(3)
         setLastAction(true)
         const keyring = new Keyring({ type: "sr25519" })
@@ -208,12 +219,14 @@ import React, {
               setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
             } else if (result.status.isFinalized) {
               setRowStatus(1)
+              setTXBlockHash(result.status.asFinalized)
               setMessage(`Block hash:: ${result.status.asFinalized}.`)
               account.userHistory.unshift({
                 withWhom: hotkeyAddr,
                 extrinsic: "RemoveStake",
                 value: unstakeAmount,
                 status: 1,
+                blockHash: result.status.asFinalized
               })
               setCurrentAccount(account)
             }
@@ -224,12 +237,14 @@ import React, {
       } catch (err) {
         setLoading(false)
         setRowStatus(2)
+        setTXBlockHash(null)
         setMessage(`😞 Error: ${err}`)
         account.userHistory.unshift({
           withWhom: hotkeyAddr,
           extrinsic: "RemoveStake",
           value: unstakeAmount,
           status: 2,
+          blockHash: null
         })
         setCurrentAccount(account)
       }
@@ -317,16 +332,19 @@ import React, {
         <Box mt={3}>
           {countdownNo !== 0 && (
             <Table size="small">
-              <HistoryTableRow
-                row={{
-                  withWhom: hotkeyAddr,
-                  value: amount,
-                  status: rowStatus,
-                  extrinsic: lastAction ? "RemoveStake": "AddStake",
-                }}
-                unit={unit}
-                columns={columns}
-              />
+              <TableBody>
+                <HistoryTableRow
+                  row={{
+                    withWhom: hotkeyAddr,
+                    value: lastAmount,
+                    status: rowStatus,
+                    extrinsic: lastAction ? "RemoveStake": "AddStake",
+                    blockHash: txBlockHash
+                  }}
+                  unit={unit}
+                  columns={columns}
+                />
+              </TableBody>
             </Table>
           )}
           
