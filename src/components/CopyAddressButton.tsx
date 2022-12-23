@@ -8,7 +8,9 @@ interface CopyAddressProps {
 
 export default function CopyAddressButton({ accountAddress }: CopyAddressProps) {
     return (
-        <Button variant="outlined" color="primary" startIcon={<ContentCopyIcon />} onClick={() => copyToClipboard(accountAddress)}>
+        <Button variant="outlined" color="primary" startIcon={<ContentCopyIcon />} onClick={() => copyToClipboard(accountAddress)} sx={{
+            textTransform: "none",
+        }} >
             {accountAddress}
         </Button>
     )
