@@ -219,10 +219,6 @@ const NavTabs: FunctionComponent = () => {
 
   } , [account, mountedRef, neurons])
 
-  /*useEffect(() => {
-    mountedRef.current && refreshMeta();
-  } , [mountedRef, apiCtx])*/
-
   return (
     <>
       <Paper square>
@@ -259,20 +255,20 @@ const NavTabs: FunctionComponent = () => {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Typography variant="h6" className={classes.rootHeading}>
-            Send Tao
+            Send TAO
           </Typography>
           <SendFundsForm />
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Typography variant="h6" className={classes.rootHeading}>
-            Receive Tao
+            Receive TAO
           </Typography>
           <ReceiveFundsForm />
         </TabPanel>
         <TabPanel value={value} index={3}>
           <Stack spacing={2} direction="row" >
             <Typography variant="h6" className={classes.rootHeading}>
-              Stake Tao
+              Stake TAO
             </Typography>
             <Button onClick={() => refreshMeta()} startIcon={<RefreshIcon />} />
           </Stack>
