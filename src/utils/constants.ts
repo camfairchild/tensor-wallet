@@ -9,7 +9,7 @@ export const POLKA_ACCOUNT_ENDPOINTS = {
 export const NETWORKS: SimpleProvider[] = [{
   name: "Bittensor Nakamoto",
   id: "bittensor-nakamoto-mainnet",
-  client: "Light client",
+  client: "Sync Node",
   endpoints: [
     "wss://sub0.tensorswap.com",
     "wss://sub1.tensorswap.com",
@@ -17,7 +17,7 @@ export const NETWORKS: SimpleProvider[] = [{
 }, {
   name: "Bittensor Nobunaga",
   id: "bittensor-nobunaga-mainnet",
-  client: "Light client",
+  client: "Sync Node",
   endpoints: [
     "ws://143.244.164.193:9944",
   ],
