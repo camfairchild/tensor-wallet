@@ -236,10 +236,15 @@ const SendFundsForm: FunctionComponent = () => {
   }
 
   useEffect(() => {
+    try {
     maxAmountFull &&
       amount &&
       fee &&
       setFundsIssue(new BN(maxAmountFull).sub(new BN(amount)).sub(fee).isNeg())
+    } catch (err) {
+      console.error(err)
+    }
+
   }, [amount, fee, maxAmountFull])
 
   useEffect(() => {
