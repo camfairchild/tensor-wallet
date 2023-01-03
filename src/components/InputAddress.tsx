@@ -45,7 +45,7 @@ const InputAddress: FunctionComponent<Props> = ({ setAddress }) => {
             InputProps={{
               spellCheck: "false",
               startAdornment: (
-                <Box marginRight={1}>
+                <Box style={{ marginRight: 15 }} >
                   {!value || value === "" ? (
                     <Skeleton variant="circle" width={32} height={32} />
                   ) : (
