@@ -53,8 +53,9 @@ const InputFunds: FunctionComponent<Props> = ({
       document.getElementById("SendFundsAmountField")?.focus()
     } else {
       const value = (e.currentTarget as HTMLButtonElement).value
-      const v: number =
+      let v: number =
         parseFloat(value) * Math.pow(10, 9)
+      v = Math.trunc(v)
       setShowValue(value !== "" ? value : "")
       setAmount(value !== "" ? v.toString() : "0")
     }
