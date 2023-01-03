@@ -18,7 +18,7 @@ import React, {
   import Stack from "@mui/material/Stack"
   import { Keyring } from "@polkadot/keyring"
   import { AccountContext } from "../utils/contexts"
-  import { InputFunds } from "."
+  import { ErrorBoundary, InputFunds } from "."
   import { useBalance, useApi, useLocalStorage } from "../hooks"
   import { HistoryTableRow } from "."
   import { Column } from "../utils/types"
@@ -279,14 +279,16 @@ import { Hash } from "@polkadot/types/interfaces"
     return (
       <React.Fragment>
         <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="center" >
-        <InputFunds
-            hidePercentages
-            total={maxAmountFull}
-            currency={unit}
-            setAmount={setAmount}
-            showValue={showValue}
-            setShowValue={setShowValue}
-          />
+          <ErrorBoundary>
+            <InputFunds
+                hidePercentages
+                total={maxAmountFull}
+                currency={unit}
+                setAmount={setAmount}
+                showValue={showValue}
+                setShowValue={setShowValue}
+              />
+          </ErrorBoundary>
           <ButtonGroup variant="contained" aria-label="outlined primary button group">
             <Button
             type="submit"

@@ -34,7 +34,11 @@ const InputFunds: FunctionComponent<Props> = ({
   
 
   const handleChange = (e: ChangeEvent | MouseEvent, fromButtons = false) => {
-    if ((e.currentTarget as HTMLButtonElement).value?.length > 6) return
+    const value: string = (e.target as HTMLInputElement).value
+    if (value) {
+      const afterDot = value.split(".")[1]
+      if (afterDot && afterDot.length > 6) return // only allow 6 decimals
+    }
     if (fromButtons) {
       const calcNewTotal =
         parseFloat((e.currentTarget as HTMLButtonElement).value) *
