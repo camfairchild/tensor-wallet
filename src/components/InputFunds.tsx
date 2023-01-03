@@ -6,59 +6,31 @@ import {
   SetStateAction,
   Dispatch,
 } from "react"
-import Button from "@mui/material/Button"
-import Grid from "@mui/material/Grid"
-import TextField from "@mui/material/TextField"
 import Box from "@mui/material/Box"
-
-import { InputAdornment } from "@material-ui/core"
 import { BN } from "@polkadot/util"
+import CurrencyInput from 'react-currency-input-field';
 
 interface Props {
   total: BN
   currency: string
-  hidePercentages?: boolean
   setAmount: Dispatch<SetStateAction<string>>
-  setShowValue: Dispatch<SetStateAction<string>>
-  showValue: string
 }
 
 const InputFunds: FunctionComponent<Props> = ({
   total,
   setAmount,
-  currency,
-  hidePercentages = false,
-  setShowValue,
-  showValue,
+  currency
 }: Props) => {
   
 
-  const handleChange = (e: ChangeEvent | MouseEvent, fromButtons = false) => {
-    const value: string = (e.target as HTMLInputElement).value
-    if (value) {
-      const afterDot = value.split(".")[1]
-      if (afterDot && afterDot.length > 6) return // only allow 6 decimals
+  const handleChange = (value: any) => {
+    if (value === "" || value === undefined) {
+      setAmount("0")
+      return
     }
-    if (fromButtons) {
-      const calcNewTotal =
-        parseFloat((e.currentTarget as HTMLButtonElement).value) *
-        parseInt(new BN(total).toString())
-      const truncDec = Math.trunc(calcNewTotal)
-      setShowValue(
-        calcNewTotal.toString() !== ""
-          ? (truncDec / Math.pow(10, 9)).toFixed(6)
-          : "",
-      )
-      setAmount(truncDec.toString())
-      document.getElementById("SendFundsAmountField")?.focus()
-    } else {
-      const value = (e.currentTarget as HTMLButtonElement).value
-      let v: number =
-        parseFloat(value) * Math.pow(10, 9)
-      v = Math.trunc(v)
-      setShowValue(value !== "" ? value : "")
-      setAmount(value !== "" ? v.toString() : "0")
-    }
+    let v = parseFloat(value)
+    v = v * 1e9 // convert to rao
+    setAmount(Math.trunc(v).toString())
   }
 
   // @TODO focus/blur TextField and %Buttons at the same time in a React way
@@ -70,52 +42,33 @@ const InputFunds: FunctionComponent<Props> = ({
   return (
     <>
       <Box marginBottom={1}>
-        <TextField
+        <CurrencyInput
+          style={styles.input}
           id="SendFundsAmountField"
-          value={showValue}
-          label="Amount"
-          fullWidth
-          type="number"
+          name="input-name"
           placeholder="0"
-          variant="outlined"
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleFocus}
-          InputProps={{
-            fullWidth: true,
-            startAdornment: (
-              <InputAdornment position="start">{currency}</InputAdornment>
-            ),
-          }}
+          defaultValue={0.0}
+          decimalsLimit={9}
+          onValueChange={(value, name) => handleChange(value)}
+          allowNegativeValue={false}
+          suffix={` ${currency}`}
+          step={1e-9}
         />
       </Box>
-
-      {!hidePercentages && (
-        <Grid container spacing={1}>
-          {[
-            { label: "25%", value: 0.25 },
-            { label: "50%", value: 0.5 },
-            { label: "75%", value: 0.75 },
-            { label: "100%", value: 1 },
-          ].map((item, index) => {
-            return (
-              <Grid key={index} item>
-                <Button
-                  onClick={(e) => handleChange(e, true)}
-                  variant="outlined"
-                  color={focus ? "primary" : undefined}
-                  size="small"
-                  value={item.value}
-                >
-                  {item.label}
-                </Button>
-              </Grid>
-            )
-          })}
-        </Grid>
-      )}
     </>
   )
+}
+
+const styles = {
+  input: {
+    width: "100%",
+    height: "55px",
+    fontSize: "24px",
+    padding: "0 10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    outline: "none",
+  },
 }
 
 export default InputFunds

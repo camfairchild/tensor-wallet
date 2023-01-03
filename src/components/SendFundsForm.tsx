@@ -141,11 +141,13 @@ const SendFundsForm: FunctionComponent = () => {
   const [txBlockHash, setTXBlockHash] = useState<Hash | null>(null)
   const [fee, setFee] = useState<Balance | undefined>()
   const [errorMsg, setErrorMsg] = useState<string>("")
-  const [showValue, setShowValue] = useState<string>("")
 
   const clearAmount = () => {
     setAmount("0")
-    setShowValue("")
+  }
+
+  const clearAddress = () => {
+    setAddress("")
   }
 
   useEffect((): void => {
@@ -201,6 +203,7 @@ const SendFundsForm: FunctionComponent = () => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
             clearAmount()
+            clearAddress()
             setCountdownNo(100)
             setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
           } else if (result.status.isFinalized) {
@@ -262,12 +265,9 @@ const SendFundsForm: FunctionComponent = () => {
       <Stack direction="column" spacing={2}>
         <InputAddress setAddress={setAddress} />
         <InputFunds
-          hidePercentages
           total={maxAmountFull}
           currency={unit}
           setAmount={setAmount}
-          showValue={showValue}
-          setShowValue={setShowValue}
         />
       </Stack>
       <Grid item xs={12} className={classes.infoRow}>

@@ -1,6 +1,6 @@
 {
   "name": "tensor-wallet",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://tensor-wallet.tensorswap.com/",
   "description": "A light-client-based, non-custodial, in-browser wallet for Bittensor. Quick and easy to use, but not audited.",
   "author": "Cameron Fairchild <cameron@fairchild.dev>",
@@ -47,6 +47,7 @@
     "html-webpack-plugin": "^5.5.0",
     "qrcode.react": "^3.1.0",
     "react": "^18.1.0",
+    "react-currency-input-field": "^3.6.9",
     "react-dom": "^18.2.0",
     "react-is": "^18.1.0",
     "react-router": "^6.3.0",

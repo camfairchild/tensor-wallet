@@ -112,7 +112,6 @@ import { Hash } from "@polkadot/types/interfaces"
     const [rowStatus, setRowStatus] = useState<number>(0)
     const [txBlockHash, setTXBlockHash] = useState<Hash | null>(null)
     const [errorMsg, setErrorMsg] = useState<string>("")
-    const [showValue, setShowValue] = useState<string>("")
     
     // AddStake=false, RemoveStake=true
     const [lastAction, setLastAction] = useState<boolean>(false)
@@ -138,10 +137,6 @@ import { Hash } from "@polkadot/types/interfaces"
         clearInterval(countdown)
       }
     }, [loading, message, setMessage])
-    
-    const clearField = (): void => {
-      setShowValue("")
-    }
 
     const handleStake = async (e: MouseEvent) => {
       e.preventDefault()
@@ -162,7 +157,6 @@ import { Hash } from "@polkadot/types/interfaces"
           .signAndSend( sender, { signer: injector.signer }, (result) => {
             setMessage(`Current transaction status ${result.status}`)
             if (result.status.isInBlock) {
-              clearField()
               setCountdownNo(100)
               setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
             } else if (result.status.isFinalized) {
@@ -217,7 +211,6 @@ import { Hash } from "@polkadot/types/interfaces"
           .signAndSend( sender, { signer: injector.signer }, (result) => {
             setMessage(`Current transaction status ${result.status}`)
             if (result.status.isInBlock) {
-              clearField()
               setCountdownNo(100)
               setMessage(`Transaction Block hash: ${result.status.asInBlock}`)
             } else if (result.status.isFinalized) {
@@ -281,12 +274,9 @@ import { Hash } from "@polkadot/types/interfaces"
         <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="center" >
           <ErrorBoundary>
             <InputFunds
-                hidePercentages
                 total={maxAmountFull}
                 currency={unit}
                 setAmount={setAmount}
-                showValue={showValue}
-                setShowValue={setShowValue}
               />
           </ErrorBoundary>
           <ButtonGroup variant="contained" aria-label="outlined primary button group">
