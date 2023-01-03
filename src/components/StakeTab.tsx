@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core"
 
 import { AccountContext } from "../utils/contexts"
-import { StakeRow } from "."
+import { ErrorBoundary, StakeRow } from "."
 import { StakeData, StakeColumn } from "../utils/types"
 import { useBalance } from "../hooks"
 import Stack from "@mui/material/Stack"
@@ -100,11 +100,13 @@ export default function StakeTab({ rows, loader, refreshStake }: PropsStakeTab) 
           ))}
       </Stack>
       <Box>
-      {rows?.map((row, i) => {
-        return (
-          <StakeRow refreshStake={refreshStake} expanded={expanded} onChange={() => handleChange(row['address'])} unit={unit} key={`row-${row.address}`} row={row} columns={columns} />
-        )
-      })}
+        <ErrorBoundary>
+          {rows?.map((row, i) => {
+            return (
+              <StakeRow refreshStake={refreshStake} expanded={expanded} onChange={() => handleChange(row['address'])} unit={unit} key={`row-${row.address}`} row={row} columns={columns} />
+            )
+          })}
+        </ErrorBoundary>
       </Box>
     </React.Fragment>
   }

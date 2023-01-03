@@ -32,6 +32,7 @@ import {
   BurnrDivider,
   HistoryTable,
   StakeTab,
+  ErrorBoundary,
 } from "."
 
 import { useApi } from "../hooks"
@@ -248,31 +249,39 @@ const NavTabs: FunctionComponent = () => {
 
       <Paper className={classes.root} square >
         <TabPanel value={value} index={0}>
-          <Typography variant="h6" className={classes.rootHeading}>
-            Transaction History
-          </Typography>
-          <HistoryTable />
+          <ErrorBoundary>
+            <Typography variant="h6" className={classes.rootHeading}>
+              Transaction History
+            </Typography>
+            <HistoryTable />
+          </ErrorBoundary>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <Typography variant="h6" className={classes.rootHeading}>
-            Send TAO
-          </Typography>
-          <SendFundsForm />
+          <ErrorBoundary>
+            <Typography variant="h6" className={classes.rootHeading}>
+              Send TAO
+            </Typography>
+            <SendFundsForm />
+          </ErrorBoundary>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <Typography variant="h6" className={classes.rootHeading}>
-            Receive TAO
-          </Typography>
-          <ReceiveFundsForm />
+          <ErrorBoundary>
+            <Typography variant="h6" className={classes.rootHeading}>
+              Receive TAO
+            </Typography>
+            <ReceiveFundsForm />
+          </ErrorBoundary>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <Stack spacing={2} direction="row" >
-            <Typography variant="h6" className={classes.rootHeading}>
-              Stake TAO
-            </Typography>
-            <Button onClick={() => refreshMeta()} startIcon={<RefreshIcon />} />
-          </Stack>
-          <StakeTab rows={rows} loader={loader} refreshStake={refreshStake} />
+          <ErrorBoundary>
+            <Stack spacing={2} direction="row" >
+              <Typography variant="h6" className={classes.rootHeading}>
+                Stake TAO
+              </Typography>
+              <Button onClick={() => refreshMeta()} startIcon={<RefreshIcon />} />
+            </Stack>
+            <StakeTab rows={rows} loader={loader} refreshStake={refreshStake} />
+          </ErrorBoundary>
         </TabPanel>
       </Paper>
     </>

@@ -1,4 +1,4 @@
-import { AccountCard, BalanceValue } from "."
+import { AccountCard, BalanceValue, ErrorBoundary } from "."
 import { StakeColumn, StakeData } from "../utils/types"
 import { BN } from "@polkadot/util"
 import { Balance } from "@polkadot/types/interfaces"
@@ -94,7 +94,9 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
         </AccordionSummary>
         <AccordionDetails>
           <Box justifyContent="flex-end" flexDirection="row" alignItems="flex-start">
-            <StakeForm hotkeyAddr={row['address']} stake={row.stake} refreshStake={refreshStake} />
+            <ErrorBoundary>
+              <StakeForm hotkeyAddr={row['address']} stake={row.stake} refreshStake={refreshStake} />
+            </ErrorBoundary>
           </Box>
         </AccordionDetails>
     </Accordion>
