@@ -3,7 +3,8 @@ import { SimpleProvider } from "./types"
 export const BURNR_WALLET = "tensor-wallet"
 
 export const POLKA_ACCOUNT_ENDPOINTS = {
-  opentensorexplorer: "explorer.nakamoto.opentensor.ai",
+  opentensorexplorer: "explorer.nakamoto.opentensor.ai/",
+  polkadotjsexplorer: "polkadot.js.org/apps/?rpc=wss%3A%2F%2Farchivelb.nakamoto.opentensor.ai%3A9943",
 }
 
 export const NETWORKS: SimpleProvider[] = [{

@@ -18,7 +18,7 @@ import { AccountContext } from "../utils/contexts"
 import { openInNewTab } from "../utils/utils"
 import { POLKA_ACCOUNT_ENDPOINTS } from "../utils/constants"
 
-const { opentensorexplorer } = POLKA_ACCOUNT_ENDPOINTS
+const { opentensorexplorer, polkadotjsexplorer } = POLKA_ACCOUNT_ENDPOINTS
 
 import type { InjectedAccountWithMeta, MetadataDef } from "@polkadot/extension-inject/types"
 import useExtensions from "../hooks/useExtensions";
@@ -44,7 +44,8 @@ interface Props {
 
 export default function AccountMenu({accounts}: Props) {
   const classes = useStyles()
-  const [opentensorexplorerUri] = useState(`https://${opentensorexplorer}/#/explorer/`)
+  const [opentensorexplorerUri] = useState(`https://${opentensorexplorer}#/explorer/`)
+  const polkadotjsexplorerUri = `https://${polkadotjsexplorer}#/explorer/`
   const { setCurrentAccount } = useContext(AccountContext)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -89,6 +90,9 @@ export default function AccountMenu({accounts}: Props) {
 
         <MenuItem onClick={() => openInNewTab(opentensorexplorerUri)}>
           OpenTensor Fdn Explorer
+        </MenuItem>
+        <MenuItem onClick={() => openInNewTab(polkadotjsexplorerUri)}>
+          PolkadotJS Explorer
         </MenuItem>
 
         <BurnrDivider />
