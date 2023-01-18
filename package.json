@@ -1,6 +1,6 @@
 {
   "name": "tensor-wallet",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://tensor-wallet.tensorswap.com/",
   "description": "A light-client-based, non-custodial, in-browser wallet for Bittensor. Quick and easy to use, but not audited.",
   "author": "Cameron Fairchild <cameron@fairchild.dev>",
