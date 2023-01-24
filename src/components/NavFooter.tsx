@@ -17,7 +17,7 @@ const AppFooter: FunctionComponent = () => (
         </Grid>
         <Grid item>
           <Typography variant="body2" color="textPrimary">
-            Donation address: 5CSWAPCCDxAtjV2vy38VSNYchQWCsiWA9pW6yZCydQ7dGyYC
+            Donation address: 5EHVUNEqz1js5LdnW56hFpqKAV2pEGa7GCA2z6r7GVdLyTZE
           </Typography>
         </Grid>
         <Grid item>
