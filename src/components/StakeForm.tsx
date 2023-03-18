@@ -30,8 +30,8 @@ import { Hash } from "@polkadot/types/interfaces"
   
   const useStyles = makeStyles((theme: Theme) => ({
     errorMessage: {
-      marginBottom: theme.spacing(),
-      textAlign: "center",
+      padding: `${theme.spacing()}px 0px`,
+      textAlign: "center"
     },
     button: {
       color: theme.palette.getContrastText(theme.palette.secondary.main),
@@ -87,10 +87,10 @@ import { Hash } from "@polkadot/types/interfaces"
   interface StakeFormProps {
     hotkeyAddr: string,
     stake: string | number,
-    refreshStake: (hotkeyAddr: string) => void,
+    refreshMeta: () => void,
   }
     
-  export default function StakeForm({ hotkeyAddr, stake, refreshStake }: StakeFormProps) {
+  export default function StakeForm({ hotkeyAddr, stake, refreshMeta }: StakeFormProps) {
     const classes = useStyles()
     const { account, setCurrentAccount } = useContext(AccountContext)
     const balanceArr = useBalance(account.accountAddress)
@@ -175,7 +175,7 @@ import { Hash } from "@polkadot/types/interfaces"
             }
           })
         setLoading(false)
-        refreshStake(hotkeyAddr)
+        refreshMeta()
         setAmount("0")
       } catch (err) {
         setLoading(false)
@@ -229,7 +229,7 @@ import { Hash } from "@polkadot/types/interfaces"
             }
           })
         setLoading(false)
-        refreshStake(hotkeyAddr)
+        refreshMeta()
         setAmount("0")
       } catch (err) {
         setLoading(false)
@@ -271,7 +271,7 @@ import { Hash } from "@polkadot/types/interfaces"
   
     return (
       <React.Fragment>
-        <Stack direction="row" spacing={2} alignItems="flex-start" justifyContent="center" >
+        <Stack direction="row" spacing={2} alignItems="center" justifyContent="center" paddingY={2} >
           <ErrorBoundary>
             <InputFunds
                 total={maxAmountFull}
@@ -279,7 +279,10 @@ import { Hash } from "@polkadot/types/interfaces"
                 setAmount={setAmount}
               />
           </ErrorBoundary>
-          <ButtonGroup variant="contained" aria-label="outlined primary button group">
+          <ButtonGroup
+            variant="contained"
+            aria-label="outlined primary button group"
+            >
             <Button
             type="submit"
             variant="contained"
@@ -287,7 +290,7 @@ import { Hash } from "@polkadot/types/interfaces"
             color="primary"
             disabled={
                 loading ||
-                !parseInt(amount) ||
+                (!parseInt(amount) || parseInt(amount) === 0) ||
                 fundsIssueStake
             }
             onClick={handleStake}
@@ -302,7 +305,7 @@ import { Hash } from "@polkadot/types/interfaces"
             color="primary"
             disabled={
                 loading ||
-                !parseInt(amount) ||
+                (!parseInt(amount) || parseInt(amount) === 0) ||
                 fundsIssueUnstake
             }
             onClick={handleUnstake}
@@ -314,7 +317,7 @@ import { Hash } from "@polkadot/types/interfaces"
         </Stack>
         
   
-        {errorMsg && (
+        
           <Typography
             variant="body2"
             color="error"
@@ -322,7 +325,7 @@ import { Hash } from "@polkadot/types/interfaces"
           >
             {errorMsg}
           </Typography>
-        )}
+        
   
         {message &&
         <Box mt={3}>
