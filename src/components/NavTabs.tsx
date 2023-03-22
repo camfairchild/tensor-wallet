@@ -20,8 +20,6 @@ import CallMadeSharpIcon from "@material-ui/icons/CallMadeSharp";
 import CallReceivedSharpIcon from "@material-ui/icons/CallReceivedSharp";
 import TollIcon from "@mui/icons-material/Toll";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { encodeAddress } from "@polkadot/keyring";
-import { SS58_FORMAT } from "../utils/constants";
 
 import {
   Neuron,
@@ -29,6 +27,7 @@ import {
   StakeInfo,
   RawMetagraph,
   NeuronInfo,
+  NeuronInfoLite,
   SubnetInfo,
   DelegateInfo,
   DelegateInfoRaw,
@@ -47,7 +46,6 @@ import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
 import { CreateAccountCtx, StakeData } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
-import { parseDeAccountId } from "../utils/utils";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -123,15 +121,20 @@ const NavTabs: FunctionComponent = () => {
   const [stakeData, setStakeData] = useState<StakeData>({});
   const [loader, setLoader] = useState<boolean>(true);
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
+  const delegates_names = {
+    "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm": "Vune",
+  }
+  
 
   const getNeurons = (netuids: Array<number>): Promise<RawMetagraph> => {
     return new Promise<RawMetagraph>(async (resolve, reject) => {
       let results_map: RawMetagraph = {};
       for (let netuid of netuids) {
         (apiCtx.api.rpc as any).neuronInfo
-          .getNeurons(netuid)
-          .then((result: any) => {
-            const neurons_info = result.toJSON();
+          .getNeuronsLite(netuid)
+          .then((result_bytes: number[]) => {
+            const result = apiCtx.api.createType("Vec<NeuronInfoLite>", result_bytes);
+            const neurons_info = result.toJSON() as any[] as NeuronInfoLite[];
             results_map[netuid] = neurons_info;
           })
           .catch((err: any) => {
@@ -144,24 +147,27 @@ const NavTabs: FunctionComponent = () => {
   };
 
   const getDelegateInfo = async (): Promise<DelegateInfo[]> => {
-    const result = await (apiCtx.api.rpc as any).delegateInfo.getDelegates();
-    const delegate_info_raw: DelegateInfoRaw[] = result.toJSON() as DelegateInfoRaw[];
-    console.log("delegate info raw", delegate_info_raw)
+    const result_bytes = await (apiCtx.api.rpc as any).delegateInfo.getDelegates();
+    const result = apiCtx.api.createType("Vec<DelegateInfo>", result_bytes);
+    const delegate_info_raw: DelegateInfoRaw[] = result.toJSON() as any[] as DelegateInfoRaw[];
+    
     const delegate_info = delegate_info_raw.map((delegate: DelegateInfoRaw) => {
+      let nominators: [string, number][] = [];
+      let total_stake = 0;
+      for (let i = 0; i < delegate.nominators.length; i++) {
+        const nominator = delegate.nominators[i];
+        const staked = nominator[1];
+        total_stake += staked;
+        nominators.push([nominator[0].toString(), staked]);
+      }
       return {
         take: delegate.take / (2**16 - 1), // Normalize take, which is a u16
-        delegate_ss58: parseDeAccountId(delegate.delegate_ss58),
-        owner_ss58: parseDeAccountId(delegate.owner_ss58),
-        nominators: delegate.nominators.map(([nominator, staked]) => {
-          return [
-            parseDeAccountId(nominator),
-            staked,
-          ] as [string, number];
-        }),
+        delegate_ss58: delegate.delegate_ss58.toString(),
+        owner_ss58: delegate.owner_ss58.toString(),
+        nominators,
+        total_stake,
       };
     });
-
-    console.log("delegate info", delegate_info);
 
     return delegate_info;
   };
@@ -170,9 +176,10 @@ const NavTabs: FunctionComponent = () => {
     const getMeta = async (): Promise<Metagraph> => {
       setLoader(true);
 
-      const subnets_info = await (
+      const subnets_info_bytes = await (
         apiCtx.api.rpc as any
       ).subnetInfo.getSubnetsInfo();
+      const subnets_info = apiCtx.api.createType("Vec<SubnetInfo>", subnets_info_bytes);
       const netuids: Array<number> = (subnets_info as any)
         .toJSON()
         .map((subnetInfo: SubnetInfo) => {
@@ -183,11 +190,11 @@ const NavTabs: FunctionComponent = () => {
 
       const result: RawMetagraph = await getNeurons(netuids);
       Object.entries(result).forEach(
-        ([netuid, neurons]: [string, NeuronInfo[]]) => {
-          let neurons_ = neurons.map((neuron: NeuronInfo) => {
+        ([netuid, neurons]: [string, NeuronInfoLite[]]) => {
+          let neurons_ = neurons.map((neuron: NeuronInfoLite) => {
             return {
-              hotkey: parseDeAccountId(neuron.hotkey),
-              coldkey: parseDeAccountId(neuron.coldkey),
+              hotkey: neuron.hotkey.toString(),
+              coldkey: neuron.coldkey.toString(),
               stake: (neuron.stake as any).tonumber(),
               uid: neuron.uid,
             };
@@ -234,8 +241,20 @@ const NavTabs: FunctionComponent = () => {
 
   useEffect(() => {
     const _getDelegateInfo = async () => {
-      const delegateInfo = await getDelegateInfo();
-      setDelegateInfo(delegateInfo);
+      let delegateInfo = await getDelegateInfo();
+      let delegateInfo_sorted = delegateInfo.sort((a, b) => {
+        return b.total_stake - a.total_stake;
+      });
+      delegateInfo_sorted.find((delegate, i) => {
+        if (delegate.delegate_ss58.toString() === "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm") {
+          // Put at the top
+          const deleted = delegateInfo_sorted.splice(i, 1);
+          delegateInfo_sorted.unshift(deleted[0]);
+
+          return true;
+        }
+      });
+      setDelegateInfo(delegateInfo_sorted);
     };
 
     mountedRef.current && _getDelegateInfo();
@@ -306,6 +325,7 @@ const NavTabs: FunctionComponent = () => {
               stakeData={stakeData}
               loader={loader}
               refreshMeta={refreshMeta}
+              delegates_names={delegates_names}
             />
           </ErrorBoundary>
         </TabPanel>

@@ -12,7 +12,7 @@ import { copyToClipboard } from "../utils/utils";
 
 interface Props {
   account: Account;
-  addressFormat?: "Full" | "Short";
+  addressFormat?: "Full" | "Short" | "Compact";
 }
 
 const Alert = (props: AlertProps) => {
@@ -57,10 +57,14 @@ const AccountCard: FunctionComponent<Props> = ({
           {account.name !== "" && (
             <Typography variant="h6">{account.name}</Typography>
           )}
-          <Typography variant="caption" sx={addressFormat === "Full" ? {} : {
+          <Typography variant="caption" sx={addressFormat === "Full" ? {} : addressFormat === "Short" ? {
             textOverflow: "ellipsis",
             overflowX: "clip",
             width: "5em",
+          } : {
+            textOverflow: "ellipsis",
+            overflowX: "clip",
+            width: "20em",
           }}>
             {account.address}
           </Typography>

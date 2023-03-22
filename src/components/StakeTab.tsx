@@ -72,10 +72,11 @@ interface PropsStakeTab {
   delegateInfo: DelegateInfo[],
   loader: boolean,
   refreshMeta: () => void,
+  delegates_names: { [key: string]: string } // ss58 addr to delegate name
 }
 
 
-export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo }: PropsStakeTab) {
+export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo, delegates_names }: PropsStakeTab) {
   const classes = useStyles()
   const { account } = useContext(AccountContext)
   const balanceArr = useBalance(account?.accountAddress || "")
@@ -137,7 +138,7 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo 
               <AccordionSummary>
                 <Typography variant="body2">Delegates</Typography>
               </AccordionSummary>
-              <Stack spacing={2} direction="column" divider={<Divider orientation="vertical" flexItem />}>
+              <Stack spacing={0} direction="column" divider={<Divider orientation="vertical" flexItem />}>
                 {delegateInfo.map((delegate: DelegateInfo) => {
                   return <DelegateRow 
                         coldkey_ss58={account.accountAddress}
@@ -147,7 +148,9 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo 
                         unit={unit}
                         key={`row-${delegate.delegate_ss58}`}
                         delegate={delegate}
-                        columns={delegateInfoColumns} />
+                        columns={delegateInfoColumns}
+                        delegates_names={delegates_names}
+                      />
                 })}
                 
                 </Stack>

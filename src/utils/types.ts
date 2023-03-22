@@ -1,4 +1,4 @@
-import { Balance, Hash, Index, RefCount } from "@polkadot/types/interfaces"
+import { AccountId, Balance, Hash, Index, RefCount } from "@polkadot/types/interfaces"
 import { u32 } from "@polkadot/types"
 import { Codec } from "@polkadot/types/types"
 import { ApiPromise } from "@polkadot/api/promise/Api"
@@ -175,10 +175,6 @@ export interface Metagraph {
   [key: string]: Neuron[]
 }
 
-
-export interface DeAccountId {
-  id: HexString
-}
 export interface AxonInfo {
   block: number, // --- Axon serving block.
   version: number, // --- Axon version
@@ -223,28 +219,29 @@ export interface SubnetInfo {
 }
 
 export interface DelegateInfoRaw {
-  delegate_ss58: DeAccountId,
+  delegate_ss58: AccountId,
   take: number,
-  nominators: Array<[DeAccountId, number]>,
-  owner_ss58: DeAccountId
+  nominators: Array<[AccountId, number]>,
+  owner_ss58: AccountId
 }
 
 export interface DelegateInfo {
   delegate_ss58: string,
   take: number,
   nominators: Array<[string, number]>,
-  owner_ss58: string
+  owner_ss58: string,
+  total_stake: number,
 }
 
 export interface NeuronInfo {
-  hotkey: DeAccountId
-  coldkey: DeAccountId
+  hotkey: AccountId
+  coldkey: AccountId
   uid: number
   netuid: number
   active: Boolean
   axon_info: AxonInfo
   prometheus_info: PrometheusInfo
-  stake: Array<[DeAccountId, number]> // map of coldkey to stake on this neuron/hotkey (includes delegations)
+  stake: Array<[AccountId, number]> // map of coldkey to stake on this neuron/hotkey (includes delegations)
   rank: number
   emission: number
   incentive: number
@@ -260,6 +257,29 @@ export interface NeuronInfo {
   pruning_score: number
 }
 
+
+export interface NeuronInfoLite {
+  hotkey: AccountId
+  coldkey: AccountId
+  uid: number
+  netuid: number
+  active: Boolean
+  axon_info: AxonInfo
+  prometheus_info: PrometheusInfo
+  stake: Array<[AccountId, number]> // map of coldkey to stake on this neuron/hotkey (includes delegations)
+  rank: number
+  emission: number
+  incentive: number
+  consensus: number
+  weight_consensus: number
+  trust: number
+  validator_trust: number
+  dividends: number
+  last_update: number
+  validator_permit: Boolean
+  pruning_score: number
+}
+
 export interface RawMetagraph {
-  [netuid: string]: NeuronInfo[]
+  [netuid: string]: NeuronInfoLite[]
 }

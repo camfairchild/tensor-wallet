@@ -1,6 +1,6 @@
 import React from "react";
 import { ApiPromise } from "@polkadot/api/promise/Api";
-import { Account, DeAccountId, LocalStorageAccountCtx } from "./types";
+import { Account, LocalStorageAccountCtx } from "./types";
 import { Keyring, decodeAddress, encodeAddress } from "@polkadot/keyring";
 import { hexToU8a, isHex, formatBalance, BN } from "@polkadot/util";
 import type { Balance } from "@polkadot/types/interfaces";
@@ -14,11 +14,6 @@ export const getName = (account: Account): string => `${account.name}`;
 export const openInNewTab = (url: string): void => {
   const newWindow = window.open(url, "_blank", "noopener,noreferrer");
   if (newWindow) newWindow.opener = null;
-};
-
-export const parseDeAccountId = (deAccountId: DeAccountId): string => {
-  const encoded_addr = encodeAddress(deAccountId.id as any as string, SS58_FORMAT);
-  return encoded_addr;
 };
 
 export const downloadFile = (
