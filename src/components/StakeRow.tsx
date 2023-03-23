@@ -1,70 +1,24 @@
 import { AccountCard, BalanceValue, ErrorBoundary } from "."
-import { StakeColumn, StakeData } from "../utils/types"
+import { StakeColumn, StakeInfo } from "../utils/types"
 import { BN } from "@polkadot/util"
 import { Balance } from "@polkadot/types/interfaces"
 import StakeForm from "./StakeForm"
 
-import { styled } from '@mui/material/styles';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import React from "react"
+import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion"
 
 interface Props {
-    row: StakeData
+    row: StakeInfo
     columns: StakeColumn[]
     unit?: string
-    stake?: (amount: number) => void
     expanded: string | false
     onChange?: () => void
-    refreshStake: (hotkeyAddr: string) => void
+    refreshMeta: () => void
 }
 
-const Accordion = styled((props: AccordionProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
-    borderBottom: 0,
-  },
-  '&:before': {
-    display: 'none',
-  },
-}));
-
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, .05)'
-      : 'rgba(0, 0, 0, .03)',
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1),
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(1),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
-}));
-
-export default function StakeRow({columns, unit, row, expanded, onChange, refreshStake }: Props) {
-    const setStake = (amount: number | string) => {
-        row.stake = amount
-    }
+export default function StakeRow({columns, unit, row, expanded, onChange, refreshMeta }: Props) {
 
     return (
       <Accordion expanded={expanded === row['address']} onChange={onChange} >
@@ -95,7 +49,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
         <AccordionDetails>
           <Box justifyContent="flex-end" flexDirection="row" alignItems="flex-start">
             <ErrorBoundary>
-              <StakeForm hotkeyAddr={row['address']} stake={row.stake} refreshStake={refreshStake} />
+              <StakeForm hotkeyAddr={row['address']} stake={row.stake} refreshMeta={refreshMeta} />
             </ErrorBoundary>
           </Box>
         </AccordionDetails>

@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   blur: {
     filter: (props: StyleProps) => (props.visible ? "unset" : "blur(5px)"),
+    width: "max-content"
   },
 }))
 

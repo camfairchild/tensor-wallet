@@ -18,7 +18,7 @@ import { AccountContext } from "../utils/contexts"
 import { openInNewTab } from "../utils/utils"
 import { POLKA_ACCOUNT_ENDPOINTS } from "../utils/constants"
 
-const { opentensorexplorer, polkadotjsexplorer } = POLKA_ACCOUNT_ENDPOINTS
+const { polkadotjsexplorer } = POLKA_ACCOUNT_ENDPOINTS
 
 import type { InjectedAccountWithMeta, MetadataDef } from "@polkadot/extension-inject/types"
 import useExtensions from "../hooks/useExtensions";
@@ -44,7 +44,6 @@ interface Props {
 
 export default function AccountMenu({accounts}: Props) {
   const classes = useStyles()
-  const [opentensorexplorerUri] = useState(`https://${opentensorexplorer}#/explorer/`)
   const polkadotjsexplorerUri = `https://${polkadotjsexplorer}#/explorer/`
   const { setCurrentAccount } = useContext(AccountContext)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -88,9 +87,6 @@ export default function AccountMenu({accounts}: Props) {
           <Typography variant="overline">Block explorers</Typography>
         </ListItem>
 
-        <MenuItem onClick={() => openInNewTab(opentensorexplorerUri)}>
-          OpenTensor Fdn Explorer
-        </MenuItem>
         <MenuItem onClick={() => openInNewTab(polkadotjsexplorerUri)}>
           PolkadotJS Explorer
         </MenuItem>
@@ -112,24 +108,6 @@ export default function AccountMenu({accounts}: Props) {
             { meta?.name || address.toString() }
           </MenuItem>
         ))}
-
-        {/*<ListItem dense autoFocus={false} selected={false}>
-          <Typography variant="overline">Networks</Typography>
-        </ListItem>
-        { NETWORKS.map(({ name }, index) => (
-
-          <MenuItem key={name} onClick={() => setNetwork(index.toString())}>
-            { name }
-          </MenuItem>
-        ))}*/}
-      {/*
-        <ListItem dense autoFocus={false} selected={false}>
-          <Typography variant="overline">Update Metadata</Typography>
-        </ListItem>
-        <MenuItem onClick={() => _updateMetadata()}>
-          Update
-        </MenuItem>
-      */}
         
       </Menu>
     </>

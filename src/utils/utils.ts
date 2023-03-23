@@ -4,7 +4,7 @@ import { Account, LocalStorageAccountCtx } from "./types";
 import { Keyring, decodeAddress, encodeAddress } from "@polkadot/keyring";
 import { hexToU8a, isHex, formatBalance, BN } from "@polkadot/util";
 import type { Balance } from "@polkadot/types/interfaces";
-import { NETWORKS } from "./constants";
+import { NETWORKS, SS58_FORMAT } from "./constants";
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 const keyring = new Keyring({ type: "sr25519" });

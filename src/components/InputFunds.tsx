@@ -41,7 +41,7 @@ const InputFunds: FunctionComponent<Props> = ({
 
   return (
     <>
-      <Box marginBottom={1}>
+      <Box>
         <CurrencyInput
           style={styles.input}
           id="SendFundsAmountField"

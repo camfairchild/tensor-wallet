@@ -90,6 +90,7 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
                       address: account?.accountAddress,
                       name: account?.accountName,
                     }}
+                    addressFormat="Short"
                   />
                   <AccountMenu accounts={accounts}/>
                 </>
