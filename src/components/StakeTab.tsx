@@ -8,7 +8,7 @@ import {
 
 import { AccountContext } from "../utils/contexts"
 import { ErrorBoundary, StakeRow } from "."
-import { StakeData, StakeColumn, DelegateInfo, DelegateColumn } from "../utils/types"
+import { StakeData, StakeColumn, DelegateInfo, DelegateColumn, DelegateExtras } from "../utils/types"
 import { useBalance } from "../hooks"
 import Stack from "@mui/material/Stack"
 import Box from "@mui/material/Box"
@@ -73,11 +73,11 @@ interface PropsStakeTab {
   delegateInfo: DelegateInfo[],
   loader: boolean,
   refreshMeta: () => void,
-  delegates_names: { [key: string]: string } // ss58 addr to delegate name
+  delegatesExtras: DelegateExtras
 }
 
 
-export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo, delegates_names }: PropsStakeTab) {
+export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo, delegatesExtras }: PropsStakeTab) {
   const classes = useStyles()
   const { account } = useContext(AccountContext)
   const balanceArr = useBalance(account?.accountAddress || "")
@@ -154,7 +154,7 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
                         key={`row-${delegate.delegate_ss58}`}
                         delegate={delegate}
                         columns={delegateInfoColumns}
-                        delegates_names={delegates_names}
+                        delegateExtra={delegatesExtras[delegate.delegate_ss58]}
                       />
                 })}
                 </List>

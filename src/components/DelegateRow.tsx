@@ -1,5 +1,5 @@
 import { AccountCard, BalanceValue, ErrorBoundary } from "."
-import { DelegateColumn, DelegateInfo, DelegateInfoRow } from "../utils/types"
+import { DelegateColumn, DelegateInfo, DelegateInfoRow, DelegateExtra } from "../utils/types"
 import { BN } from "@polkadot/util"
 import { Balance } from "@polkadot/types/interfaces"
 import StakeForm from "./StakeForm"
@@ -19,7 +19,7 @@ interface Props {
     expanded: string | false
     onChange?: () => void
     refreshMeta: () => void
-    delegates_names: { [key: string]: string } // ss58 addr to delegate name
+    delegateExtra: DelegateExtra | undefined
 }
 
 const useStyles = createUseStyles(({
@@ -30,7 +30,7 @@ const useStyles = createUseStyles(({
   }))
 
 
-export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegates_names }: Props) {
+export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegateExtra }: Props) {
     const [delegate_row, setDelegateRow] = React.useState<DelegateInfoRow>({} as DelegateInfoRow)
     const classes = useStyles()
 
@@ -75,7 +75,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                             return (
                             <React.Fragment key={column.id}>
                                 {column.id === "delegate_ss58" && (
-                                <AccountCard account={{ address: value.toString(), name: delegates_names[value.toString()] || ""  }} addressFormat="Compact" />
+                                <AccountCard account={{ address: value.toString(), name: delegateExtra?.name || ""  }} addressFormat="Compact" />
                                 )}
                             </React.Fragment>
                             )
