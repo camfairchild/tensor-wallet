@@ -32,6 +32,7 @@ import {
   DelegateInfo,
   DelegateInfoRaw,
   DelegateExtras,
+  DelegateExtra,
 } from "../utils/types";
 
 import {
@@ -122,6 +123,7 @@ const NavTabs: FunctionComponent = () => {
   const [stakeData, setStakeData] = useState<StakeData>({});
   const [loader, setLoader] = useState<boolean>(true);
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
+  const [delegateRows, setDelegateRows] = useState<DelegateInfo[]>([]);
   const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({
     "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm": {
       "name": "Vune",
@@ -218,11 +220,23 @@ const NavTabs: FunctionComponent = () => {
       return _meta;
     };
 
+    const _getDelegateInfo = async (): Promise<[DelegateInfo[], DelegateExtras]> => {
+      const delegates_json = await getDelegatesJson();
+      const delegateInfo = await getDelegateInfo();
+      return [delegateInfo, delegates_json];
+    };
+
     account &&
       getMeta().then((_meta: Metagraph) => {
         setMeta(_meta);
         setLoader(false);
-      });
+      })
+    account && _getDelegateInfo().then(([delegateInfo, delegates_json]) => {
+      setDelegateInfo(delegateInfo);
+      setDelegatesExtras(delegates_json);
+
+      setLoader(false);
+    });
   };
 
   useEffect(() => {
@@ -253,20 +267,26 @@ const NavTabs: FunctionComponent = () => {
   }, [account, mountedRef, meta]);
 
   useEffect(() => {
-    const _getDelegateInfo = async () => {
-      let delegateInfo = await getDelegateInfo();
-      let delegateInfo_sorted = delegateInfo.sort((a, b) => {
+    const prepareDelegateRows = (delegateInfo: DelegateInfo[], delegatesExtras: DelegateExtras) => {
+      delegateInfo.sort((a, b) => {
         return b.total_stake - a.total_stake;
       });
-      setDelegateInfo(delegateInfo_sorted);
-
-      getDelegatesJson().then((delegates_json) => {
-        setDelegatesExtras(delegates_json);
-      })
+      delegateInfo.find((delegate, index) => {
+        if (delegatesExtras[delegate.delegate_ss58]?.name === "Vune") {
+          // Put at top
+          delegateInfo.splice(index, 1);
+          delegateInfo.unshift(delegate);
+          return true;
+        }
+        return false;
+      });
+      
+      setDelegateRows(delegateInfo);
     };
+    
+    mountedRef.current && prepareDelegateRows(delegateInfo, delegatesExtras);
 
-    mountedRef.current && _getDelegateInfo();
-  }, [account, mountedRef]);
+  }, [account, mountedRef, delegateInfo, delegatesExtras]);
 
   return (
     <>
@@ -329,7 +349,7 @@ const NavTabs: FunctionComponent = () => {
               />
             </Stack>
             <StakeTab
-              delegateInfo={delegateInfo}
+              delegateInfo={delegateRows}
               stakeData={stakeData}
               loader={loader}
               refreshMeta={refreshMeta}

@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import React, { useEffect } from "react"
 import { Typography } from "@material-ui/core"
 import {createUseStyles} from 'react-jss'
+import '../assets/styles/DelegateRow.css'
 
 interface Props {
     delegate: DelegateInfo
@@ -64,7 +65,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
     <React.Fragment>
         <ErrorBoundary>
             {!!Object.keys(delegate_row).length && (
-                <Accordion expanded={expanded === delegate_row.delegate_ss58} onChange={onChange} >
+                <Accordion expanded={expanded === delegate_row.delegate_ss58} onChange={onChange} id="delegates" >
                     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                     <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
                         {columns.map((column) => {
@@ -80,7 +81,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                             </React.Fragment>
                             )
                         })}
-                        <Stack direction="column" >
+                        <Stack direction="column" className="delegatestats-headings" >
                             {columns.map((column) => {
                                 if (!["total_stake"].includes(column.id)) {
                                     return null;
@@ -135,9 +136,8 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                             <React.Fragment key={column.id}>
                                 {column.id === "owner_ss58" && (
                                 <Box flex={3} >
-                                    <AccountCard account={{ address: value.toString(), name: "Delegate Owner" }} addressFormat="Short" />
+                                    <AccountCard account={{ address: value.toString(), name: "Delegate Coldkey" }} addressFormat="Short" />
                                 </Box>
-
                                 )}
                             </React.Fragment>
                             )
@@ -156,7 +156,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                                         <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%" >
                                             <Typography style={{
                                                 fontWeight: "bold",
-                                            }} >{column.id}:</Typography>
+                                            }} >Nominators:</Typography>
                                             <Typography>{value.toString() }</Typography>
                                         </Stack>
                                     </React.Fragment>
@@ -167,7 +167,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                                         <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%" >
                                             <Typography style={{
                                                 fontWeight: "bold",
-                                            }} >your {column.id}:</Typography>
+                                            }} >Your Stake:</Typography>
                                             <BalanceValue
                                                 isVisible={true}
                                                 value={new BN(value) as Balance}

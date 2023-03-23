@@ -1,0 +1,10 @@
+#delegates div>p {
+    width: -webkit-fill-available;
+    width: -moz-available;
+    width: fill-available;
+    width: stretch;
+}
+
+.delegatestats-headings {
+    width: 18em;
+}
