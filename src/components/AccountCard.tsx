@@ -57,15 +57,15 @@ const AccountCard: FunctionComponent<Props> = ({
           {account.name !== "" && (
             <Typography variant="h6">{account.name}</Typography>
           )}
-          <Typography variant="caption" sx={addressFormat === "Full" ? {} : addressFormat === "Short" ? {
+          <Typography variant="caption" sx={addressFormat === "Full" ? {} : (addressFormat === "Short" ? {
             textOverflow: "ellipsis",
             overflowX: "clip",
             width: "5em",
           } : {
             textOverflow: "ellipsis",
             overflowX: "clip",
-            width: "20em",
-          }}>
+            width: "10em",
+          })}>
             {account.address}
           </Typography>
         </Box>

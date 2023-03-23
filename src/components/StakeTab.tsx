@@ -15,10 +15,11 @@ import Box from "@mui/material/Box"
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Paper from "@mui/material/Paper"
+import List from "@mui/material/List"
 import CircularProgress from "@mui/material/CircularProgress"
 import Subnet from "./Subnet"
 import DelegateRow from "./DelegateRow"
-import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion"
+import { Accordion, AccordionSummary } from "./Accordion"
 
 const columns: StakeColumn[] = [
   { id: "address", label: "Hotkey", width: 160 },
@@ -134,11 +135,15 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
         </ErrorBoundary>
         <ErrorBoundary>
           {!!delegateInfo.length && 
-            <Accordion expanded={expandedDelegate} onChange={() => setExpandedDelegate(!expandedDelegate)}>
-              <AccordionSummary>
-                <Typography variant="body2">Delegates</Typography>
-              </AccordionSummary>
-              <Stack spacing={0} direction="column" divider={<Divider orientation="vertical" flexItem />}>
+            <React.Fragment>
+              
+              <Typography variant="body2" sx={{
+                    fontWeight: 'bold',
+                  }} >
+                    Delegates
+              </Typography>
+              <Paper style={{maxHeight: 300, overflow: 'auto'}}>
+                <List>
                 {delegateInfo.map((delegate: DelegateInfo) => {
                   return <DelegateRow 
                         coldkey_ss58={account.accountAddress}
@@ -152,9 +157,9 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
                         delegates_names={delegates_names}
                       />
                 })}
-                
-                </Stack>
-            </Accordion>
+                </List>
+              </Paper>
+            </React.Fragment>
           }
           {!!!delegateInfo.length && <Typography variant="body2" className={classes.no_neurons_error}>No Delegates exist</Typography>}
         </ErrorBoundary>
