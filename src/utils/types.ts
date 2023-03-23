@@ -166,7 +166,9 @@ export interface DelegateInfoRow {
 export interface Neuron {
   hotkey: string
   coldkey: string
-  stake: number
+  stake: {
+    [key: string]: number
+  }
   uid: number
 }
 

@@ -48,6 +48,9 @@ import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
 import { CreateAccountCtx, StakeData } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
+import { Option } from "@polkadot/types";
+import { Codec } from "@polkadot/types/types";
+import { AccountId } from "@polkadot/types/interfaces";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -137,18 +140,19 @@ const NavTabs: FunctionComponent = () => {
     return new Promise<RawMetagraph>(async (resolve, reject) => {
       let results_map: RawMetagraph = {};
       for (let netuid of netuids) {
-        (apiCtx.api.rpc as any).neuronInfo
-          .getNeuronsLite(netuid)
-          .then((result_bytes: number[]) => {
-            const result = apiCtx.api.createType("Vec<NeuronInfoLite>", result_bytes);
-            const neurons_info = result.toJSON() as any[] as NeuronInfoLite[];
-            results_map[netuid] = neurons_info;
-          })
-          .catch((err: any) => {
+        try {
+          let result_bytes = await (apiCtx.api.rpc as any).neuronInfo
+            .getNeuronsLite(netuid)
+        
+          const result = apiCtx.api.createType("Vec<NeuronInfoLite>", result_bytes);
+          const neurons_info = result.toJSON() as any[] as NeuronInfoLite[];
+          results_map[netuid] = neurons_info;
+        } catch(err: any) {
             console.log(err);
             reject(err);
-          });
+        }
       }
+      console.log("results_map", results_map);
       resolve(results_map);
     });
   };
@@ -194,7 +198,8 @@ const NavTabs: FunctionComponent = () => {
       const subnets_info_bytes = await (
         apiCtx.api.rpc as any
       ).subnetInfo.getSubnetsInfo();
-      const subnets_info = apiCtx.api.createType("Vec<SubnetInfo>", subnets_info_bytes);
+      const subnets_info = apiCtx.api.createType("Vec<Option<SubnetInfo>>", subnets_info_bytes);
+
       const netuids: Array<number> = (subnets_info as any)
         .toJSON()
         .map((subnetInfo: SubnetInfo) => {
@@ -204,19 +209,23 @@ const NavTabs: FunctionComponent = () => {
       let _meta: Metagraph = {};
 
       const result: RawMetagraph = await getNeurons(netuids);
+
       Object.entries(result).forEach(
         ([netuid, neurons]: [string, NeuronInfoLite[]]) => {
           let neurons_ = neurons.map((neuron: NeuronInfoLite) => {
             return {
               hotkey: neuron.hotkey.toString(),
               coldkey: neuron.coldkey.toString(),
-              stake: (neuron.stake as any).tonumber(),
+              stake: Object.fromEntries(neuron.stake.map((stake: [AccountId, number]) => {
+                return [stake[0].toString(), stake[1]];
+              })),
               uid: neuron.uid,
             };
           });
           _meta[netuid] = neurons_;
         }
       );
+      
       return _meta;
     };
 
@@ -253,13 +262,13 @@ const NavTabs: FunctionComponent = () => {
               .map((neuron) => {
                 return {
                   address: neuron.hotkey,
-                  stake: neuron.stake,
+                  stake: neuron.stake[account.accountAddress] || 0
                 } as StakeInfo;
               }),
           ];
         })
       );
-
+  
       setStakeData(stakeData);
     };
 

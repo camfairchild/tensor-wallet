@@ -1,4 +1,4 @@
-import React, {useContext } from "react"
+import React, {useContext, useState } from "react"
 
 import {
   Theme,
@@ -15,6 +15,7 @@ import Box from "@mui/material/Box"
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Paper from "@mui/material/Paper"
+import Pagination from "@mui/material/Pagination"
 import List from "@mui/material/List"
 import CircularProgress from "@mui/material/CircularProgress"
 import Subnet from "./Subnet"
@@ -76,15 +77,19 @@ interface PropsStakeTab {
   delegatesExtras: DelegateExtras
 }
 
-
 export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo, delegatesExtras }: PropsStakeTab) {
   const classes = useStyles()
   const { account } = useContext(AccountContext)
   const balanceArr = useBalance(account?.accountAddress || "")
   const unit = balanceArr[3]
+  const [page, setPage] = useState(1);
 
   const handleChange = (panel: string) => {
     setExpanded(expanded === panel ? false : panel);
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
   };
 
   const [expanded, setExpanded] = React.useState<string | false>(false);
@@ -135,17 +140,20 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
         </ErrorBoundary>
         <ErrorBoundary>
           {!!delegateInfo.length && 
-            <React.Fragment>
+            <Stack direction="column" spacing={1} alignItems="center" marginTop="2em" >
               
               <Typography variant="body2" sx={{
                     fontWeight: 'bold',
                   }} >
                     Delegates
               </Typography>
-              <Paper style={{maxHeight: 300, overflow: 'auto'}}>
-                <List>
-                {delegateInfo.map((delegate: DelegateInfo) => {
-                  return <DelegateRow 
+              <List sx={{
+                minHeight: "400px",
+                padding: "0.5em",
+              }} >
+                  {delegateInfo.slice((page-1)*5, page*5).map((delegate) => {
+                    return (
+                      <DelegateRow 
                         coldkey_ss58={account.accountAddress}
                         refreshMeta={refreshMeta}
                         expanded={expanded}
@@ -156,10 +164,11 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
                         columns={delegateInfoColumns}
                         delegateExtra={delegatesExtras[delegate.delegate_ss58]}
                       />
-                })}
-                </List>
-              </Paper>
-            </React.Fragment>
+                    )
+                  })}
+              </List>
+              <Pagination count={Math.ceil(delegateInfo.length/5)} shape="rounded" onChange={handlePageChange} page={page} />
+            </Stack>
           }
           {!!!delegateInfo.length && <Typography variant="body2" className={classes.no_neurons_error}>No Delegates exist</Typography>}
         </ErrorBoundary>
