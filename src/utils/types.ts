@@ -283,3 +283,13 @@ export interface NeuronInfoLite {
 export interface RawMetagraph {
   [netuid: string]: NeuronInfoLite[]
 }
+
+export interface DelegateExtra {
+  name: string
+  url: string
+  description: string
+}
+
+export interface DelegateExtras {
+  [key: string]: DelegateExtra
+}

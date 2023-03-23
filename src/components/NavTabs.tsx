@@ -31,6 +31,7 @@ import {
   SubnetInfo,
   DelegateInfo,
   DelegateInfoRaw,
+  DelegateExtras,
 } from "../utils/types";
 
 import {
@@ -121,9 +122,13 @@ const NavTabs: FunctionComponent = () => {
   const [stakeData, setStakeData] = useState<StakeData>({});
   const [loader, setLoader] = useState<boolean>(true);
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
-  const delegates_names = {
-    "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm": "Vune",
-  }
+  const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({
+    "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm": {
+      "name": "Vune",
+      "url": "https://fairchild.dev",
+      "description": "Vune is a dev at the Opentensor Foundation, and a CS student at the University of Toronto. He also maintains tensorwallet and tensorping.",
+    }
+  });
   
 
   const getNeurons = (netuids: Array<number>): Promise<RawMetagraph> => {
@@ -171,6 +176,14 @@ const NavTabs: FunctionComponent = () => {
 
     return delegate_info;
   };
+
+  const getDelegatesJson = async (): Promise<DelegateExtras> => {
+    const url = "https://raw.githubusercontent.com/opentensor/bittensor/master/delegates.json";
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  };
+    
 
   const refreshMeta = async () => {
     const getMeta = async (): Promise<Metagraph> => {
@@ -245,16 +258,11 @@ const NavTabs: FunctionComponent = () => {
       let delegateInfo_sorted = delegateInfo.sort((a, b) => {
         return b.total_stake - a.total_stake;
       });
-      delegateInfo_sorted.find((delegate, i) => {
-        if (delegate.delegate_ss58.toString() === "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm") {
-          // Put at the top
-          const deleted = delegateInfo_sorted.splice(i, 1);
-          delegateInfo_sorted.unshift(deleted[0]);
-
-          return true;
-        }
-      });
       setDelegateInfo(delegateInfo_sorted);
+
+      getDelegatesJson().then((delegates_json) => {
+        setDelegatesExtras(delegates_json);
+      })
     };
 
     mountedRef.current && _getDelegateInfo();
@@ -325,7 +333,7 @@ const NavTabs: FunctionComponent = () => {
               stakeData={stakeData}
               loader={loader}
               refreshMeta={refreshMeta}
-              delegates_names={delegates_names}
+              delegatesExtras={delegatesExtras}
             />
           </ErrorBoundary>
         </TabPanel>
