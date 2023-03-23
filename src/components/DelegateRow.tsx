@@ -25,8 +25,7 @@ interface Props {
 
 const useStyles = createUseStyles(({
     stake_display: {
-        fontWeight: "bold",
-        width: "fill-available"
+        fontWeight: "bold"
     }
   }))
 
@@ -59,7 +58,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
             ..._row
         })
 
-    }, [delegate])
+    }, [delegate, coldkey_ss58])
 
     return (
     <React.Fragment>
