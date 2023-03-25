@@ -20,7 +20,6 @@ import List from "@mui/material/List"
 import CircularProgress from "@mui/material/CircularProgress"
 import Subnet from "./Subnet"
 import DelegateRow from "./DelegateRow"
-import { Accordion, AccordionSummary } from "./Accordion"
 
 const columns: StakeColumn[] = [
   { id: "address", label: "Hotkey", width: 160 },
