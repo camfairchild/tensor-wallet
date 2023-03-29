@@ -100,7 +100,7 @@ export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise
   if (rawBalance instanceof BN) {
     rawBalance = rawBalance.toNumber();
   } 
-  
+
   const firstPass = humanReadable(rawBalance, api);
 
   return firstPass.slice(0, firstPass.length);
@@ -108,7 +108,7 @@ export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise
 
 export const humanReadable = (amnt: number, api: ApiPromise): string => {
   const decimals = api.registry.chainDecimals[0];
-  const asString = amnt.toString();)
+  const asString = amnt.toString();
   const addDecimal = asString.length - decimals;
   const firstPass = asString.slice(0, addDecimal) + "." + asString.slice(addDecimal);
   return firstPass;
