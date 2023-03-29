@@ -90,24 +90,29 @@ export const isValidAddressPolkadotAddress = (address = ""): boolean => {
  * format once with @polkadot/util formatBalance,
  * then strip the trailing Unit and make it to 2 decimal points
  */
-export const prettyBalance = (rawBalance: Balance | BN | number): string => {
+export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise): string => {
   if ((typeof rawBalance === "number" && rawBalance === 0) || !rawBalance) {
     return "0";
   } else if (rawBalance.toString() === "0") {
     return rawBalance.toString();
   }
-  // Use `api.registry.chainDecimals` instead of decimals
-  const firstPass = formatBalance(rawBalance, {
-    decimals: 9,
-    forceUnit: "-",
-    withSi: false,
-  });
+
+  if (rawBalance instanceof BN) {
+    rawBalance = rawBalance.toNumber();
+  } 
+  
+  const firstPass = humanReadable(rawBalance, api);
 
   return firstPass.slice(0, firstPass.length);
 };
 
-export const humanReadable = (amnt: number, api: ApiPromise): string =>
-  (amnt / Math.pow(10, 9)).toFixed(6);
+export const humanReadable = (amnt: number, api: ApiPromise): string => {
+  const decimals = api.registry.chainDecimals[0];
+  const asString = amnt.toString();)
+  const addDecimal = asString.length - decimals;
+  const firstPass = asString.slice(0, addDecimal) + "." + asString.slice(addDecimal);
+  return firstPass;
+}
 
 export const validateLocalstorage = (): void => {
   // expected acceptable values of localStorage.

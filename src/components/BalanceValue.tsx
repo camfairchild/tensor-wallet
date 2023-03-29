@@ -6,6 +6,8 @@ import { SizeScale } from "../utils/types"
 import { prettyBalance } from "../utils/utils"
 import { CSSProperties } from "@material-ui/core/styles/withStyles"
 import { Balance } from "@polkadot/types/interfaces"
+import { bnToBn } from "@polkadot/util"
+import { useApi } from "../hooks"
 
 interface Props extends SizeScale {
   value: Balance
@@ -47,7 +49,9 @@ const BalanceValue: FunctionComponent<Props> = ({
   size,
   style,
 }: Props) => {
-  const fBalance = prettyBalance(value)
+  const apiCtx = useApi()
+  const value_bn = bnToBn(value)
+  const fBalance = prettyBalance(value_bn, apiCtx.api)
   const isColored = parseInt(fBalance) >= 0
   const classes = useStyles({ colored: isColored, visible: isVisible })
 
