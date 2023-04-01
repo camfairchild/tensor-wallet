@@ -110,7 +110,7 @@ export const humanReadable = (amnt: number, api: ApiPromise): string => {
   const decimals = api.registry.chainDecimals[0];
   const asString = amnt.toString();
   const addDecimal = asString.length - decimals;
-  const firstPass = asString.slice(0, addDecimal) + "." + asString.slice(addDecimal);
+  const firstPass = (asString.slice(0, addDecimal) || "0") + "." + asString.slice(addDecimal).padStart(decimals, "0");
   return firstPass;
 }
 
