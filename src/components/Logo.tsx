@@ -1,29 +1,36 @@
 import { FunctionComponent } from "react"
-import { makeStyles } from "@material-ui/core"
+import { Button, makeStyles } from "@material-ui/core"
 
 interface Props {
-  theme: boolean
+  theme: boolean,
+  onClick: () => void
 }
 
 const useStyles = makeStyles({
-  root: {
+  inner: {
     display: "block",
     height: "5em",
     "& img": {
       maxHeight: "100%",
     },
   },
+  root: {
+  }
 })
 
-const Logo: FunctionComponent<Props> = ({ theme }: Props) => {
+const Logo: FunctionComponent<Props> = ({ theme, onClick }: Props) => {
   const classes = useStyles()
   return (
-    <div className={classes.root}>
-      <img
-        alt="Tensor Wallet Logo"
-        src="./assets/images/logo_dark.svg"
-      />
-    </div>
+    <Button className={classes.root} onClick={onClick} title="Toggle Dark Theme">
+      <div className={classes.inner}>
+        <img
+          alt="Tensor Wallet Logo"
+          src={theme ? "./assets/images/logo_dark.svg" :
+            "./assets/images/logo.png"
+          } 
+        />
+      </div>
+    </Button>
   )
 }
 

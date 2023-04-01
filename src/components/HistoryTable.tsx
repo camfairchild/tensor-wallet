@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   table: {
     tableLayout: "fixed",
     width: "100%",
+    backgroundColor: theme.palette.background.paper,
     "& th": {
       backgroundColor: theme.palette.background.paper,
       color: theme.palette.text.disabled,

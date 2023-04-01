@@ -1,6 +1,7 @@
 import { FunctionComponent, useState } from "react";
 import Identicon from "@polkadot/react-identicon";
 
+import { makeStyles } from "@material-ui/styles";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -9,6 +10,16 @@ import Stack from "@mui/material/Stack";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { Account } from "../utils/types";
 import { copyToClipboard } from "../utils/utils";
+import { Theme } from "@material-ui/core";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    backgroundColor: theme.palette.background.paper,
+  },
+  typo: {
+    color: theme.palette.text.secondary,
+  }
+}));
 
 interface Props {
   account: Account;
@@ -24,6 +35,8 @@ const AccountCard: FunctionComponent<Props> = ({
   addressFormat,
 }: Props) => {
   const [showCopied, setShowCopied] = useState<boolean>(false);
+  const classes = useStyles();
+
   return (
     <>
         <Snackbar
@@ -31,12 +44,14 @@ const AccountCard: FunctionComponent<Props> = ({
           open={showCopied}
           autoHideDuration={2000}
           onClose={() => setShowCopied(false)}
+          className={classes.root}
         >
           <Alert severity="success">Copied!</Alert>
         </Snackbar>
       <Stack
         spacing={1}
         direction={addressFormat === "Full" ? "column" : "row"}
+        className={classes.root}
       >
         <Identicon
           size={32}
@@ -53,11 +68,12 @@ const AccountCard: FunctionComponent<Props> = ({
           flexDirection="column"
           justifyContent="center"
           ml={1}
+          className={classes.root}
         >
           {account.name !== "" && (
-            <Typography variant="h6">{account.name}</Typography>
+            <Typography variant="h6" className={classes.typo} >{account.name}</Typography>
           )}
-          <Typography variant="caption" sx={addressFormat === "Full" ? {} : (addressFormat === "Short" ? {
+          <Typography variant="caption" className={classes.typo} sx={addressFormat === "Full" ? {} : (addressFormat === "Short" ? {
             textOverflow: "ellipsis",
             overflowX: "clip",
             width: "5em",

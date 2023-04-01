@@ -35,7 +35,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: theme.palette.background.paper,
   },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+  }
 }))
 
 interface Props {
@@ -81,8 +85,8 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
         value={{ balanceVisibility, setBalanceVisibility }}
       >
         <Paper square className={classes.paperAccount} key={accounts.length}>
-          <Box paddingY={1} paddingX={2} display="flex" alignItems="center">
-            <Box width="50%" display="flex">
+          <Box paddingY={1} paddingX={2} display="flex" alignItems="center" className={classes.paper} >
+            <Box width="50%" display="flex" className={classes.paper}>
               {account?.accountAddress && (
                 <>
                   <AccountCard

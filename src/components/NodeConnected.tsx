@@ -12,18 +12,25 @@ import { useApi } from "../hooks"
 import { logger } from "@polkadot/util"
 
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord"
+import Stack from "@mui/material/Stack"
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     nodeSelectorWrap: {
       position: "relative",
-      height: "60px",
+      minHeight: "50px",
+      maxHeight: "90px",
+      padding: theme.spacing(0.25),
+      paddingLeft: theme.spacing(0.5),
       borderTopRightRadius: theme.spacing(0.5),
       borderTopLeftRadius: theme.spacing(0.5),
       backgroundColor: theme.palette.background.paper,
+      border: "2px solid",
+      borderColor: 'grey',
+      borderBottom: "none"
     },
     nodeSelectorInner: {
-      position: "absolute",
+      position: "relative",
       zIndex: theme.zIndex.modal,
       width: "100%",
       borderRadius: theme.spacing(0.5),
@@ -33,8 +40,11 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     nodeDesc: {
-      paddingLeft: theme.spacing(1),
+      color: theme.palette.text.secondary,
     },
+    networkName: {
+      color: theme.palette.text.secondary,
+    }
   }),
 )
 
@@ -55,6 +65,7 @@ type colorType =
 export default function NodeConnected(): ReactElement {
   const l = logger(BURNR_WALLET)
   const classes = useStyles()
+  
   const [fiberColor, setFiberColor] = useState<colorType>("error")
   const { api, network  } = useApi()
 
@@ -70,32 +81,27 @@ export default function NodeConnected(): ReactElement {
   }, [api, l])
 
   return (
-    <div className={classes.nodeSelectorWrap}>
-      <div className={classes.nodeSelectorInner}>
-        <Box
-          display="flex"
-          alignItems="center"
-          pt={2.5}
-          pb={2.5}
-          pl={2.5}
-          pr={2.5}
+    <Box className={classes.nodeSelectorWrap} borderColor={} >
+      <Box className={classes.nodeSelectorInner}>
+        <Stack
+          alignItems="flex-start"
+          direction="column"
         >
           <FiberManualRecordIcon
             style={{ fontSize: "16px", marginRight: 4 }}
             color={fiberColor}
           />
-          <Box width="100%" display="flex" alignItems="baseline">
-            <Typography variant="h4">{NETWORKS[parseInt(network)].name}</Typography>
+          <Stack width="100%" alignItems="baseline" direction="column" >
+            <Typography variant="h4" className={classes.networkName} >{NETWORKS[parseInt(network)].name}</Typography>
             <Typography
               variant="body2"
               className={classes.nodeDesc}
-              color="textSecondary"
             >
               {NETWORKS[parseInt(network)].client}
             </Typography>
-          </Box>
-        </Box>
-      </div>
-    </div>
+          </Stack>
+        </Stack>
+      </Box>
+    </Box>
   )
 }

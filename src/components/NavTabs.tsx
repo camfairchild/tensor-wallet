@@ -10,9 +10,9 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import Paper from "@material-ui/core/Paper";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import SwapHorizSharpIcon from "@material-ui/icons/SwapHorizSharp";
@@ -67,16 +67,27 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down("sm")]: {
       minHeight: "calc(100vh - 320px)",
     },
+    backgroundColor: theme.palette.background.paper,
+  },
+  paper: {
+    backgroundColor: theme.palette.background.paper,
   },
   rootHeading: {
     marginBottom: theme.spacing(3),
+    color: theme.palette.text.secondary,
   },
   rootTabs: {
     "& 	.MuiTabs-root": {
       minHeight: theme.spacing(8),
       ...theme.typography.overline,
       lineHeight: 1,
-    },
+    }
+  },
+  icon: {
+    color: theme.palette.text.secondary,
+  },
+  selectedTab: {
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -86,10 +97,11 @@ const TabPanel: FunctionComponent<TabPanelProps> = ({
   index,
   ...props
 }: TabPanelProps) => {
+  const classes = useStyles();
   return (
     <div hidden={value !== index} id={`tabpanel-${index}`} {...props}>
       {value === index && (
-        <Box p={3}>
+        <Box p={3} className={classes.paper} >
           <Stack direction="column" spacing={2}>
             {children}
           </Stack>
@@ -304,30 +316,53 @@ const NavTabs: FunctionComponent = () => {
 
   return (
     <>
-      <Paper square>
+      <Paper square className={classes.paper} >
         <Tabs
           value={value}
           onChange={handleChange}
           variant="fullWidth"
-          className={classes.rootTabs}
+          className={[classes.rootTabs, classes.paper].join(" ")}
+          textColor="primary"
         >
           <Tab
             label="Receipts"
-            icon={<SwapHorizSharpIcon fontSize="small" />}
+            icon={<SwapHorizSharpIcon fontSize="small" className={classes.icon} />}
+            className={classes.paper}
+            classes={{
+              textColorPrimary: classes.selectedTab
+            }}
           />
-          <Tab label="Send" icon={<CallMadeSharpIcon fontSize="small" />} />
+          <Tab
+            label="Send"
+            icon={<CallMadeSharpIcon fontSize="small" className={classes.icon} />}
+            className={classes.paper} 
+            classes={{
+              textColorPrimary: classes.selectedTab
+            }}
+          />
           <Tab
             label="Receive"
-            icon={<CallReceivedSharpIcon fontSize="small" />}
+            icon={<CallReceivedSharpIcon fontSize="small" className={classes.icon} />}
+            className={classes.paper}
+            classes={{
+              textColorPrimary: classes.selectedTab
+            }}
           />
-          <Tab label="Stake" icon={<TollIcon fontSize="small" />} />
+          <Tab
+            label="Stake"
+            icon={<TollIcon fontSize="small" className={classes.icon} />} 
+            className={classes.paper}
+            classes={{
+              textColorPrimary: classes.selectedTab
+            }}
+          />
         </Tabs>
       </Paper>
 
       <BurnrDivider />
 
-      <Paper className={classes.root} square>
-        <TabPanel value={value} index={0}>
+      <Paper className={`${classes.root} ${classes.paper}`} square >
+        <TabPanel value={value} index={0} >
           <ErrorBoundary>
             <Typography variant="h6" className={classes.rootHeading}>
               Transaction History

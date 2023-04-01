@@ -11,13 +11,13 @@ import { ErrorBoundary, StakeRow } from "."
 import { StakeData, StakeColumn, DelegateInfo, DelegateColumn, DelegateExtras } from "../utils/types"
 import { useBalance } from "../hooks"
 import Stack from "@mui/material/Stack"
-import Box from "@mui/material/Box"
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import Paper from "@mui/material/Paper"
+import Box from "@material-ui/core/Box"
+import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
+import Paper from "@material-ui/core/Paper"
 import Pagination from "@mui/material/Pagination"
-import List from "@mui/material/List"
-import CircularProgress from "@mui/material/CircularProgress"
+import List from "@material-ui/core/List"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import Subnet from "./Subnet"
 import DelegateRow from "./DelegateRow"
 
@@ -65,6 +65,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   no_neurons_error: {
     textAlign: "center",
     padding: theme.spacing(2),
+  },
+  text: {
+    color: theme.palette.text.secondary,
   }
 }))
 
@@ -166,7 +169,7 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
                     )
                   })}
               </List>
-              <Pagination count={Math.ceil(delegateInfo.length/5)} shape="rounded" onChange={handlePageChange} page={page} />
+              <Pagination count={Math.ceil(delegateInfo.length/5)} shape="rounded" onChange={handlePageChange} page={page} className={classes.text} />
             </Stack>
           }
           {!!!delegateInfo.length && <Typography variant="body2" className={classes.no_neurons_error}>No Delegates exist</Typography>}

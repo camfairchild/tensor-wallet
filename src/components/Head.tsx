@@ -18,7 +18,7 @@ const Head: FunctionComponent = () => {
     <Grid container alignItems="center" className={classes.root}>
       <Grid item xs={6}>
         <Box paddingX={2}>
-          <Typography variant="h1">Tensor Wallet</Typography>
+          <Typography variant="h1" color="secondary" >Tensor Wallet</Typography>
         </Box>
       </Grid>
       <Grid item xs={6}>

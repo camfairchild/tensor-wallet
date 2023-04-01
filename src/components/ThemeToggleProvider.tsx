@@ -42,10 +42,7 @@ const ThemeToggleProvider = ({ children }: { children: React.ReactNode }) => {
     <ThemeProvider theme={appliedTheme}>
       <CssBaseline />
       <div className={classes.root}>
-        <Logo theme={theme} />
-        {
-        //<ThemeButton theme={theme} onClick={() => selectTheme(!theme)} />
-        }
+        <Logo theme={theme} onClick={() => selectTheme(!theme)} />
       </div>
       {children}
     </ThemeProvider>

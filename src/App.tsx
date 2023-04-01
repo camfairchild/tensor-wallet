@@ -17,10 +17,8 @@ import Home from "./Home"
 
 import {
   NavFooter,
-  ThemeToggleProvider,
   Head,
   ErrorBoundary,
-  BurnrBG,
   BurnrDivider,
 } from "./components"
 import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types"
@@ -36,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     minHeight: "100vh",
+  },
+  paper: {
+    backgroundColor: theme.palette.background.default,
   },
   main: {
     width: "100%",
@@ -97,10 +98,9 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
   }, [accounts])
 
   return (
-    <Stack spacing={0} direction="column">
+    <Stack spacing={0} direction="column" className={classes.paper} >
       <Banner />
       <div className={`${classes.root} ${className}`}>
-        <ThemeToggleProvider>
           <AccountContext.Provider value={{ account, setCurrentAccount }}>
             <ErrorBoundary>
               <main className={classes.main}>
@@ -108,13 +108,11 @@ const App: React.FunctionComponent<Props> = ({ className = "" }: Props) => {
                   <Head />
                   <BurnrDivider />
                   <Home accounts={accounts} loader={loader} />
-                  <BurnrBG />
                 </ApiContext.Provider>
               </main>
               <NavFooter />
             </ErrorBoundary>
           </AccountContext.Provider>
-        </ThemeToggleProvider>
       </div>
     </Stack>
   )

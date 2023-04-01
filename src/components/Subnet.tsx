@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@material-ui/core';
 
 interface SubnetProps {
     netuid: string | number, 
