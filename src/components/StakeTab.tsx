@@ -132,10 +132,11 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
                     <StakeRow refreshMeta={refreshMeta} expanded={expanded} onChange={() => handleChange(row['address'])} unit={unit} key={`row-${row.address}`} row={row} columns={columns} />
                   )
                 })}
+                {!!!neurons.length && <Typography variant="body2" className={classes.no_neurons_error}>No Neurons Registered to this Coldkey</Typography>}
               </Subnet>
             </Stack>
           })}
-          {!!!Object.keys(stakeData).length && <Typography variant="body2" className={classes.no_neurons_error}>No Neurons Registered to this Coldkey</Typography>}
+          {!!!Object.keys(stakeData).length && <Typography variant="body2" className={classes.no_neurons_error}>No Subnets</Typography>}
         </ErrorBoundary>
         <ErrorBoundary>
           {!!delegateInfo.length && 
