@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import { styled, Theme } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {
@@ -23,10 +23,10 @@ export const AccordionSummary = styled((props: AccordionSummaryProps) => (
       expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
       {...props}
     />
-  ))(({ theme }) => ({
+  ))(({ theme }: { theme: Theme }) => ({
     backgroundColor:
-      theme.palette.type === 'dark'
-        ? 'rgba(255, 255, 255, .05)'
+      theme.palette.mode === 'dark'
+        ? 'rgba(255, 255, 255, .25)'
         : 'rgba(0, 0, 0, .03)',
     flexDirection: 'row-reverse',
     '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
@@ -35,6 +35,14 @@ export const AccordionSummary = styled((props: AccordionSummaryProps) => (
     '& .MuiAccordionSummary-content': {
       marginLeft: theme.spacing(1),
     },
+    color: theme.palette.mode === 'dark'
+    ? 'rgba(255, 255, 255, .54)'
+    : 'rgba(0, 0, 0, .54)',
+    '& .MuiAccordionSummary-expandIconWrapper': {
+      color: theme.palette.mode === 'dark'
+      ? 'rgba(255, 255, 255, .54)'
+      : 'rgba(0, 0, 0, .54)',
+    }
   }));
   
 export const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
