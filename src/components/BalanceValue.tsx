@@ -14,6 +14,7 @@ interface Props extends SizeScale {
   isVisible: boolean
   unit?: string
   style?: CSSProperties
+  colored?: boolean
 }
 interface StyleProps {
   colored?: boolean
@@ -29,17 +30,21 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     borderRadius: theme.spacing(0.5),
-    backgroundColor: (props: StyleProps) =>
-      props.colored ? theme.palette.primary.light : "",
-    color: (props: StyleProps) =>
-      props.colored
-        ? theme.palette.getContrastText(theme.palette.primary.light)
-        : theme.palette.text.primary,
+    color: theme.palette.text.primary,
+  },
+  colored: {
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.getContrastText(theme.palette.primary.light),
   },
   blur: {
-    filter: (props: StyleProps) => (props.visible ? "unset" : "blur(5px)"),
-    width: "max-content"
+    filter: "blur(5px)"
   },
+  unblur: {
+    filter: "unset"
+  },
+  balance: {
+    width: "max-content",
+  }
 }))
 
 const BalanceValue: FunctionComponent<Props> = ({
@@ -48,17 +53,17 @@ const BalanceValue: FunctionComponent<Props> = ({
   unit = "TAO",
   size,
   style,
+  colored = false,
 }: Props) => {
   const apiCtx = useApi()
   const value_bn = bnToBn(value)
   const fBalance = prettyBalance(value_bn, apiCtx.api)
-  const isColored = parseInt(fBalance) >= 0
-  const classes = useStyles({ colored: isColored, visible: isVisible })
+  const classes = useStyles({ colored, visible: isVisible })
 
   const TypographyVariant = size === "large" ? "subtitle1" : "subtitle2"
   return (
-    <Box component="span" className={classes.root} style={style}>
-      <Typography variant={TypographyVariant} className={classes.blur}>
+    <Box component="span" className={`${classes.root} ${colored ? classes.colored : ""}`} style={style}>
+      <Typography variant={TypographyVariant} className={`${classes.balance} ${isVisible ? classes.unblur : classes.blur}`}>
         {`${fBalance} ${unit}`}
       </Typography>
     </Box>

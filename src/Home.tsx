@@ -107,6 +107,7 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
                 value={balanceArr[1]}
                 size="large"
                 style={{ width: "100%", justifyContent: "flex-end" }}
+                colored
               />
               <IconButton
                 style={{ borderRadius: 4 }}
