@@ -14,7 +14,7 @@ import { Theme } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'transparent'
   },
   typo: {
     color: theme.palette.text.secondary,
