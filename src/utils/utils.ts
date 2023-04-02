@@ -103,13 +103,13 @@ export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise
 
   const firstPass = humanReadable(rawBalance, api);
 
-  return firstPass.slice(0, firstPass.length);
+  return firstPass;
 };
 
 export const humanReadable = (amnt: number, api: ApiPromise): string => {
   const decimals = api.registry.chainDecimals[0];
   const asString = amnt.toString();
-  const addDecimal = asString.length - decimals;
+  const addDecimal = Math.max(asString.length - decimals, 0);
   const firstPass = (asString.slice(0, addDecimal) || "0") + "." + asString.slice(addDecimal).padStart(decimals, "0");
   return firstPass;
 }
