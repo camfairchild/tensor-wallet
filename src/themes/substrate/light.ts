@@ -1,6 +1,7 @@
 import { ThemeOptions } from "@material-ui/core/styles"
+import { ThemeOptions as ThemeOptionsNew } from "@mui/material"
 import colors from "./colors"
-import typography from "./typography"
+import typography, { typographyNew } from "./typography"
 import shadows from "./shadows"
 import { grey } from "@material-ui/core/colors"
 
@@ -45,6 +46,18 @@ const light: ThemeOptions = {
       active: colors.substrate.dark,
     },
     divider: grey[300],
+  },
+}
+
+const { hint: textHint, ...restText }: any = light.palette?.text
+
+export const SubstrateLightNew: ThemeOptionsNew = {
+  ...light,
+  typography: typographyNew.typography,
+  palette: {
+    ...light.palette,
+    mode: "light",
+    text: restText,
   },
 }
 

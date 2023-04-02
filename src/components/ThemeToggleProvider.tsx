@@ -5,7 +5,8 @@ import {
   CssBaseline,
   makeStyles,
 } from "@material-ui/core"
-import { SubstrateLight, SubstrateDark } from "../themes"
+import { ThemeProvider as ThemeProviderNew, createTheme as createThemeNew } from "@mui/material"
+import { SubstrateLight, SubstrateDark, SubstrateDarkNew, SubstrateLightNew } from "../themes"
 import { useLocalStorage } from "../hooks"
 
 import { Logo } from "."
@@ -32,6 +33,7 @@ const ThemeToggleProvider = ({ children }: { children: React.ReactNode }) => {
   const [localTheme, setLocalTheme] = useLocalStorage("theme")
   const [theme, setTheme] = useState(localTheme === "false" ? false : true)
   const appliedTheme = createTheme(theme ? SubstrateLight : SubstrateDark)
+  const appliedThemeNew = createThemeNew(theme ? SubstrateLightNew : SubstrateDarkNew )
 
   const selectTheme = (selected: boolean) => {
     setLocalTheme(selected.toString())
@@ -40,11 +42,13 @@ const ThemeToggleProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ThemeProvider theme={appliedTheme}>
-      <CssBaseline />
-      <div className={classes.root}>
-        <Logo theme={theme} onClick={() => selectTheme(!theme)} />
-      </div>
-      {children}
+      <ThemeProviderNew theme={appliedThemeNew}>
+        <CssBaseline />
+        <div className={classes.root}>
+          <Logo theme={theme} onClick={() => selectTheme(!theme)} />
+        </div>
+        {children}
+      </ThemeProviderNew>
     </ThemeProvider>
   )
 }
