@@ -8,8 +8,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion"
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import React, { useEffect } from "react"
-import { Typography } from "@material-ui/core"
-import {createUseStyles} from 'react-jss'
+import { Theme, Typography, makeStyles } from "@material-ui/core"
 import '../assets/styles/DelegateRow.css'
 
 interface Props {
@@ -23,12 +22,12 @@ interface Props {
     delegateExtra: DelegateExtra | undefined
 }
 
-const useStyles = createUseStyles(({
+const useStyles = makeStyles((theme: Theme) => ({
     stake_display: {
-        fontWeight: "bold"
+        fontWeight: "bold",
+        color: theme.palette.text.primary
     }
   }))
-
 
 export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegateExtra }: Props) {
     const [delegate_row, setDelegateRow] = React.useState<DelegateInfoRow>({} as DelegateInfoRow)

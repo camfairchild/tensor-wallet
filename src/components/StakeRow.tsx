@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import React from "react"
 import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion"
-
 interface Props {
     row: StakeInfo
     columns: StakeColumn[]
@@ -22,7 +21,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
 
     return (
       <Accordion expanded={expanded === row['address']} onChange={onChange} >
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" >
           <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
           {columns.map((column) => {
             const value: string | number = row[column.id]

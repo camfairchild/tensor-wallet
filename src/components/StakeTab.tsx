@@ -65,9 +65,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   no_neurons_error: {
     textAlign: "center",
     padding: theme.spacing(2),
-  },
-  text: {
-    color: theme.palette.text.secondary,
   }
 }))
 
@@ -144,12 +141,12 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
           {!!delegateInfo.length && 
             <Stack direction="column" spacing={1} alignItems="center" marginTop="2em" >
               
-              <Typography variant="body2" sx={{
+              <Typography variant="h2" style={{
                     fontWeight: 'bold',
                   }} >
                     Delegates
               </Typography>
-              <List sx={{
+              <List style={{
                 minHeight: "400px",
                 padding: "0.5em",
               }} >
@@ -169,7 +166,7 @@ export default function StakeTab({ stakeData, loader, refreshMeta, delegateInfo,
                     )
                   })}
               </List>
-              <Pagination count={Math.ceil(delegateInfo.length/5)} shape="rounded" onChange={handlePageChange} page={page} className={classes.text} />
+              <Pagination count={Math.ceil(delegateInfo.length/5)} shape="rounded" onChange={handlePageChange} page={page} />
             </Stack>
           }
           {!!!delegateInfo.length && <Typography variant="body2" className={classes.no_neurons_error}>No Delegates exist</Typography>}
