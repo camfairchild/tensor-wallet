@@ -26,13 +26,11 @@ import {
   Metagraph,
   StakeInfo,
   RawMetagraph,
-  NeuronInfo,
   NeuronInfoLite,
   SubnetInfo,
   DelegateInfo,
   DelegateInfoRaw,
   DelegateExtras,
-  DelegateExtra,
 } from "../utils/types";
 
 import {
@@ -48,8 +46,6 @@ import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
 import { CreateAccountCtx, StakeData } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
-import { Option } from "@polkadot/types";
-import { Codec } from "@polkadot/types/types";
 import { AccountId } from "@polkadot/types/interfaces";
 
 interface TabPanelProps {
@@ -89,6 +85,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   selectedTab: {
     color: theme.palette.text.secondary,
   },
+  tabPanel: {
+    minHeight: "500px",
+  }
 }));
 
 const TabPanel: FunctionComponent<TabPanelProps> = ({
@@ -101,7 +100,7 @@ const TabPanel: FunctionComponent<TabPanelProps> = ({
   return (
     <div hidden={value !== index} id={`tabpanel-${index}`} {...props}>
       {value === index && (
-        <Box p={3} className={classes.paper} >
+        <Box p={3} className={`${classes.paper} ${classes.tabPanel}`} >
           <Stack direction="column" spacing={2}>
             {children}
           </Stack>

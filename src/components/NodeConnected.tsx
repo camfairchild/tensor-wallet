@@ -81,7 +81,7 @@ export default function NodeConnected(): ReactElement {
   }, [api, l])
 
   return (
-    <Box className={classes.nodeSelectorWrap} borderColor={} >
+    <Box className={classes.nodeSelectorWrap}>
       <Box className={classes.nodeSelectorInner}>
         <Stack
           alignItems="flex-start"
