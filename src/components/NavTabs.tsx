@@ -143,6 +143,7 @@ const NavTabs: FunctionComponent = () => {
       "name": "Vune",
       "url": "https://fairchild.dev",
       "description": "Vune is a dev at the Opentensor Foundation, and a CS student at the University of Toronto. He also maintains tensorwallet and tensorping.",
+      "signature": ""
     }
   });
   
