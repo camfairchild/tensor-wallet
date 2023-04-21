@@ -195,7 +195,7 @@ const NavTabs: FunctionComponent = () => {
   };
 
   const getDelegatesJson = async (): Promise<DelegateExtras> => {
-    const url = "https://raw.githubusercontent.com/opentensor/bittensor/master/delegates.json";
+    const url = "https://raw.githubusercontent.com/opentensor/bittensor-delegates/master/public/delegates.json";
     const response = await fetch(url);
     const data = await response.json();
     return data;

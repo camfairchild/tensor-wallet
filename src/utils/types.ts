@@ -290,8 +290,9 @@ export interface DelegateExtra {
   name: string
   url: string
   description: string
+  signature: string
 }
 
 export interface DelegateExtras {
-  [key: string]: DelegateExtra
+  [key: string ]: DelegateExtra
 }
