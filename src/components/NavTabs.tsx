@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   rootHeading: {
     marginBottom: theme.spacing(3),
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
   rootTabs: {
     "& 	.MuiTabs-root": {
@@ -80,10 +80,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   },
   icon: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
   selectedTab: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
   tabPanel: {
     minHeight: "500px",

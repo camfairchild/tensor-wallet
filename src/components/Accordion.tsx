@@ -1,4 +1,6 @@
-import { styled, Theme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import { Theme } from '@mui/material';
+
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {

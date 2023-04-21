@@ -9,9 +9,9 @@
     "prebuild": "yarn clean",
     "build": "webpack",
     "deep-clean": "yarn clean && rm -rf node_modules",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "clean": "rm -rf dist build tsconfig.tsbuildinfo",
     "dev": "yarn run clean && tsc -b & webpack serve --config webpack.config.js",
-    "predeploy": "yarn run build",
+    "predeploy": "yarn run build && mv dist build",
     "deploy": "gh-pages -d build"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.10.0",
+    "@mui/styles": "^5.11.13",
     "@polkadot/api": "^9.2.1",
     "@polkadot/api-augment": "^9.2.1",
     "@polkadot/app-settings": "^0.39.1",
