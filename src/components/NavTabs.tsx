@@ -25,11 +25,7 @@ import {
   Neuron,
   Metagraph,
   StakeInfo,
-  RawMetagraph,
-  NeuronInfoLite,
-  SubnetInfo,
   DelegateInfo,
-  DelegateInfoRaw,
   DelegateExtras,
 } from "../utils/types";
 
@@ -46,7 +42,7 @@ import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
 import { CreateAccountCtx, StakeData } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
-import { AccountId } from "@polkadot/types/interfaces";
+import { getDelegateInfo, getDelegatesJson, getMetagraph } from "../utils/api";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -125,7 +121,7 @@ const NavTabs: FunctionComponent = () => {
       // refresh the page when the tab is clicked
       // but only do this once
       refreshMeta();
-      getDelegateInfo().then((delegateInfo: DelegateInfo[]) => {
+      getDelegateInfo(apiCtx.api).then((delegateInfo: DelegateInfo[]) => {
         setDelegateInfo(delegateInfo);
       });
       setLoaded(true);
@@ -148,107 +144,21 @@ const NavTabs: FunctionComponent = () => {
   });
   
 
-  const getNeurons = (netuids: Array<number>): Promise<RawMetagraph> => {
-    return new Promise<RawMetagraph>(async (resolve, reject) => {
-      let results_map: RawMetagraph = {};
-      for (let netuid of netuids) {
-        try {
-          let result_bytes = await (apiCtx.api.rpc as any).neuronInfo
-            .getNeuronsLite(netuid)
-        
-          const result = apiCtx.api.createType("Vec<NeuronInfoLite>", result_bytes);
-          const neurons_info = result.toJSON() as any[] as NeuronInfoLite[];
-          results_map[netuid] = neurons_info;
-        } catch(err: any) {
-            console.log(err);
-            reject(err);
-        }
-      }
-      console.log("results_map", results_map);
-      resolve(results_map);
-    });
-  };
-
-  const getDelegateInfo = async (): Promise<DelegateInfo[]> => {
-    const result_bytes = await (apiCtx.api.rpc as any).delegateInfo.getDelegates();
-    const result = apiCtx.api.createType("Vec<DelegateInfo>", result_bytes);
-    const delegate_info_raw: DelegateInfoRaw[] = result.toJSON() as any[] as DelegateInfoRaw[];
-    
-    const delegate_info = delegate_info_raw.map((delegate: DelegateInfoRaw) => {
-      let nominators: [string, number][] = [];
-      let total_stake = 0;
-      for (let i = 0; i < delegate.nominators.length; i++) {
-        const nominator = delegate.nominators[i];
-        const staked = nominator[1];
-        total_stake += staked;
-        nominators.push([nominator[0].toString(), staked]);
-      }
-      return {
-        take: delegate.take / (2**16 - 1), // Normalize take, which is a u16
-        delegate_ss58: delegate.delegate_ss58.toString(),
-        owner_ss58: delegate.owner_ss58.toString(),
-        nominators,
-        total_stake,
-      };
-    });
-
-    return delegate_info;
-  };
-
-  const getDelegatesJson = async (): Promise<DelegateExtras> => {
-    const url = "https://raw.githubusercontent.com/opentensor/bittensor-delegates/master/public/delegates.json";
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  };
-    
-
   const refreshMeta = async () => {
-    const getMeta = async (): Promise<Metagraph> => {
-      setLoader(true);
-
-      const subnets_info_bytes = await (
-        apiCtx.api.rpc as any
-      ).subnetInfo.getSubnetsInfo();
-      const subnets_info = apiCtx.api.createType("Vec<Option<SubnetInfo>>", subnets_info_bytes);
-
-      const netuids: Array<number> = (subnets_info as any)
-        .toJSON()
-        .map((subnetInfo: SubnetInfo) => {
-          return subnetInfo.netuid;
-        });
-
-      let _meta: Metagraph = {};
-
-      const result: RawMetagraph = await getNeurons(netuids);
-
-      Object.entries(result).forEach(
-        ([netuid, neurons]: [string, NeuronInfoLite[]]) => {
-          let neurons_ = neurons.map((neuron: NeuronInfoLite) => {
-            return {
-              hotkey: neuron.hotkey.toString(),
-              coldkey: neuron.coldkey.toString(),
-              stake: Object.fromEntries(neuron.stake.map((stake: [AccountId, number]) => {
-                return [stake[0].toString(), stake[1]];
-              })),
-              uid: neuron.uid,
-            };
-          });
-          _meta[netuid] = neurons_;
-        }
-      );
-      
-      return _meta;
+    const _getMeta = async (): Promise<Metagraph> => {
+      setLoaded(true);
+      const meta_ = await getMetagraph(apiCtx.api);
+      return meta_;
     };
 
     const _getDelegateInfo = async (): Promise<[DelegateInfo[], DelegateExtras]> => {
       const delegates_json = await getDelegatesJson();
-      const delegateInfo = await getDelegateInfo();
+      const delegateInfo = await getDelegateInfo(apiCtx.api);
       return [delegateInfo, delegates_json];
     };
 
     account &&
-      getMeta().then((_meta: Metagraph) => {
+    _getMeta().then((_meta: Metagraph) => {
         setMeta(_meta);
         setLoader(false);
       })
