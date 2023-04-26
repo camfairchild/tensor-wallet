@@ -53,6 +53,8 @@ const InputFunds: FunctionComponent<Props> = ({
           allowNegativeValue={false}
           suffix={` ${currency}`}
           step={1e-9}
+          decimalSeparator="."
+          groupSeparator=","
         />
       </Box>
     </>
