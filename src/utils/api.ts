@@ -1,6 +1,7 @@
 import { ApiPromise } from "@polkadot/api/promise/Api";
-import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras } from "./types";
+import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData } from "./types";
 import { AccountId } from "@polkadot/types/interfaces";
+import { hexToU8a, u8aToNumber } from "@polkadot/util";
 
 export async function getNeurons(api: ApiPromise, netuids: Array<number>): Promise<RawMetagraph> {
     return new Promise<RawMetagraph>(async (resolve, reject) => {
@@ -54,6 +55,27 @@ export async function getDelegatesJson(): Promise<DelegateExtras> {
     const data = await response.json();
     return data;
 };
+
+export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: string): Promise<StakeInfo[]> {
+  const coldkey_as_u8a = api.createType("AccountId", coldkey_ss58).toHex();
+  console.log(api)
+  const formatted_hex = "0x80" + coldkey_as_u8a.slice(2);
+  const stake_info_result = await api.rpc.state.call(
+      "StakeInfoRuntimeApi_get_stake_info_for_coldkey",
+      formatted_hex
+  );
+    
+  const formatted_result_hex = '0x' + stake_info_result.toHex().slice(2 + 4);
+
+  const result_bytes = api.createType("Vec<u8>", formatted_result_hex).toHex();
+  const stake_info = api.createType("Vec<StakeInfo>", result_bytes);
+  const stake_info_json = stake_info.toJSON() as any[] as StakeInfo[];
+
+  const clean_result = stake_info_json.filter((stake_info: StakeInfo) => {
+    return Number(stake_info.stake) > 0;
+  });
+  return clean_result;
+}
 
 export async function getMetagraph(api: ApiPromise): Promise<Metagraph> {
     const subnets_info_bytes = await ( api.rpc as any).subnetInfo.getSubnetsInfo();

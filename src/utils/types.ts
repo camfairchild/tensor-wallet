@@ -129,7 +129,8 @@ export interface Column {
 }
 
 export interface StakeInfo {
-  address: string
+  hotkey: string
+  coldkey: string
   stake: number | string
 }
 export interface StakeData {
@@ -137,7 +138,7 @@ export interface StakeData {
 }
 
 export interface StakeColumn {
-  id: "address" | "stake"
+  id: "hotkey" | "stake"
   label: string
   minWidth?: number
   maxWidth?: number
