@@ -18,7 +18,7 @@ import { AccountContext } from "../utils/contexts"
 import { openInNewTab } from "../utils/utils"
 import { POLKA_ACCOUNT_ENDPOINTS } from "../utils/constants"
 
-const { polkadotjsexplorer } = POLKA_ACCOUNT_ENDPOINTS
+const { polkadotjsexplorer, scantensor, taostats } = POLKA_ACCOUNT_ENDPOINTS
 
 import type { InjectedAccountWithMeta, MetadataDef } from "@polkadot/extension-inject/types"
 import useExtensions from "../hooks/useExtensions";
@@ -89,6 +89,14 @@ export default function AccountMenu({accounts}: Props) {
 
         <MenuItem onClick={() => openInNewTab(polkadotjsexplorerUri)}>
           PolkadotJS Explorer
+        </MenuItem>
+
+        <MenuItem onClick={() => openInNewTab(scantensor)}>
+          ScanTensor Explorer
+        </MenuItem>
+
+        <MenuItem onClick={() => openInNewTab(taostats)}>
+          TAOStats Explorer
         </MenuItem>
 
         <BurnrDivider />
