@@ -204,7 +204,7 @@ export default function StakeTab({
                         variant="body2"
                         className={classes.no_neurons_error}
                       >
-                        Not Staked To Any Keys
+                        Not Staked To Any Non-delegate Keys
                       </Typography>
                     )}
                   </Stack>
