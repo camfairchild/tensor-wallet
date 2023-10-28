@@ -119,6 +119,11 @@ export const useApiCreate = (defaultnetwork: string): ApiCtx => {
               network_connect: 'Vec<[u16; 2]>',
               emission_values: 'Compact<u64>',
               burn: 'Compact<u64>',
+            },
+            StakeInfo: {
+              hotkey: "AccountId",
+              coldkey: "AccountId",
+              stake: "Compact<u64>",
             }
           },
           rpc: {

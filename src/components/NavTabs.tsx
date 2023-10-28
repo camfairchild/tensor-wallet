@@ -27,6 +27,7 @@ import {
   StakeInfo,
   DelegateInfo,
   DelegateExtras,
+  LocalStorageAccountCtx,
 } from "../utils/types";
 
 import {
@@ -42,7 +43,7 @@ import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
 import { CreateAccountCtx, StakeData } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
-import { getDelegateInfo, getDelegatesJson, getMetagraph } from "../utils/api";
+import { getDelegateInfo, getDelegatesJson, getMetagraph, getStakeInfoForColdkey } from "../utils/api";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -129,9 +130,10 @@ const NavTabs: FunctionComponent = () => {
     setValue(newValue);
   };
 
-  const [meta, setMeta] = useState<Metagraph>({});
-  const [stakeData, setStakeData] = useState<StakeData>({});
+  const [stakeData, setStakeData] = useState<StakeInfo[]>([]);
   const [loader, setLoader] = useState<boolean>(true);
+  const [rowLoader, setRowLoader] = useState<boolean>(true);
+  const [delegateLoader, setDelegateLoader] = useState<boolean>(true);
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
   const [delegateRows, setDelegateRows] = useState<DelegateInfo[]>([]);
   const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({
@@ -142,60 +144,46 @@ const NavTabs: FunctionComponent = () => {
       "signature": ""
     }
   });
-  
+
+  const getRows = async (account: LocalStorageAccountCtx) => {
+    const stakeInfo = await getStakeInfoForColdkey (apiCtx.api, account.accountAddress);
+    setStakeData(stakeInfo);
+  };
 
   const refreshMeta = async () => {
-    const _getMeta = async (): Promise<Metagraph> => {
-      setLoaded(true);
-      const meta_ = await getMetagraph(apiCtx.api);
-      return meta_;
-    };
-
     const _getDelegateInfo = async (): Promise<[DelegateInfo[], DelegateExtras]> => {
       const delegates_json = await getDelegatesJson();
       const delegateInfo = await getDelegateInfo(apiCtx.api);
       return [delegateInfo, delegates_json];
     };
 
-    account &&
-    _getMeta().then((_meta: Metagraph) => {
-        setMeta(_meta);
-        setLoader(false);
-      })
+    account && getRows(
+      account
+    ).then(() => {
+      setRowLoader(false);
+      setLoader(false);
+    });
     account && _getDelegateInfo().then(([delegateInfo, delegates_json]) => {
       setDelegateInfo(delegateInfo);
       setDelegatesExtras(delegates_json);
 
       setLoader(false);
+      setDelegateLoader(false);
     });
   };
 
   useEffect(() => {
-    const getRows = async (meta_: Metagraph) => {
-      let stakeData: StakeData = {};
-      stakeData = Object.fromEntries(
-        Object.entries(meta_).map(([netuid, neurons]: [string, Neuron[]]) => {
-          return [
-            netuid,
-            neurons
-              .filter((neuron) => {
-                return neuron.coldkey === account.accountAddress;
-              })
-              .map((neuron) => {
-                return {
-                  address: neuron.hotkey,
-                  stake: neuron.stake[account.accountAddress] || 0
-                } as StakeInfo;
-              }),
-          ];
-        })
-      );
-  
-      setStakeData(stakeData);
+    const refereshOnAccountChange = () => {
+      setRowLoader(true);
+      getRows(
+        account
+      ).then(() => {
+        setRowLoader(false);
+      });
     };
 
-    mountedRef.current && !!meta && getRows(meta);
-  }, [account, mountedRef, meta]);
+    account && refereshOnAccountChange();
+  }, [account, apiCtx.api]);
 
   useEffect(() => {
     const prepareDelegateRows = (delegateInfo: DelegateInfo[], delegatesExtras: DelegateExtras, account_addr: string) => {
@@ -311,6 +299,8 @@ const NavTabs: FunctionComponent = () => {
               delegateInfo={delegateRows}
               stakeData={stakeData}
               loader={loader}
+              rowLoader={rowLoader}
+              delegateLoader={delegateLoader}
               refreshMeta={refreshMeta}
               delegatesExtras={delegatesExtras}
             />

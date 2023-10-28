@@ -20,14 +20,14 @@ interface Props {
 export default function StakeRow({columns, unit, row, expanded, onChange, refreshMeta }: Props) {
 
     return (
-      <Accordion expanded={expanded === row['address']} onChange={onChange} >
+      <Accordion expanded={expanded === row['hotkey']} onChange={onChange} >
         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" >
           <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
           {columns.map((column) => {
             const value: string | number = row[column.id]
             return (
               <React.Fragment key={column.id}>
-                {column.id === "address" && (
+                {column.id === "hotkey" && (
                   <AccountCard account={{ address: value.toString(), name: "" }} addressFormat="Full" />
                 )}
                 {column.id === "stake" && // This may look overwhelming but is just for "dump" data until page is fixed
@@ -48,7 +48,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
         <AccordionDetails>
           <Box justifyContent="flex-end" flexDirection="row" alignItems="flex-start">
             <ErrorBoundary>
-              <StakeForm hotkeyAddr={row['address']} stake={row.stake} refreshMeta={() => {}} />
+              <StakeForm hotkeyAddr={row['hotkey']} stake={row.stake} refreshMeta={() => {}} />
             </ErrorBoundary>
           </Box>
         </AccordionDetails>
