@@ -121,6 +121,11 @@ export default function StakeTab({
   const [expandedDelegate, setExpandedDelegate] =
     React.useState<boolean>(false);
 
+  const delegates_ss58 = delegateInfo.map((delegate) => delegate.delegate_ss58);
+  const stakeDataNoDelegates = stakeData.filter(
+    (stakeInfo: StakeInfo) => delegates_ss58.includes(stakeInfo.hotkey) === false
+  );
+
   return (
     <Stack
       spacing={2}
@@ -178,8 +183,8 @@ export default function StakeTab({
                     alignItems="center"
                     marginTop="2em"
                   >
-                    {!!stakeData.length &&
-                      stakeData.map((stakeInfo: StakeInfo) => {
+                    {!!stakeDataNoDelegates.length &&
+                      stakeDataNoDelegates.map((stakeInfo: StakeInfo) => {
                         return (
                           <StakeRow
                             refreshMeta={refreshMeta}
@@ -194,7 +199,7 @@ export default function StakeTab({
                           />
                         );
                       })}
-                    {!!!stakeData.length && (
+                    {!!!stakeDataNoDelegates.length && (
                       <Typography
                         variant="body2"
                         className={classes.no_neurons_error}
