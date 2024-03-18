@@ -136,14 +136,7 @@ const NavTabs: FunctionComponent = () => {
   const [delegateLoader, setDelegateLoader] = useState<boolean>(true);
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
   const [delegateRows, setDelegateRows] = useState<DelegateInfo[]>([]);
-  const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({
-    "5ECvRLMj9jkbdM4sLuH5WvjUe87TcAdjRfUj5onN4iKqYYGm": {
-      "name": "Vune",
-      "url": "https://fairchild.dev",
-      "description": "Vune is a dev at the Opentensor Foundation, and a CS student at the University of Toronto. He also maintains tensorwallet and tensorping.",
-      "signature": ""
-    }
-  });
+  const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({});
 
   const getRows = async (account: LocalStorageAccountCtx) => {
     const stakeInfo = await getStakeInfoForColdkey (apiCtx.api, account.accountAddress);
@@ -194,15 +187,6 @@ const NavTabs: FunctionComponent = () => {
         let amt_b: number = b.nominators[nom_idx_b]?.[1] || 0;
 
         return amt_b - amt_a || b.total_stake - a.total_stake;
-      });
-      delegateInfo.find((delegate, index) => {
-        if (delegatesExtras[delegate.delegate_ss58]?.name === "Vune") {
-          // Put at top
-          delegateInfo.splice(index, 1);
-          delegateInfo.unshift(delegate);
-          return true;
-        }
-        return false;
       });
       
       setDelegateRows(delegateInfo);
