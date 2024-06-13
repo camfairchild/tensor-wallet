@@ -9,6 +9,9 @@ import ErrorIcon from "@material-ui/icons/Error"
 
 import { ExtrinsicInfo } from "../utils/types"
 
+import { POLKA_ACCOUNT_ENDPOINTS } from "../utils/constants"
+const { taostats } = POLKA_ACCOUNT_ENDPOINTS
+
 const useStyles = makeStyles((theme: Theme) => ({
   popover: {
     pointerEvents: "none",
@@ -43,7 +46,7 @@ const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
   function handleClick (event: React.MouseEvent<HTMLElement, MouseEvent>) {
     event.preventDefault()
     if (blockHash) {
-      window.open(`https://explorer.nakamoto.opentensor.ai/#/explorer/query/${blockHash.toHex()}`, "_blank")
+      window.open(`${taostats}/search?query=${blockHash.toHex()}`, "_blank")
     }
   }
 
