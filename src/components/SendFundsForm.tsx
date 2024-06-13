@@ -153,7 +153,7 @@ const SendFundsForm: FunctionComponent = () => {
   useEffect((): void => {
     const calcFee = async (): Promise<void> => {
       const fee = await api.tx.balances
-        .transfer(address, new BN(amount))
+        .transferKeepAlive(address, new BN(amount))
         .paymentInfo(account.accountAddress)
       setFee(fee.partialFee)
     }
@@ -198,7 +198,7 @@ const SendFundsForm: FunctionComponent = () => {
       const sender = account.accountAddress;
       const injector = await web3FromAddress(sender);
       await api.tx.balances
-        .transfer(address, new BN(transferAmount))
+        .transferKeepAlive(address, new BN(transferAmount))
         .signAndSend( sender, { signer: injector.signer }, (result) => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
