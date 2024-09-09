@@ -199,7 +199,7 @@ const SendFundsForm: FunctionComponent = () => {
       const injector = await web3FromAddress(sender);
       await api.tx.balances
         .transferKeepAlive(address, new BN(transferAmount))
-        .signAndSend( sender, { signer: injector.signer }, (result) => {
+        .signAndSend( sender, { signer: injector.signer, withSignedTransaction: true }, (result) => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
             clearAmount()
