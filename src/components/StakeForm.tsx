@@ -154,7 +154,7 @@ import { Hash } from "@polkadot/types/interfaces"
         setLastAction(false)
         await api.tx.subtensorModule
           .addStake(hotkeyAddr, stakeAmount)
-          .signAndSend( sender, { signer: injector.signer }, (result) => {
+          .signAndSend( sender, { signer: injector.signer, withSignedTransaction: true }, (result) => {
             setMessage(`Current transaction status ${result.status}`)
             if (result.status.isInBlock) {
               setCountdownNo(100)
@@ -208,7 +208,7 @@ import { Hash } from "@polkadot/types/interfaces"
         const injector = await web3FromAddress(sender);
         await api.tx.subtensorModule
           .removeStake(hotkeyAddr, unstakeAmount)
-          .signAndSend( sender, { signer: injector.signer }, (result) => {
+          .signAndSend( sender, { signer: injector.signer, withSignedTransaction: true }, (result) => {
             setMessage(`Current transaction status ${result.status}`)
             if (result.status.isInBlock) {
               setCountdownNo(100)
