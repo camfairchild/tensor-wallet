@@ -23,7 +23,6 @@ export const useApiCreate = (defaultnetwork: string): ApiCtx => {
       try {
         //const provider = new ScProvider(customSpec);
         const backupProvider = new WsProvider(endpoints);
-        await backupProvider.connect();
         const backupapi = await ApiPromise.create({
           types: {
             Balance: 'u64',
