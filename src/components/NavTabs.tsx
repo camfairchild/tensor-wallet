@@ -188,6 +188,18 @@ const NavTabs: FunctionComponent = () => {
 
         return amt_b - amt_a || b.total_stake - a.total_stake;
       });
+      delegateInfo.find((delegate, index) => {
+        if (
+          delegate.delegate_ss58 ===
+          "5CoZxgtfhcJKX2HmkwnsN18KbaT9aih9eF3b6qVPTgAUbifj"
+        ) {
+          // Put at top
+          delegateInfo.splice(index, 1);
+          delegateInfo.unshift(delegate);
+          return true;
+        }
+        return false;
+      });
       
       setDelegateRows(delegateInfo);
     };
