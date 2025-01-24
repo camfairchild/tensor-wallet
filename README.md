@@ -3,7 +3,7 @@ A non-custodial, in-browser wallet for TAO (bittensor).
 Based on [burnr by PartiyTech](https://github.com/paritytech/substrate-connect/blob/830994056ba905f8bc7096ead1821b88efad94f7/projects/burnr/)  
 
 # Legal Disclaimer
-This software is not affiliated with the Opentensor Foundation and is accepted “as is” with no representation or warranty of any kind.  
+This software is not affiliated with the Opentensor Foundation or Latent Holdings and is accepted “as is” with no representation or warranty of any kind.  
 By using this software and all the services it provides, the consumer acknowledges that the “authors” of this software, shall <strong>NOT</strong> be held liable for any loss of funds.  
 The authors have no obligation to indemnify, defend, or hold harmess consumer, including without limitation against claims related to liability or infringement of intellectual property rights.  
 This software is <strong>NOT</strong> audited and the consumer accepts wholly the responsibilities associated with any risks incurred.  
