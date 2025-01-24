@@ -292,8 +292,38 @@ export interface DelegateExtra {
   url: string
   description: string
   signature: string
+  identity: Identity | null
 }
 
 export interface DelegateExtras {
   [key: string ]: DelegateExtra
+}
+
+export interface Identity {
+  name: string | null
+  image: string | null
+}
+
+export interface PalletRegistryRegistration {
+  deposit: string // of a u128
+  info: {
+    display: string
+    legal: string
+    web: string
+    email: string
+    twitter: string
+    image: string
+    pgpFingerprint: string | null
+    riot: string
+    additional: any[]
+  }
+}
+
+export interface PalletSubtensorChainIdentity {
+  name: string
+  url: string
+  image: string
+  discord: string
+  description: string
+  additional: any
 }

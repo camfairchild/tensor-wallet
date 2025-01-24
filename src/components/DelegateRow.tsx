@@ -10,6 +10,8 @@ import Box from '@mui/material/Box';
 import React, { useEffect } from "react"
 import { Theme, Typography, makeStyles } from "@material-ui/core"
 import '../assets/styles/DelegateRow.css'
+import { getOnChainIdentity } from "../utils/api"
+import { useApi } from "../hooks"
 
 interface Props {
     delegate: DelegateInfo
@@ -33,7 +35,35 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
     const [delegate_row, setDelegateRow] = React.useState<DelegateInfoRow>({} as DelegateInfoRow)
     const classes = useStyles()
 
+    const apiCtx = useApi();
+
     useEffect(() => {
+        const getIdentity = async () => {
+            const identity = await getOnChainIdentity(apiCtx.api, delegate.delegate_ss58);
+            console.log("identity", identity);
+            if (identity.name || identity.image) {
+                if (!!delegateExtra) {
+                    delegateExtra = {
+                        name: identity.name || "",
+                        url: "",
+                        description: "",
+                        signature: "",
+                        identity: identity,
+                    }
+                } else {
+                    delegateExtra = {
+                        name: identity.name || delegate.delegate_ss58,
+                        url: "",
+                        description: "",
+                        signature: "",
+                        identity: identity,
+                    }
+                }
+            }
+        }
+
+        getIdentity();
+      
         let _row: DelegateInfoRow = {
             stake: 0,
             take: delegate.take,
@@ -57,7 +87,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
             ..._row
         })
 
-    }, [delegate, coldkey_ss58])
+    }, [delegate.delegate_ss58, delegate.total_stake, delegate.nominators.length, coldkey_ss58])
 
     return (
     <React.Fragment>
