@@ -1,7 +1,8 @@
 import { ApiPromise } from "@polkadot/api/promise/Api";
-import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData } from "./types";
+import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData, Identity, PalletRegistryRegistration, PalletSubtensorChainIdentity } from "./types";
 import { AccountId } from "@polkadot/types/interfaces";
-import { hexToU8a, u8aToNumber } from "@polkadot/util";
+import { hexToU8a, identity, u8aToNumber } from "@polkadot/util";
+import { Option } from "@polkadot/types";
 
 export async function getNeurons(api: ApiPromise, netuids: Array<number>): Promise<RawMetagraph> {
     return new Promise<RawMetagraph>(async (resolve, reject) => {
@@ -22,6 +23,57 @@ export async function getNeurons(api: ApiPromise, netuids: Array<number>): Promi
       resolve(results_map);
     });
   };
+
+function extractInnerFields(identity_info: any): any {
+  for (let key in identity_info) {
+    if (identity_info[key] === null) {
+      continue;
+    }
+
+    if (identity_info[key] === "None") {
+      identity_info[key] = null;
+      continue;
+    }
+    
+    if (typeof identity_info[key] === "object" && Object.entries(identity_info[key]).length == 1) {
+      if (Object.keys(identity_info[key])[0].startsWith("Raw")) {
+        identity_info[key] = identity_info[key][Object.keys(identity_info[key])[0]];
+      }
+    }
+  }
+}
+
+export async function getOnChainIdentity(api: ApiPromise, ss58: string): Promise<Identity> {
+  // Try Subtensor pallet identity
+  let identity_result = await api.query.subtensorModule.identities(ss58) as Option<any>;
+  
+  if (identity_result.isSome) {
+    let identity = identity_result.unwrap().toHuman() as PalletSubtensorChainIdentity;
+    
+    console.log("identity_result sub", identity);
+
+    return {
+      name: identity.name === "None" ? null : identity.name || null,
+      image: identity.image === "None" ? null : identity.image || null,
+    }
+  }
+
+  // Try Registry pallet identity
+  identity_result = await api.query.registry.identityOf(ss58) as Option<any>;
+  if (identity_result.isSome) {
+    let identity = identity_result.unwrap().toHuman() as PalletRegistryRegistration;
+
+    console.log("identity_result", identity);
+    extractInnerFields(identity.info)
+
+    return {
+      name: identity.info.display === "None" ? null : identity.info.display || null,
+      image: null,
+    }
+  }
+
+  return { name: null, image: null };
+}
 
 export async function getDelegateInfo(api: ApiPromise): Promise<DelegateInfo[]> {
     const result_bytes = await (api.rpc as any).delegateInfo.getDelegates();
@@ -52,8 +104,12 @@ export async function getDelegateInfo(api: ApiPromise): Promise<DelegateInfo[]> 
 export async function getDelegatesJson(): Promise<DelegateExtras> {
     const url = "https://raw.githubusercontent.com/opentensor/bittensor-delegates/master/public/delegates.json";
     const response = await fetch(url);
-    const data = await response.json();
-    return data;
+    const data = await response.json() as Object;
+
+    Object.entries(data).forEach(([key, delegate]) => {
+      delegate.identity = null;
+    });
+    return data as DelegateExtras;
 };
 
 export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: string): Promise<StakeInfo[]> {
@@ -64,13 +120,25 @@ export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: stri
       "StakeInfoRuntimeApi_get_stake_info_for_coldkey",
       formatted_hex
   );
-    
-  const formatted_result_hex = '0x' + stake_info_result.toHex().slice(2 + 4);
+  
+  console.log("stake_info_result", stake_info_result.toHex());
+  const formatted_result_hex = stake_info_result.toHex();
 
-  const result_bytes = api.createType("Vec<u8>", formatted_result_hex).toHex();
-  const stake_info = api.createType("Vec<StakeInfo>", result_bytes);
+  if (formatted_result_hex == "0x0400") {
+    return []; // For some reason can't decode empty Vec
+  }
+
+  const result_bytes = api.createType("Vec<u8>", formatted_result_hex);
+  console.log("result_bytes", result_bytes);
+
+  let first_zero_bytes = result_bytes.findIndex((byte: number) => byte == 0);
+  console.log("first_zero_bytes", first_zero_bytes);
+  const result_bytes_trimmed = result_bytes.slice(first_zero_bytes + 1);
+  console.log("result_bytes_trimmed", result_bytes_trimmed);
+  const stake_info = api.createType("Vec<StakeInfo>", result_bytes_trimmed);
   const stake_info_json = stake_info.toJSON() as any[] as StakeInfo[];
-
+  console.log("stake_info_json", stake_info_json);
+  
   const clean_result = stake_info_json.filter((stake_info: StakeInfo) => {
     return Number(stake_info.stake) > 0;
   });
