@@ -20,7 +20,7 @@ export default function Banner() {
         <Stack direction="column" spacing={1}>
           <Box>
                 <AlertTitle>Legal Disclaimer</AlertTitle>
-                This website is not affiliated with the Opentensor Foundation and is accepted “as is” with no representation or warranty of any kind.
+                This website is not affiliated with the Opentensor Foundation or Latent Holdings and is accepted “as is” with no representation or warranty of any kind.
                 <br />
                 By using this website and all the services it provides, the consumer acknowledges that the “authors” of this software, shall <strong>NOT</strong> be held liable for any loss of funds.
                 <br />
