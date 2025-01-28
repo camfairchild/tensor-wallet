@@ -1,7 +1,7 @@
 import { ApiPromise } from "@polkadot/api/promise/Api";
 import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData, Identity, PalletRegistryRegistration, PalletSubtensorChainIdentity } from "./types";
 import { AccountId } from "@polkadot/types/interfaces";
-import { hexToU8a, identity, u8aToNumber } from "@polkadot/util";
+import { compactStripLength, hexToU8a, compactAddLength, u8aToHex } from "@polkadot/util";
 import { Option } from "@polkadot/types";
 
 export async function getNeurons(api: ApiPromise, netuids: Array<number>): Promise<RawMetagraph> {
@@ -113,30 +113,23 @@ export async function getDelegatesJson(): Promise<DelegateExtras> {
 };
 
 export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: string): Promise<StakeInfo[]> {
-  const coldkey_as_u8a = api.createType("AccountId", coldkey_ss58).toHex();
-  console.log(api)
-  const formatted_hex = "0x80" + coldkey_as_u8a.slice(2);
+  const coldkey_as_u8a = api.createType("AccountId", coldkey_ss58).toU8a();
+  const with_length_prefix = compactAddLength(coldkey_as_u8a);
+  
   const stake_info_result = await api.rpc.state.call(
       "StakeInfoRuntimeApi_get_stake_info_for_coldkey",
-      formatted_hex
+      u8aToHex(with_length_prefix)
   );
   
   console.log("stake_info_result", stake_info_result.toHex());
   const formatted_result_hex = stake_info_result.toHex();
 
-  if (formatted_result_hex == "0x0400") {
-    return []; // For some reason can't decode empty Vec
-  }
+  const [length, trimmed] = compactStripLength(hexToU8a(formatted_result_hex));
+  console.log("length", length, "trimmed", trimmed);
 
-  const result_bytes = api.createType("Vec<u8>", formatted_result_hex);
-  console.log("result_bytes", result_bytes);
-
-  let first_zero_bytes = result_bytes.findIndex((byte: number) => byte == 0);
-  console.log("first_zero_bytes", first_zero_bytes);
-  const result_bytes_trimmed = result_bytes.slice(first_zero_bytes + 1);
-  console.log("result_bytes_trimmed", result_bytes_trimmed);
-  const stake_info = api.createType("Vec<StakeInfo>", result_bytes_trimmed);
+  const stake_info = api.createType("Vec<StakeInfo>", trimmed);
   const stake_info_json = stake_info.toJSON() as any[] as StakeInfo[];
+
   console.log("stake_info_json", stake_info_json);
   
   const clean_result = stake_info_json.filter((stake_info: StakeInfo) => {
