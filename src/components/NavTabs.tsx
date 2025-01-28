@@ -181,24 +181,23 @@ const NavTabs: FunctionComponent = () => {
   useEffect(() => {
     const prepareDelegateRows = (delegateInfo: DelegateInfo[], delegatesExtras: DelegateExtras, account_addr: string) => {
       delegateInfo.sort((a, b) => {
-        let nom_idx_a = a.nominators.findIndex((nom) => nom[0] === account_addr); 
-        let nom_idx_b = b.nominators.findIndex((nom) => nom[0] === account_addr);
+        let nom_idx_a = a.nominators.findIndex(
+          (nom) => nom[0] === account_addr
+        );
+        let nom_idx_b = b.nominators.findIndex(
+          (nom) => nom[0] === account_addr
+        );
         let amt_a: number = a.nominators[nom_idx_a]?.[1] || 0;
         let amt_b: number = b.nominators[nom_idx_b]?.[1] || 0;
 
-        return amt_b - amt_a || b.total_stake - a.total_stake;
-      });
-      delegateInfo.find((delegate, index) => {
-        if (
-          delegate.delegate_ss58 ===
+        return (
+          amt_b - amt_a ||
+          (a.delegate_ss58 ===
           "5CoZxgtfhcJKX2HmkwnsN18KbaT9aih9eF3b6qVPTgAUbifj"
-        ) {
-          // Put at top
-          delegateInfo.splice(index, 1);
-          delegateInfo.unshift(delegate);
-          return true;
-        }
-        return false;
+            ? -1
+            : 0) ||
+          b.total_stake - a.total_stake
+        );
       });
       
       setDelegateRows(delegateInfo);
