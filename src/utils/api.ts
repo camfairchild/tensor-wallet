@@ -9,9 +9,11 @@ export async function getNeurons(api: ApiPromise, netuids: Array<number>): Promi
       let results_map: RawMetagraph = {};
       for (let netuid of netuids) {
         try {
-          let result_bytes = await (api.rpc as any).neuronInfo
-            .getNeuronsLite(netuid)
-        
+          const result_bytes = await api.rpc.state.call(
+            "NeuronInfoRuntimeApi_get_neurons_lite",
+            api.createType("u32", netuid).toHex()
+          );
+      
           const result = api.createType("Vec<NeuronInfoLite>", result_bytes);
           const neurons_info = result.toJSON() as any[] as NeuronInfoLite[];
           results_map[netuid] = neurons_info;
@@ -113,21 +115,20 @@ export async function getDelegatesJson(): Promise<DelegateExtras> {
 };
 
 export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: string): Promise<StakeInfo[]> {
-  const coldkey_as_u8a = api.createType("AccountId", coldkey_ss58).toU8a();
-  const with_length_prefix = compactAddLength(coldkey_as_u8a);
+  const coldkey_as_u8a = api.createType("AccountId", coldkey_ss58).toHex();
   
   const stake_info_result = await api.rpc.state.call(
       "StakeInfoRuntimeApi_get_stake_info_for_coldkey",
-      u8aToHex(with_length_prefix)
+      coldkey_as_u8a
   );
   
   console.log("stake_info_result", stake_info_result.toHex());
   const formatted_result_hex = stake_info_result.toHex();
 
-  const [length, trimmed] = compactStripLength(hexToU8a(formatted_result_hex));
-  console.log("length", length, "trimmed", trimmed);
+  // const [length, trimmed] = compactStripLength(hexToU8a(formatted_result_hex));
+  // console.log("length", length, "trimmed", trimmed);
 
-  const stake_info = api.createType("Vec<StakeInfo>", trimmed);
+  const stake_info = api.createType("Vec<StakeInfo>", formatted_result_hex);//trimmed);
   const stake_info_json = stake_info.toJSON() as any[] as StakeInfo[];
 
   console.log("stake_info_json", stake_info_json);

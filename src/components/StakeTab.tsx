@@ -193,7 +193,7 @@ export default function StakeTab({
                               handleChange("0" + stakeInfo["hotkey"])
                             }
                             unit={unit}
-                            key={`row-${stakeInfo.hotkey}`}
+                            key={`row-${stakeInfo.hotkey}-${stakeInfo.netuid}`}
                             row={stakeInfo}
                             columns={columns}
                           />

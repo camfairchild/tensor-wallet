@@ -131,6 +131,7 @@ export interface Column {
 export interface StakeInfo {
   hotkey: string
   coldkey: string
+  netuid: number
   stake: number | string
 }
 export interface StakeData {
