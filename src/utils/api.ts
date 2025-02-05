@@ -3,18 +3,14 @@ import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo
 import { AccountId } from "@polkadot/types/interfaces";
 import { compactStripLength, hexToU8a, compactAddLength, u8aToHex } from "@polkadot/util";
 import { Option } from "@polkadot/types";
+import { HexString } from "@polkadot/util/types";
 
 export async function getNeurons(api: ApiPromise, netuids: Array<number>): Promise<RawMetagraph> {
     return new Promise<RawMetagraph>(async (resolve, reject) => {
       let results_map: RawMetagraph = {};
       for (let netuid of netuids) {
         try {
-          const result_bytes = await api.rpc.state.call(
-            "NeuronInfoRuntimeApi_get_neurons_lite",
-            api.createType("u32", netuid).toHex()
-          );
-      
-          const result = api.createType("Vec<NeuronInfoLite>", result_bytes);
+          const result = await queryRuntimeApi(api, "NeuronInfoRuntimeApi_get_neurons_lite", [netuid]);
           const neurons_info = result.toJSON() as any[] as NeuronInfoLite[];
           results_map[netuid] = neurons_info;
         } catch(err: any) {
@@ -77,9 +73,45 @@ export async function getOnChainIdentity(api: ApiPromise, ss58: string): Promise
   return { name: null, image: null };
 }
 
+export async function queryRuntimeApi(api: ApiPromise, method: string, params: Array<any>): Promise<any> {
+  const split_idx = method.indexOf("_");
+  const api_name = method.slice(0, split_idx);
+  const method_name = method.slice(split_idx + 1);
+  
+  console.log(api, api_name, method_name);
+  const api_def = api.runtimeMetadata.asV15.apis.find((api: any) => api.name.toHuman() === api_name);
+  console.log(api_def);
+  const call_def = api_def?.methods.find((method: any) => method.name.toHuman() === method_name);
+  const output_type = call_def?.output;
+  if (!output_type) {
+    throw new Error(`Output type not found for method ${method_name} in api ${api_name}`);
+  }
+
+  const param_types = call_def?.inputs.map((input: any) => input.type);
+  console.log(param_types);
+
+  const params_bytes_hex: HexString = params.map((param, idx) => {
+    const typeDef = api.registry.createLookupType(param_types[idx]);
+    return api.createType(typeDef, param).toHex();
+  }).reduce((acc: HexString, curr: HexString) => {
+    return acc.concat(curr.slice(2)) as HexString;
+  }, "0x");
+
+  const result_bytes = await api.rpc.state.call(
+    method,
+    params_bytes_hex
+  );
+
+  const typeDef = api.registry.createLookupType(output_type);
+  const result = api.createType(typeDef, result_bytes);
+
+  return result;
+}
+
 export async function getDelegateInfo(api: ApiPromise): Promise<DelegateInfo[]> {
-    const result_bytes = await (api.rpc as any).delegateInfo.getDelegates();
-    const result = api.createType("Vec<DelegateInfo>", result_bytes);
+    const result = await queryRuntimeApi(api, "DelegateInfoRuntimeApi_get_delegates", []);
+    console.log(result);
+   
     const delegate_info_raw: DelegateInfoRaw[] = result.toJSON() as any[] as DelegateInfoRaw[];
     
     const delegate_info = delegate_info_raw.map((delegate: DelegateInfoRaw) => {
@@ -93,8 +125,8 @@ export async function getDelegateInfo(api: ApiPromise): Promise<DelegateInfo[]> 
       }
       return {
         take: delegate.take / (2**16 - 1), // Normalize take, which is a u16
-        delegate_ss58: delegate.delegate_ss58.toString(),
-        owner_ss58: delegate.owner_ss58.toString(),
+        delegate_ss58: delegate.delegateSs58.toString(),
+        owner_ss58: delegate.ownerSs58.toString(),
         nominators,
         total_stake,
       };
@@ -115,21 +147,9 @@ export async function getDelegatesJson(): Promise<DelegateExtras> {
 };
 
 export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: string): Promise<StakeInfo[]> {
-  const coldkey_as_u8a = api.createType("AccountId", coldkey_ss58).toHex();
+  const stake_info_result = await queryRuntimeApi(api, "StakeInfoRuntimeApi_get_stake_info_for_coldkey", [coldkey_ss58]);
   
-  const stake_info_result = await api.rpc.state.call(
-      "StakeInfoRuntimeApi_get_stake_info_for_coldkey",
-      coldkey_as_u8a
-  );
-  
-  console.log("stake_info_result", stake_info_result.toHex());
-  const formatted_result_hex = stake_info_result.toHex();
-
-  // const [length, trimmed] = compactStripLength(hexToU8a(formatted_result_hex));
-  // console.log("length", length, "trimmed", trimmed);
-
-  const stake_info = api.createType("Vec<StakeInfo>", formatted_result_hex);//trimmed);
-  const stake_info_json = stake_info.toJSON() as any[] as StakeInfo[];
+  const stake_info_json = stake_info_result.toJSON() as any[] as StakeInfo[];
 
   console.log("stake_info_json", stake_info_json);
   
@@ -140,8 +160,8 @@ export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: stri
 }
 
 export async function getMetagraph(api: ApiPromise): Promise<Metagraph> {
-    const subnets_info_bytes = await ( api.rpc as any).subnetInfo.getSubnetsInfo();
-    const subnets_info = api.createType("Vec<Option<SubnetInfo>>", subnets_info_bytes);
+    const subnets_info = await queryRuntimeApi(api, "SubnetInfoRuntimeApi_get_subnets_info", []);
+    console.log("subnets_info", subnets_info);
 
     const netuids: Array<number> = (subnets_info as any)
       .toJSON()

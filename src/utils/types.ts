@@ -223,10 +223,10 @@ export interface SubnetInfo {
 }
 
 export interface DelegateInfoRaw {
-  delegate_ss58: AccountId,
+  delegateSs58: AccountId,
   take: number,
   nominators: Array<[AccountId, number]>,
-  owner_ss58: AccountId
+  ownerSs58: AccountId
 }
 
 export interface DelegateInfo {
