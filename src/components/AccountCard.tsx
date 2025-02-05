@@ -1,16 +1,16 @@
 import { FunctionComponent, useState } from "react";
 import Identicon from "@polkadot/react-identicon";
 
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Snackbar from "@material-ui/core/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { Account } from "../utils/types";
 import { copyToClipboard } from "../utils/utils";
-import { Theme } from "@material-ui/core";
+import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {

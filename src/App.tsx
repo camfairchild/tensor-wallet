@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { makeStyles } from "@material-ui/core/styles"
+import { makeStyles } from '@mui/styles';
 import { ApiContext, AccountContext } from "./utils/contexts"
 import { ApiCtx, LocalStorageAccountCtx } from "./utils/types"
 import { useApiCreate, useLocalStorage } from "./hooks"
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   main: {
     width: "100%",
-    maxWidth: `${theme.spacing(3) + 650}px`,
+    maxWidth: `calc(${theme.spacing(3)} + 650px)`,
     padding: theme.spacing(2),
     flex: 1,
   },

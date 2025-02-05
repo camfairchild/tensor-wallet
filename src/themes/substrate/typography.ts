@@ -1,7 +1,7 @@
-import { ThemeOptions } from "@material-ui/core/styles"
-import { ThemeOptions as ThemeOptionsNew } from "@mui/material"
+import { DeprecatedThemeOptions } from "@mui/material/styles"
+import { DeprecatedThemeOptions as DeprecatedThemeOptionsNew } from "@mui/material"
 
-const typography: ThemeOptions = {
+const typography: DeprecatedThemeOptions = {
   typography: {
     fontFamily: "Inter, Helvetica, Roboto, Arial, sans-serif",
     h1: {
@@ -66,7 +66,7 @@ const typography: ThemeOptions = {
   },
 }
 
-export const typographyNew: ThemeOptionsNew = {
+export const typographyNew: DeprecatedThemeOptionsNew = {
   typography: {
     fontFamily: "Inter, Helvetica, Roboto, Arial, sans-serif",
     h1: {

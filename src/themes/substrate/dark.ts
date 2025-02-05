@@ -1,15 +1,15 @@
-import { ThemeOptions } from "@material-ui/core/styles"
-import { ThemeOptions as ThemeOptionsNew } from "@mui/material"
+import { DeprecatedThemeOptions } from "@mui/material/styles"
+import { DeprecatedThemeOptions as DeprecatedThemeOptionsNew } from "@mui/material"
 import colors from "./colors"
 import typography, { typographyNew } from "./typography"
 import shadows from "./shadows"
-import { grey } from "@material-ui/core/colors"
+import { grey } from "@mui/material/colors"
 
-const dark: ThemeOptions = {
+const dark: DeprecatedThemeOptions = {
   typography: typography.typography,
   shadows: shadows.shadows,
   palette: {
-    type: "dark",
+    mode: "dark",
     common: {
       black: colors.black,
       white: colors.white,
@@ -40,7 +40,6 @@ const dark: ThemeOptions = {
       primary: colors.white,
       secondary: colors.light.main,
       disabled: colors.dark.light,
-      hint: colors.yellow.main,
     },
     divider: grey[800],
   },
@@ -48,7 +47,7 @@ const dark: ThemeOptions = {
 
 const { hint: textHint, ...restText }: any = dark.palette?.text
 
-export const SubstrateDarkNew: ThemeOptionsNew = {
+export const SubstrateDarkNew: DeprecatedThemeOptionsNew = {
     ...dark,
 
     typography: typographyNew.typography,

@@ -1,11 +1,12 @@
 import { FunctionComponent, useState } from "react"
 
-import { IconButton, Typography, CircularProgress, Link } from "@material-ui/core"
-import { makeStyles, Theme } from "@material-ui/core/styles"
-import Popover from "@material-ui/core/Popover"
-import CachedIcon from "@material-ui/icons/Cached"
-import CheckIcon from "@material-ui/icons/Check"
-import ErrorIcon from "@material-ui/icons/Error"
+import { IconButton, Typography, CircularProgress, Link } from "@mui/material"
+import { Theme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import Popover from "@mui/material/Popover"
+import CachedIcon from "@mui/icons-material/Cached"
+import CheckIcon from "@mui/icons-material/Check"
+import ErrorIcon from "@mui/icons-material/Error"
 
 import { ExtrinsicInfo } from "../utils/types"
 
@@ -50,51 +51,49 @@ const PopoverExtrinsic: FunctionComponent<ExtrinsicInfo> = ({
     }
   }
 
-  return (
-    <>
-      <IconButton
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        onClick={handleClick}
-      >
-        {status === 0 && <CachedIcon color="disabled" />}
-        {status === 1 && <CheckIcon color="action" />}
-        {status === 2 && <ErrorIcon color="error" />}
-        {status === 3 && <CircularProgress />}
-      </IconButton>
-      <Popover
-        elevation={2}
-        transitionDuration={0}
-        id="mouse-over-popover"
-        className={classes.popover}
-        classes={{
-          paper: classes.paper,
-        }}
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        {blockHash ? (
-          <Typography variant="body2">
-            View on Explorer
-          </Typography>
-        ) : (
-          <Typography variant="body2">
-            Pending
-          </Typography>
-        )}
-      </Popover>
-    </>
-  )
+  return (<>
+    <IconButton
+      onMouseEnter={handlePopoverOpen}
+      onMouseLeave={handlePopoverClose}
+      onClick={handleClick}
+      size="large">
+      {status === 0 && <CachedIcon color="disabled" />}
+      {status === 1 && <CheckIcon color="action" />}
+      {status === 2 && <ErrorIcon color="error" />}
+      {status === 3 && <CircularProgress />}
+    </IconButton>
+    <Popover
+      elevation={2}
+      transitionDuration={0}
+      id="mouse-over-popover"
+      className={classes.popover}
+      classes={{
+        paper: classes.paper,
+      }}
+      open={open}
+      anchorEl={anchorEl}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "center",
+      }}
+      transformOrigin={{
+        vertical: "bottom",
+        horizontal: "center",
+      }}
+      onClose={handlePopoverClose}
+      disableRestoreFocus
+    >
+      {blockHash ? (
+        <Typography variant="body2">
+          View on Explorer
+        </Typography>
+      ) : (
+        <Typography variant="body2">
+          Pending
+        </Typography>
+      )}
+    </Popover>
+  </>);
 }
 
 export default PopoverExtrinsic

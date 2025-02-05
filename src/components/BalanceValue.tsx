@@ -1,10 +1,10 @@
-import { FunctionComponent, memo } from "react"
+import { CSSProperties, FunctionComponent, memo } from "react"
 
-import { makeStyles, Theme } from "@material-ui/core/styles"
-import { Box, Typography } from "@material-ui/core"
+import { Theme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import { Box, Typography } from "@mui/material"
 import { SizeScale } from "../utils/types"
 import { prettyBalance } from "../utils/utils"
-import { CSSProperties } from "@material-ui/core/styles/withStyles"
 import { Balance } from "@polkadot/types/interfaces"
 import { bnToBn } from "@polkadot/util"
 import { useApi } from "../hooks"

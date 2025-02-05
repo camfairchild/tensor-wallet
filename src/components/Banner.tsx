@@ -11,7 +11,7 @@ export default function Banner() {
     const [open, setOpen] = useState<boolean>(true);
 
     return (
-    <Modal keepMounted
+    <Modal
         open={open}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"

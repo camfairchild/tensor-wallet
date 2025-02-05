@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary } from './Accordion';
-import { Typography } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles((theme: Theme) => ({
     accordion: {

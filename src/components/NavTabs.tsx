@@ -6,18 +6,20 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import Paper from "@mui/material/Paper";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import SwapHorizSharpIcon from "@material-ui/icons/SwapHorizSharp";
-import CallMadeSharpIcon from "@material-ui/icons/CallMadeSharp";
-import CallReceivedSharpIcon from "@material-ui/icons/CallReceivedSharp";
+import SwapHorizSharpIcon from "@mui/icons-material/SwapHorizSharp";
+import CallMadeSharpIcon from "@mui/icons-material/CallMadeSharp";
+import CallReceivedSharpIcon from "@mui/icons-material/CallReceivedSharp";
 import TollIcon from "@mui/icons-material/Toll";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
@@ -57,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderTopRightRadius: 0,
     borderTopLeftRadius: 0,
 
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       minHeight: "calc(100vh - 320px)",
     },
     backgroundColor: theme.palette.background.paper,

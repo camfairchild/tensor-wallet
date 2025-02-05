@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 
-import { Theme, makeStyles, alpha as fade } from "@material-ui/core";
+import { Theme, alpha as fade } from "@mui/material";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { AccountContext } from "../utils/contexts";
 import { ErrorBoundary, StakeRow } from ".";
@@ -14,13 +16,13 @@ import {
 } from "../utils/types";
 import { useBalance } from "../hooks";
 import Stack from "@mui/material/Stack";
-import Box from "@material-ui/core/Box";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import Pagination from "@mui/material/Pagination";
-import List from "@material-ui/core/List";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import List from "@mui/material/List";
+import CircularProgress from "@mui/material/CircularProgress";
 import Subnet from "./Subnet";
 import DelegateRow from "./DelegateRow";
 

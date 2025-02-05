@@ -1,10 +1,8 @@
 import { FunctionComponent, useContext } from "react"
 
-import {
-  Theme,
-  makeStyles,
-  alpha as fade,
-} from "@material-ui/core/styles"
+import { Theme, alpha as fade } from "@mui/material/styles";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import Table from "@mui/material/Table"
 import TableBody from "@mui/material/TableBody"

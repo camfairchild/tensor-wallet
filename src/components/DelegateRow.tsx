@@ -3,12 +3,13 @@ import { DelegateColumn, DelegateInfo, DelegateInfoRow, DelegateExtra } from "..
 import { BN } from "@polkadot/util"
 import { Balance } from "@polkadot/types/interfaces"
 import StakeForm from "./StakeForm"
-    
+
 import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion"
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import React, { useEffect } from "react"
-import { Theme, Typography, makeStyles } from "@material-ui/core"
+import { Theme, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import '../assets/styles/DelegateRow.css'
 import { getOnChainIdentity } from "../utils/api"
 import { useApi } from "../hooks"

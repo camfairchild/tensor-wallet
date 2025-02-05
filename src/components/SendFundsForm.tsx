@@ -6,16 +6,8 @@ import React, {
   FunctionComponent,
 } from "react"
 import { BN } from "@polkadot/util"
-import {
-  makeStyles,
-  Theme,
-  Button,
-  Typography,
-  LinearProgress,
-  Table,
-  Grid,
-  Box,
-} from "@material-ui/core"
+import { Theme, Button, Typography, LinearProgress, Table, Grid, Box } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import Stack from "@mui/material/Stack"
 import { Balance, Hash } from "@polkadot/types/interfaces"
 import { Keyring } from "@polkadot/keyring"

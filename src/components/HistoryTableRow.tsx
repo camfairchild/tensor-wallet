@@ -4,7 +4,7 @@ import { BN } from "@polkadot/util"
 import { BalanceVisibleContext } from "../utils/contexts"
 import Typography from "@mui/material/Typography";
 import { Balance, Hash } from "@polkadot/types/interfaces"
-import { TableRow, TableCell } from "@material-ui/core"
+import { TableRow, TableCell } from "@mui/material"
 import { Column } from "../utils/types"
 
 import { AccountCard, BalanceValue, PopoverExtrinsic } from "."

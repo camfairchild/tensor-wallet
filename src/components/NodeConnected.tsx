@@ -1,17 +1,18 @@
 import { useState, useEffect, ReactElement } from "react"
 
-import createStyles from "@material-ui/core/styles/createStyles"
-import makeStyles from "@material-ui/core/styles/makeStyles"
-import { Theme } from "@material-ui/core/styles/createTheme"
+import { Theme } from '@mui/material/styles';
 
-import { Typography, Box } from "@material-ui/core"
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+
+import { Typography, Box } from "@mui/material"
 import { ApiPromise } from "@polkadot/api/promise/Api"
 
 import { NETWORKS, BURNR_WALLET } from "../utils/constants"
 import { useApi } from "../hooks"
 import { logger } from "@polkadot/util"
 
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord"
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord"
 import Stack from "@mui/material/Stack"
 
 const useStyles = makeStyles((theme: Theme) =>
