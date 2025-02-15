@@ -104,13 +104,15 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                             const value: string | number = delegate_row[column.id];
                             return (
                             <React.Fragment key={column.id}>
-                                {column.id === "delegate_ss58" && (
-                                <AccountCard account={{ address: value.toString(), name: delegateExtra?.name || ""  }} addressFormat="Compact" />
-                                )}
+                                <Box flex={2}>
+                                    {column.id === "delegate_ss58" && (
+                                    <AccountCard account={{ address: value.toString(), name: delegateExtra?.name || ""  }} addressFormat="Compact" />
+                                    )}
+                                </Box>
                             </React.Fragment>
                             )
                         })}
-                        <Stack direction="column" className="delegatestats-headings" >
+                        <Stack direction="column" className="delegatestats-headings" flex={3} >
                             {columns.map((column) => {
                                 if (!["total_stake"].includes(column.id)) {
                                     return null;
