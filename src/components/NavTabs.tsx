@@ -21,6 +21,7 @@ import SwapHorizSharpIcon from "@mui/icons-material/SwapHorizSharp";
 import CallMadeSharpIcon from "@mui/icons-material/CallMadeSharp";
 import CallReceivedSharpIcon from "@mui/icons-material/CallReceivedSharp";
 import TollIcon from "@mui/icons-material/Toll";
+import HubIcon from "@mui/icons-material/Hub";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import {
@@ -254,7 +255,7 @@ const NavTabs: FunctionComponent = () => {
           />
           <Tab
             label="Neurons"
-            icon={<TollIcon fontSize="small" className={classes.icon} />} 
+            icon={<HubIcon fontSize="small" className={classes.icon} />} 
             className={classes.paper}
             classes={{
               textColorPrimary: classes.selectedTab
