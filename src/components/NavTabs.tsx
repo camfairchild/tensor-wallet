@@ -38,6 +38,7 @@ import {
   BurnrDivider,
   HistoryTable,
   StakeTab,
+  NeuronsTab,
   ErrorBoundary,
 } from ".";
 
@@ -251,6 +252,14 @@ const NavTabs: FunctionComponent = () => {
               textColorPrimary: classes.selectedTab
             }}
           />
+          <Tab
+            label="Neurons"
+            icon={<TollIcon fontSize="small" className={classes.icon} />} 
+            className={classes.paper}
+            classes={{
+              textColorPrimary: classes.selectedTab
+            }}
+          />
         </Tabs>
       </Paper>
 
@@ -293,6 +302,27 @@ const NavTabs: FunctionComponent = () => {
               />
             </Stack>
             <StakeTab
+              delegateInfo={delegateRows}
+              stakeData={stakeData}
+              loader={loader}
+              delegateLoader={delegateLoader}
+              refreshMeta={refreshMeta}
+              delegatesExtras={delegatesExtras}
+            />
+          </ErrorBoundary>
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <ErrorBoundary>
+            <Stack spacing={2} direction="row">
+              <Typography variant="h6" className={classes.rootHeading}>
+                Neurons
+              </Typography>
+              <Button
+                onClick={() => refreshMeta()}
+                startIcon={<RefreshIcon />}
+              />
+            </Stack>
+            <NeuronsTab
               delegateInfo={delegateRows}
               stakeData={stakeData}
               loader={loader}
