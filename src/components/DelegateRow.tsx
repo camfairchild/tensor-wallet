@@ -214,7 +214,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                     </Stack>
                     <Box justifyContent="flex-end" flexDirection="row" alignItems="center">
                         <ErrorBoundary>
-                        <StakeForm hotkeyAddr={delegate_row.delegate_ss58} stake={delegate_row.stake} refreshMeta={refreshMeta} />
+                        <StakeForm hotkeyAddr={delegate_row.delegate_ss58} stake={delegate_row.stake} refreshMeta={refreshMeta} netuid={0} />
                         </ErrorBoundary>
                     </Box>
                     </AccordionDetails>

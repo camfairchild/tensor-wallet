@@ -48,7 +48,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
         <AccordionDetails>
           <Box justifyContent="flex-end" flexDirection="row" alignItems="flex-start">
             <ErrorBoundary>
-              <StakeForm hotkeyAddr={row['hotkey']} stake={row.stake} refreshMeta={() => {}} />
+              <StakeForm hotkeyAddr={row['hotkey']} stake={row.stake} refreshMeta={() => {}} netuid={0} />
             </ErrorBoundary>
           </Box>
         </AccordionDetails>

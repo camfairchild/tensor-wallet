@@ -81,9 +81,10 @@ interface StakeFormProps {
   hotkeyAddr: string,
   stake: string | number,
   refreshMeta: () => void,
+  netuid: number,
 }
 
-export default function StakeForm({ hotkeyAddr, stake, refreshMeta }: StakeFormProps) {
+export default function StakeForm({ hotkeyAddr, stake, refreshMeta, netuid }: StakeFormProps) {
   const classes = useStyles()
   const { account, setCurrentAccount } = useContext(AccountContext)
   const balanceArr = useBalance(account.accountAddress)
@@ -146,7 +147,7 @@ export default function StakeForm({ hotkeyAddr, stake, refreshMeta }: StakeFormP
       const injector = await web3FromAddress(sender);
       setLastAction(false)
       await api.tx.subtensorModule
-        .addStake(hotkeyAddr, stakeAmount)
+        .addStake(hotkeyAddr, stakeAmount, netuid)
         .signAndSend( sender, { signer: injector.signer, withSignedTransaction: true }, (result) => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
@@ -200,7 +201,7 @@ export default function StakeForm({ hotkeyAddr, stake, refreshMeta }: StakeFormP
       const sender = account.accountAddress;
       const injector = await web3FromAddress(sender);
       await api.tx.subtensorModule
-        .removeStake(hotkeyAddr, unstakeAmount)
+        .removeStake(hotkeyAddr, unstakeAmount, netuid)
         .signAndSend( sender, { signer: injector.signer, withSignedTransaction: true }, (result) => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
