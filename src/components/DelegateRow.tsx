@@ -171,7 +171,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                             </React.Fragment>
                             )
                         })}
-                        <Stack direction="column" justifyContent="space-between" alignItems="center" width="100%" flex={2} >
+                        <Stack direction="column" justifyContent="space-between" alignItems="center" width="100%" flex={3} >
                         {columns.map((column) => {
                             if (!["stake", "nominators"].includes(column.id)) {
                                 return null;
@@ -186,7 +186,14 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                                             <Typography style={{
                                                 fontWeight: "bold",
                                             }} >Nominators:</Typography>
-                                            <Typography>{value.toString() }</Typography>
+                                            <Typography
+                                                style={{
+                                                    width: "100%",
+                                                    justifyContent: "flex-end",
+                                                    display: "flex",
+                                                    paddingRight: "0.5em"
+                                                }}
+                                            >{value.toString() }</Typography>
                                         </Stack>
                                     </React.Fragment>
                                 )}
