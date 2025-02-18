@@ -1,5 +1,5 @@
 import { ApiPromise } from "@polkadot/api/promise/Api";
-import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData, Identity, PalletRegistryRegistration, PalletSubtensorChainIdentity } from "./types";
+import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData, Identity, PalletRegistryRegistration, PalletSubtensorChainIdentity, SubnetState, DynamicInfo, DynamicInfoRaw } from "./types";
 import { AccountId } from "@polkadot/types/interfaces";
 import { Option } from "@polkadot/types";
 import { HexString } from "@polkadot/util/types";
@@ -197,3 +197,39 @@ export async function getMetagraph(api: ApiPromise): Promise<Metagraph> {
     
     return _meta;
   };
+
+export async function getSubnetState(api: ApiPromise, netuid: number): Promise<SubnetState | null> {
+  const subnet_info_result_option = await queryRuntimeApi(api, "SubnetInfoRuntimeApi_get_subnet_state", [netuid]);
+  if (!!!subnet_info_result_option) {
+    return null;
+  }
+  const subnet_info_json = subnet_info_result_option.toJSON() as any as SubnetState;
+
+  return subnet_info_json;
+}
+
+export async function getDynamicInfo(api: ApiPromise, netuid: number): Promise<DynamicInfo | null> {
+  const dynamic_info_result_option = await queryRuntimeApi(api, "SubnetInfoRuntimeApi_get_dynamic_info", [netuid]);
+  if (!!!dynamic_info_result_option) {
+    return null;
+  }
+  let utf8decoder = new TextDecoder();
+
+  const dynamic_info_json = dynamic_info_result_option.toJSON() as any as DynamicInfoRaw;
+  const dynamic_info = {
+    ...dynamic_info_json,
+    subnet_name: utf8decoder.decode(new Uint8Array(dynamic_info_json.subnet_name)),
+    token_symbol: utf8decoder.decode(new Uint8Array(dynamic_info_json.token_symbol)),
+    subnet_identity: dynamic_info_json.subnet_identity ? Object.fromEntries(
+      Object.entries(dynamic_info_json.subnet_identity).map(([key, value]) => {
+        if (value === null) {
+          return [key, null];
+        }
+        return [key, utf8decoder.decode(new Uint8Array(value))];
+      })
+    ) : null,
+    moving_price: dynamic_info_json.moving_price.toNumber(),
+  } as DynamicInfo;
+
+  return dynamic_info;
+}

@@ -1,4 +1,4 @@
-import { AccountId, Balance, Hash, Index, RefCount } from "@polkadot/types/interfaces"
+import { AccountId, Balance, FixedI128, Hash, Index, RefCount } from "@polkadot/types/interfaces"
 import { u32 } from "@polkadot/types"
 import { Codec } from "@polkadot/types/types"
 import { ApiPromise } from "@polkadot/api/promise/Api"
@@ -177,6 +177,96 @@ export interface Neuron {
 export interface Metagraph {
   // [netuid: number]: Neuron[]
   [key: string]: Neuron[]
+}
+
+export interface SubnetState {
+  netuid: number,
+  hotkeys: string[],
+  coldkeys: string[],
+  active: boolean[],
+  validator_permit: boolean[],
+  pruning_score: number[],
+  last_update: number[],
+  emission: number[],
+  dividends: number[],
+  incentives: number[],
+  consensus: number[],
+  trust: number[],
+  rank: number[],
+  block_at_registration: number[],
+  alpha_stake: number[],
+  tao_stake: number[],
+  total_stake: number[],
+  emission_history: number[][],
+}
+
+
+export interface SubnetIdentityV2Raw {
+  subnet_name: number[],
+  github_repo: number[],
+  subnet_contact: number[],
+  subnet_url: number[],
+  discord: number[],
+  description: number[],
+  additional: number[],
+}
+
+export interface SubnetIdentityV2 {
+    subnet_name: string,
+    github_repo: string,
+    subnet_contact: string,
+    subnet_url: string,
+    discord: string,
+    description: string,
+    additional: string,
+}
+
+export interface DynamicInfoRaw {
+  netuid: number,
+  owner_hotkey: AccountId,
+  owner_coldkey: AccountId,
+  subnet_name: number[],
+  token_symbol: number[],
+  tempo: number,
+  last_step: number,
+  blocks_since_last_step: number,
+  emission: number,
+  alpha_in: number,
+  alpha_out: number,
+  tao_in: number,
+  alpha_out_emission: number,
+  alpha_in_emission: number,
+  tao_in_emission: number,
+  pending_alpha_emission: number,
+  pending_root_emission: number,
+  subnet_volume: number,
+  network_registered_at: number,
+  subnet_identity: SubnetIdentityV2Raw | null,
+  moving_price: FixedI128, // float
+}
+
+export interface DynamicInfo {
+  netuid: number,
+  owner_hotkey: AccountId,
+  owner_coldkey: AccountId,
+  subnet_name: string, // from bytes, UTF-8
+  token_symbol: string, // from bytes, UTF-8
+  tempo: number,
+  last_step: number,
+  blocks_since_last_step: number,
+  emission: number,
+  alpha_in: number,
+  alpha_out: number,
+  tao_in: number,
+  alpha_out_emission: number,
+  alpha_in_emission: number,
+  tao_in_emission: number,
+  pending_alpha_emission: number,
+  pending_root_emission: number,
+  subnet_volume: number,
+  network_registered_at: number,
+  subnet_identity: SubnetIdentityV2 | null,
+  moving_price: number, // float
 }
 
 export interface AxonInfo {
