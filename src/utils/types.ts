@@ -1,421 +1,432 @@
-import { AccountId, Balance, FixedI128, Hash, Index, RefCount } from "@polkadot/types/interfaces"
-import { u32 } from "@polkadot/types"
-import { Codec } from "@polkadot/types/types"
-import { ApiPromise } from "@polkadot/api/promise/Api"
-import { KeyringPair } from "@polkadot/keyring/types"
-import { HexString } from "@polkadot/util/types"
+import {
+  AccountId,
+  Balance,
+  FixedI128,
+  Hash,
+  Index,
+  RefCount,
+} from "@polkadot/types/interfaces";
+import { u32 } from "@polkadot/types";
+import { Codec } from "@polkadot/types/types";
+import { ApiPromise } from "@polkadot/api/promise/Api";
+import { KeyringPair } from "@polkadot/keyring/types";
+import { HexString } from "@polkadot/util/types";
 
 export interface Option {
-  network: string
-  client: string | undefined
-  provider: string
+  network: string;
+  client: string | undefined;
+  provider: string;
 }
 
 export interface SimpleProvider {
-  name: string
-  id: string
-  client: string
-  endpoints: string[]
+  name: string;
+  id: string;
+  client: string;
+  endpoints: string[];
 }
 
 export interface Account {
-  address: string
-  name: string
+  address: string;
+  name: string;
 }
 
 export interface AccountCtx {
-  accountAddress: string
-  accountName: string
+  accountAddress: string;
+  accountName: string;
 }
 
 export interface LocalStorageAccountCtx extends AccountCtx {
-  userHistory: EvtTxCtx
+  userHistory: EvtTxCtx;
 }
 
 export interface CreateAccountCtx {
-  account: LocalStorageAccountCtx
-  setCurrentAccount: (account: LocalStorageAccountCtx) => void
+  account: LocalStorageAccountCtx;
+  setCurrentAccount: (account: LocalStorageAccountCtx) => void;
 }
 
 export interface AdminCtx {
-  adminAddress: string
-  adminPair: KeyringPair
-  deriveAdmin: (userName: string) => string
-  treasuryAddress: string
-  userName: string
+  adminAddress: string;
+  adminPair: KeyringPair;
+  deriveAdmin: (userName: string) => string;
+  treasuryAddress: string;
+  userName: string;
 }
 
 export interface ApiCtx {
-  api: ApiPromise,
-  network: string,
-  setNetwork: (network: string) => void,
+  api: ApiPromise;
+  network: string;
+  setNetwork: (network: string) => void;
 }
 
 export interface BalanceVisibilityCtx {
-  balanceVisibility: boolean
-  setBalanceVisibility: (bal: boolean) => void
+  balanceVisibility: boolean;
+  setBalanceVisibility: (bal: boolean) => void;
 }
 
 export interface MgrEvent {
-  when: Date
-  method: string
-  amount: Balance
-  address: string
-  key: string
-  wasSent: boolean | null
-  from: string | null
-  to: string
+  when: Date;
+  method: string;
+  amount: Balance;
+  address: string;
+  key: string;
+  wasSent: boolean | null;
+  from: string | null;
+  to: string;
 }
 
-export type EvtMgrCtx = MgrEvent[]
+export type EvtMgrCtx = MgrEvent[];
 
 export interface TxEvent {
-  withWhom: string
-  extrinsic: string
-  value: string | number
-  status: string | number
-  blockHash: Hash | null
+  withWhom: string;
+  extrinsic: string;
+  value: string | number;
+  status: string | number;
+  blockHash: Hash | null;
 }
 
-export type EvtTxCtx = TxEvent[]
+export type EvtTxCtx = TxEvent[];
 
 export interface AccountData extends Codec {
-  free: Balance
-  reserved: Balance
-  miscFrozen: Balance
-  feeFrozen: Balance
-  txCount: u32
-  sessionIndex: u32
+  free: Balance;
+  reserved: Balance;
+  miscFrozen: Balance;
+  feeFrozen: Balance;
+  txCount: u32;
+  sessionIndex: u32;
 }
 
 export interface AccountInfo extends Codec {
-  nonce: Index
-  refcount: RefCount
-  data: AccountData
+  nonce: Index;
+  refcount: RefCount;
+  data: AccountData;
 }
 
 export interface UserInfo {
-  active: boolean
-  address: string
-  created: Date
-  balance: Balance
-  reserved: Balance
-  feeFrozen: Balance
-  miscFrozen: Balance
+  active: boolean;
+  address: string;
+  created: Date;
+  balance: Balance;
+  reserved: Balance;
+  feeFrozen: Balance;
+  miscFrozen: Balance;
 }
 
 export interface ExtrinsicInfo {
-  status: string | number
-  blockHash: Hash | null
+  status: string | number;
+  blockHash: Hash | null;
 }
 
 export interface Data extends ExtrinsicInfo {
-  withWhom: string
-  value: string | number
-  extrinsic: string
+  withWhom: string;
+  value: string | number;
+  extrinsic: string;
 }
 
 export interface SizeScale {
-  size?: "large" | "medium" | "small"
+  size?: "large" | "medium" | "small";
 }
 
 export interface Column {
-  id: "withWhom" | "extrinsic" | "value" | "status" | "blockHash"
-  label: string
-  minWidth?: number
-  maxWidth?: number
-  width?: number
-  align?: "right"
+  id: "withWhom" | "extrinsic" | "value" | "status" | "blockHash";
+  label: string;
+  minWidth?: number;
+  maxWidth?: number;
+  width?: number;
+  align?: "right";
 }
 
 export interface StakeInfo {
-  hotkey: string
-  coldkey: string
-  netuid: number
-  stake: number | string
+  hotkey: string;
+  coldkey: string;
+  netuid: number;
+  stake: number | string;
 }
 export interface StakeData {
-  [key: string]: StakeInfo[]
+  [key: string]: StakeInfo[];
 }
 
 export interface StakeColumn {
-  id: "hotkey" | "stake"
-  label: string
-  minWidth?: number
-  maxWidth?: number
-  width?: number
-  align?: "right"
+  id: "hotkey" | "stake";
+  label: string;
+  minWidth?: number;
+  maxWidth?: number;
+  width?: number;
+  align?: "right";
 }
 
 export interface DelegateColumn {
-  id: "delegate_ss58" | "owner_ss58" | "nominators" | "total_stake" | "take" | "stake"
-  label: string
-  minWidth?: number
-  maxWidth?: number
-  width?: number
-  align?: "right"
+  id:
+    | "delegate_ss58"
+    | "owner_ss58"
+    | "nominators"
+    | "total_stake"
+    | "take"
+    | "stake";
+  label: string;
+  minWidth?: number;
+  maxWidth?: number;
+  width?: number;
+  align?: "right";
 }
 
 export interface DelegateInfoRow {
-  delegate_ss58: string
-  owner_ss58: string
-  nominators: number
-  total_stake: number
-  take: number
-  stake: number
+  delegate_ss58: string;
+  owner_ss58: string;
+  nominators: number;
+  total_stake: number;
+  take: number;
+  stake: number;
 }
 
 export interface Neuron {
-  hotkey: string
-  coldkey: string
+  hotkey: string;
+  coldkey: string;
   stake: {
-    [key: string]: number
-  }
-  uid: number
+    [key: string]: number;
+  };
+  uid: number;
 }
 
 export interface Metagraph {
   // [netuid: number]: Neuron[]
-  [key: string]: Neuron[]
+  [key: string]: Neuron[];
 }
 
 export interface SubnetState {
-  netuid: number,
-  hotkeys: string[],
-  coldkeys: string[],
-  active: boolean[],
-  validator_permit: boolean[],
-  pruning_score: number[],
-  last_update: number[],
-  emission: number[],
-  dividends: number[],
-  incentives: number[],
-  consensus: number[],
-  trust: number[],
-  rank: number[],
-  block_at_registration: number[],
-  alpha_stake: number[],
-  tao_stake: number[],
-  total_stake: number[],
-  emission_history: number[][],
+  netuid: number;
+  hotkeys: string[];
+  coldkeys: string[];
+  active: boolean[];
+  validator_permit: boolean[];
+  pruning_score: number[];
+  last_update: number[];
+  emission: number[];
+  dividends: number[];
+  incentives: number[];
+  consensus: number[];
+  trust: number[];
+  rank: number[];
+  block_at_registration: number[];
+  alpha_stake: number[];
+  tao_stake: number[];
+  total_stake: number[];
+  emission_history: number[][];
 }
 
-
 export interface SubnetIdentityV2Raw {
-  subnet_name: number[],
-  github_repo: number[],
-  subnet_contact: number[],
-  subnet_url: number[],
-  discord: number[],
-  description: number[],
-  additional: number[],
+  subnet_name: number[];
+  github_repo: number[];
+  subnet_contact: number[];
+  subnet_url: number[];
+  discord: number[];
+  description: number[];
+  additional: number[];
 }
 
 export interface SubnetIdentityV2 {
-    subnet_name: string,
-    github_repo: string,
-    subnet_contact: string,
-    subnet_url: string,
-    discord: string,
-    description: string,
-    additional: string,
+  subnet_name: string;
+  github_repo: string;
+  subnet_contact: string;
+  subnet_url: string;
+  discord: string;
+  description: string;
+  additional: string;
 }
 
 export interface DynamicInfoRaw {
-  netuid: number,
-  owner_hotkey: AccountId,
-  owner_coldkey: AccountId,
-  subnet_name: number[],
-  token_symbol: number[],
-  tempo: number,
-  last_step: number,
-  blocks_since_last_step: number,
-  emission: number,
-  alpha_in: number,
-  alpha_out: number,
-  tao_in: number,
-  alpha_out_emission: number,
-  alpha_in_emission: number,
-  tao_in_emission: number,
-  pending_alpha_emission: number,
-  pending_root_emission: number,
-  subnet_volume: number,
-  network_registered_at: number,
-  subnet_identity: SubnetIdentityV2Raw | null,
-  moving_price: FixedI128, // float
+  netuid: number;
+  owner_hotkey: AccountId;
+  owner_coldkey: AccountId;
+  subnet_name: number[];
+  token_symbol: number[];
+  tempo: number;
+  last_step: number;
+  blocks_since_last_step: number;
+  emission: number;
+  alpha_in: number;
+  alpha_out: number;
+  tao_in: number;
+  alpha_out_emission: number;
+  alpha_in_emission: number;
+  tao_in_emission: number;
+  pending_alpha_emission: number;
+  pending_root_emission: number;
+  subnet_volume: number;
+  network_registered_at: number;
+  subnet_identity: SubnetIdentityV2Raw | null;
+  moving_price: FixedI128; // float
 }
 
 export interface DynamicInfo {
-  netuid: number,
-  owner_hotkey: AccountId,
-  owner_coldkey: AccountId,
-  subnet_name: string, // from bytes, UTF-8
-  token_symbol: string, // from bytes, UTF-8
-  tempo: number,
-  last_step: number,
-  blocks_since_last_step: number,
-  emission: number,
-  alpha_in: number,
-  alpha_out: number,
-  tao_in: number,
-  alpha_out_emission: number,
-  alpha_in_emission: number,
-  tao_in_emission: number,
-  pending_alpha_emission: number,
-  pending_root_emission: number,
-  subnet_volume: number,
-  network_registered_at: number,
-  subnet_identity: SubnetIdentityV2 | null,
-  moving_price: number, // float
+  netuid: number;
+  owner_hotkey: AccountId;
+  owner_coldkey: AccountId;
+  subnet_name: string; // from bytes, UTF-8
+  token_symbol: string; // from bytes, UTF-8
+  tempo: number;
+  last_step: number;
+  blocks_since_last_step: number;
+  emission: number;
+  alpha_in: number;
+  alpha_out: number;
+  tao_in: number;
+  alpha_out_emission: number;
+  alpha_in_emission: number;
+  tao_in_emission: number;
+  pending_alpha_emission: number;
+  pending_root_emission: number;
+  subnet_volume: number;
+  network_registered_at: number;
+  subnet_identity: SubnetIdentityV2 | null;
+  moving_price: number; // float
 }
 
 export interface AxonInfo {
-  block: number, // --- Axon serving block.
-  version: number, // --- Axon version
-  ip: string, // --- Axon u128 encoded ip address of type v6 or v4. serialized to string.
-  port: number, // --- Axon u16 encoded port.
-  ip_type: number, // --- Axon ip type, 4 for ipv4 and 6 for ipv6.
-  protocol: number, // --- Axon protocol. TCP, UDP, other.
-  placeholder1: number, // --- Axon proto placeholder 1.
-  placeholder2: number // --- Axon proto placeholder 1.
+  block: number; // --- Axon serving block.
+  version: number; // --- Axon version
+  ip: string; // --- Axon u128 encoded ip address of type v6 or v4. serialized to string.
+  port: number; // --- Axon u16 encoded port.
+  ip_type: number; // --- Axon ip type, 4 for ipv4 and 6 for ipv6.
+  protocol: number; // --- Axon protocol. TCP, UDP, other.
+  placeholder1: number; // --- Axon proto placeholder 1.
+  placeholder2: number; // --- Axon proto placeholder 1.
 }
 
 export interface PrometheusInfo {
-  block: number, // --- Prometheus serving block.
-  version: number, // --- Prometheus version.
-  ip: string, // --- Prometheus u128 encoded ip address of type v6 or v4. serialized to string.
-  port: number, // --- Prometheus u16 encoded port.
-  ip_type: number, // --- Prometheus ip type, 4 for ipv4 and 6 for ipv6.
+  block: number; // --- Prometheus serving block.
+  version: number; // --- Prometheus version.
+  ip: string; // --- Prometheus u128 encoded ip address of type v6 or v4. serialized to string.
+  port: number; // --- Prometheus u16 encoded port.
+  ip_type: number; // --- Prometheus ip type, 4 for ipv4 and 6 for ipv6.
 }
 
 export interface SubnetInfo {
-  netuid: number,
-  rho: number,
-  kappa: number,
-  difficulty: number,
-  immunity_period: number,
-  validator_batch_size: number,
-  validator_sequence_length: number,
-  validator_epochs_per_reset: number,
-  validator_epoch_length: number,
-  max_allowed_validators: number,
-  min_allowed_weights: number,
-  max_weights_limit: number,
-  scaling_law_power: number,
-  synergy_scaling_law_power: number,
-  subnetwork_n: number,
-  max_allowed_uids: number,
-  blocks_since_last_step: number,
-  tempo: number,
-  network_modality: number,
-  network_connect: Array<number>,
-  emission_values: number
+  netuid: number;
+  rho: number;
+  kappa: number;
+  difficulty: number;
+  immunity_period: number;
+  validator_batch_size: number;
+  validator_sequence_length: number;
+  validator_epochs_per_reset: number;
+  validator_epoch_length: number;
+  max_allowed_validators: number;
+  min_allowed_weights: number;
+  max_weights_limit: number;
+  scaling_law_power: number;
+  synergy_scaling_law_power: number;
+  subnetwork_n: number;
+  max_allowed_uids: number;
+  blocks_since_last_step: number;
+  tempo: number;
+  network_modality: number;
+  network_connect: Array<number>;
+  emission_values: number;
 }
 
 export interface DelegateInfoRaw {
-  delegateSs58: AccountId,
-  take: number,
-  nominators: Array<[AccountId, number]>,
-  ownerSs58: AccountId
+  delegateSs58: AccountId;
+  take: number;
+  nominators: Array<[AccountId, number]>;
+  ownerSs58: AccountId;
 }
 
 export interface DelegateInfo {
-  delegate_ss58: string,
-  take: number,
-  nominators: Array<[string, number]>,
-  owner_ss58: string,
-  total_stake: number,
-  stake: number, // user stake on this delegate
+  delegate_ss58: string;
+  take: number;
+  nominators: Array<[string, number]>;
+  owner_ss58: string;
+  total_stake: number;
+  stake: number; // user stake on this delegate
 }
 
 export interface NeuronInfo {
-  hotkey: AccountId
-  coldkey: AccountId
-  uid: number
-  netuid: number
-  active: Boolean
-  axon_info: AxonInfo
-  prometheus_info: PrometheusInfo
-  stake: Array<[AccountId, number]> // map of coldkey to stake on this neuron/hotkey (includes delegations)
-  rank: number
-  emission: number
-  incentive: number
-  consensus: number
-  weight_consensus: number
-  trust: number
-  validator_trust: number
-  dividends: number
-  last_update: number
-  validator_permit: Boolean
-  weights: Array<[number, number]> // map of uid to weight
-  bonds: Array<[number, number]> // map of uid to bond
-  pruning_score: number
+  hotkey: AccountId;
+  coldkey: AccountId;
+  uid: number;
+  netuid: number;
+  active: Boolean;
+  axon_info: AxonInfo;
+  prometheus_info: PrometheusInfo;
+  stake: Array<[AccountId, number]>; // map of coldkey to stake on this neuron/hotkey (includes delegations)
+  rank: number;
+  emission: number;
+  incentive: number;
+  consensus: number;
+  weight_consensus: number;
+  trust: number;
+  validator_trust: number;
+  dividends: number;
+  last_update: number;
+  validator_permit: Boolean;
+  weights: Array<[number, number]>; // map of uid to weight
+  bonds: Array<[number, number]>; // map of uid to bond
+  pruning_score: number;
 }
 
-
 export interface NeuronInfoLite {
-  hotkey: AccountId
-  coldkey: AccountId
-  uid: number
-  netuid: number
-  active: Boolean
-  axon_info: AxonInfo
-  prometheus_info: PrometheusInfo
-  stake: Array<[AccountId, number]> // map of coldkey to stake on this neuron/hotkey (includes delegations)
-  rank: number
-  emission: number
-  incentive: number
-  consensus: number
-  weight_consensus: number
-  trust: number
-  validator_trust: number
-  dividends: number
-  last_update: number
-  validator_permit: Boolean
-  pruning_score: number
+  hotkey: AccountId;
+  coldkey: AccountId;
+  uid: number;
+  netuid: number;
+  active: Boolean;
+  axon_info: AxonInfo;
+  prometheus_info: PrometheusInfo;
+  stake: Array<[AccountId, number]>; // map of coldkey to stake on this neuron/hotkey (includes delegations)
+  rank: number;
+  emission: number;
+  incentive: number;
+  consensus: number;
+  weight_consensus: number;
+  trust: number;
+  validator_trust: number;
+  dividends: number;
+  last_update: number;
+  validator_permit: Boolean;
+  pruning_score: number;
 }
 
 export interface RawMetagraph {
-  [netuid: string]: NeuronInfoLite[]
+  [netuid: string]: NeuronInfoLite[];
 }
 
 export interface DelegateExtra {
-  name: string
-  url: string
-  description: string
-  signature: string
-  identity: Identity | null
+  name: string;
+  url: string;
+  description: string;
+  signature: string;
+  identity: Identity | null;
 }
 
 export interface DelegateExtras {
-  [key: string ]: DelegateExtra
+  [key: string]: DelegateExtra;
 }
 
 export interface Identity {
-  name: string | null
-  image: string | null
+  name: string | null;
+  image: string | null;
 }
 
 export interface PalletRegistryRegistration {
-  deposit: string // of a u128
+  deposit: string; // of a u128
   info: {
-    display: string
-    legal: string
-    web: string
-    email: string
-    twitter: string
-    image: string
-    pgpFingerprint: string | null
-    riot: string
-    additional: any[]
-  }
+    display: string;
+    legal: string;
+    web: string;
+    email: string;
+    twitter: string;
+    image: string;
+    pgpFingerprint: string | null;
+    riot: string;
+    additional: any[];
+  };
 }
 
 export interface PalletSubtensorChainIdentity {
-  name: string
-  url: string
-  image: string
-  discord: string
-  description: string
-  additional: any
+  name: string;
+  url: string;
+  image: string;
+  discord: string;
+  description: string;
+  additional: any;
 }
