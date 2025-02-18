@@ -45,9 +45,9 @@ import {
 
 import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
-import { CreateAccountCtx, StakeData } from "../utils/types";
+import { CreateAccountCtx } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
-import { getDelegateInfo, getDelegatesJson, getMetagraph, getStakeInfoForColdkey } from "../utils/api";
+import { getAllSubnets, getDelegateInfo, getDelegatesJson, getStakeInfoForColdkey } from "../utils/api";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -141,10 +141,16 @@ const NavTabs: FunctionComponent = () => {
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
   const [delegateRows, setDelegateRows] = useState<DelegateInfo[]>([]);
   const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({});
+  const [subnets, setSubnets] = useState<number[]>([]);
 
   const getRows = async (account: LocalStorageAccountCtx) => {
     const stakeInfo = await getStakeInfoForColdkey (apiCtx.api, account.accountAddress);
     setStakeData(stakeInfo);
+  };
+
+  const getSubnets = async (): Promise<number[]> => {
+    const subnets = await getAllSubnets(apiCtx.api);
+    return subnets;
   };
 
   const refreshMeta = async () => {
@@ -166,6 +172,10 @@ const NavTabs: FunctionComponent = () => {
 
       setLoader(false);
       setDelegateLoader(false);
+    });
+    
+    getSubnets().then((subnets) => {
+      setSubnets(subnets);
     });
   };
 
@@ -309,6 +319,7 @@ const NavTabs: FunctionComponent = () => {
               delegateLoader={delegateLoader}
               refreshMeta={refreshMeta}
               delegatesExtras={delegatesExtras}
+              subnets={subnets}
             />
           </ErrorBoundary>
         </TabPanel>
@@ -324,13 +335,12 @@ const NavTabs: FunctionComponent = () => {
               />
             </Stack>
             <NeuronsTab
-              delegateInfo={delegateRows}
               stakeData={stakeData}
               loader={loader}
               rowLoader={rowLoader}
-              delegateLoader={delegateLoader}
               refreshMeta={refreshMeta}
-              delegatesExtras={delegatesExtras}
+              delegateInfo={delegateRows}
+              subnets={subnets}
             />
           </ErrorBoundary>
         </TabPanel>

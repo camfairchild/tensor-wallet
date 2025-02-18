@@ -1,7 +1,6 @@
 import { ApiPromise } from "@polkadot/api/promise/Api";
 import { NeuronInfoLite, RawMetagraph, DelegateInfo, DelegateInfoRaw, SubnetInfo, Metagraph, DelegateExtras, StakeInfo, StakeData, Identity, PalletRegistryRegistration, PalletSubtensorChainIdentity } from "./types";
 import { AccountId } from "@polkadot/types/interfaces";
-import { compactStripLength, hexToU8a, compactAddLength, u8aToHex } from "@polkadot/util";
 import { Option } from "@polkadot/types";
 import { HexString } from "@polkadot/util/types";
 
@@ -129,6 +128,7 @@ export async function getDelegateInfo(api: ApiPromise): Promise<DelegateInfo[]> 
         owner_ss58: delegate.ownerSs58.toString(),
         nominators,
         total_stake,
+        stake: 0,
       };
     });
 
@@ -157,6 +157,12 @@ export async function getStakeInfoForColdkey(api: ApiPromise, coldkey_ss58: stri
     return Number(stake_info.stake) > 0;
   });
   return clean_result;
+}
+
+export async function getAllSubnets(api: ApiPromise): Promise<number[]> {
+  const subnets_info = await queryRuntimeApi(api, "SubnetInfoRuntimeApi_get_subnets_info", []);
+  const subnets_json = subnets_info.toJSON() as any[] as SubnetInfo[];
+  return subnets_json.map((subnet: SubnetInfo) => subnet.netuid);
 }
 
 export async function getMetagraph(api: ApiPromise): Promise<Metagraph> {

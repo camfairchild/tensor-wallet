@@ -20,23 +20,11 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import Pagination from "@mui/material/Pagination";
-import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
-import Subnet from "./Subnet";
-import DelegateRow from "./DelegateRow";
+import SubnetSelector, { SubnetProvider, useSubnet } from "./SubnetSelector";
 
 const columns: StakeColumn[] = [
   { id: "hotkey", label: "Hotkey", width: 160 },
-  { id: "stake", label: "Stake" },
-];
-
-const delegateInfoColumns: DelegateColumn[] = [
-  { id: "delegate_ss58", label: "Delegate Hotkey", width: 160 },
-  { id: "owner_ss58", label: "Owner Coldkey", width: 160 },
-  { id: "nominators", label: "Nominators" },
-  { id: "total_stake", label: "Total Stake" },
-  { id: "take", label: "Take" },
   { id: "stake", label: "Stake" },
 ];
 
@@ -85,48 +73,37 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface PropsNeuronsTab {
   stakeData: StakeInfo[];
-  delegateInfo: DelegateInfo[];
   loader: boolean;
   rowLoader: boolean;
-  delegateLoader: boolean;
   refreshMeta: () => void;
-  delegatesExtras: DelegateExtras;
+  delegateInfo: DelegateInfo[];
+  subnets: number[];
 }
 
 export default function NeuronsTab({
   stakeData,
   loader,
   rowLoader,
-  delegateLoader,
   refreshMeta,
   delegateInfo,
-  delegatesExtras,
+  subnets,
 }: PropsNeuronsTab) {
   const classes = useStyles();
   const { account } = useContext(AccountContext);
   const balanceArr = useBalance(account?.accountAddress || "");
   const unit = balanceArr[3];
-  const [page, setPage] = useState(1);
+  const { state: { netuid } } = useSubnet();
 
   const handleChange = (panel: string) => {
     setExpanded(expanded === panel ? false : panel);
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value);
-  };
-
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [expandedDelegate, setExpandedDelegate] =
-    React.useState<boolean>(false);
 
   const delegates_ss58 = delegateInfo.map((delegate) => delegate.delegate_ss58);
   const stakeDataNoDelegates = stakeData.filter(
     (stakeInfo: StakeInfo) => delegates_ss58.includes(stakeInfo.hotkey) === false
-  );
+  ).filter((stakeInfo: StakeInfo) => stakeInfo.netuid === netuid);
 
   return (
     <Stack
@@ -134,88 +111,94 @@ export default function NeuronsTab({
       direction="column"
       divider={<Divider orientation="vertical" flexItem />}
     >
-      {loader ? (
-        <Paper className={classes.loadingPaper}>
-          <Stack spacing={2} direction="column" justifyContent="center">
-            <Box>
-              <CircularProgress color="primary" />
-            </Box>
-            <Typography variant="body2">Syncing the Metagraph</Typography>
-          </Stack>
-        </Paper>
-      ) : (
-        <React.Fragment>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            className={classes.table}
-          >
-            {columns.map((column) => (
-              <Typography
-                key={column.id}
-                align={column.align}
-                style={{
-                  width: column.width,
-                  minWidth: column.minWidth,
-                  maxWidth: column.maxWidth,
-                }}
+      <SubnetProvider defaultNetuid={netuid}>
+        <SubnetSelector subnets={subnets} >
+          
+          {loader ? (
+            <Paper className={classes.loadingPaper}>
+              <Stack spacing={2} direction="column" justifyContent="center">
+                <Box>
+                  <CircularProgress color="primary" />
+                </Box>
+                <Typography variant="body2">Syncing the Metagraph</Typography>
+              </Stack>
+            </Paper>
+          ) : (
+            <React.Fragment>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                className={classes.table}
               >
-                {column.label}
-              </Typography>
-            ))}
-          </Stack>
-          <Box>
-            <Box className={classes.rowRoot}>
-              {rowLoader ? (
-                <Paper className={classes.subLoadingPaper}>
-                  <Stack spacing={2} direction="column" justifyContent="center">
-                    <Box>
-                      <CircularProgress color="primary" />
-                    </Box>
-                    <Typography variant="body2">
-                      Syncing Metagraph...
-                    </Typography>
-                  </Stack>
-                </Paper>
-              ) : (
-                <ErrorBoundary>
-                  <Stack
-                    direction="column"
-                    spacing={1}
-                    alignItems="center"
-                    marginTop="2em"
+                {columns.map((column) => (
+                  <Typography
+                    key={column.id}
+                    align={column.align}
+                    style={{
+                      width: column.width,
+                      minWidth: column.minWidth,
+                      maxWidth: column.maxWidth,
+                    }}
                   >
-                    {!!stakeDataNoDelegates.length &&
-                      stakeDataNoDelegates.map((stakeInfo: StakeInfo) => {
-                        return (
-                          <StakeRow
-                            refreshMeta={refreshMeta}
-                            expanded={!!expanded ? expanded.slice(1) : expanded}
-                            onChange={() =>
-                              handleChange("0" + stakeInfo["hotkey"])
-                            }
-                            unit={unit}
-                            key={`row-${stakeInfo.hotkey}-${stakeInfo.netuid}`}
-                            row={stakeInfo}
-                            columns={columns}
-                          />
-                        );
-                      })}
-                    {!!!stakeDataNoDelegates.length && (
-                      <Typography
-                        variant="body2"
-                        className={classes.no_neurons_error}
+                    {column.label}
+                  </Typography>
+                ))}
+              </Stack>
+              <Box>
+                <Box className={classes.rowRoot}>
+                  {rowLoader ? (
+                    <Paper className={classes.subLoadingPaper}>
+                      <Stack spacing={2} direction="column" justifyContent="center">
+                        <Box>
+                          <CircularProgress color="primary" />
+                        </Box>
+                        <Typography variant="body2">
+                          Syncing Metagraph...
+                        </Typography>
+                      </Stack>
+                    </Paper>
+                  ) : (
+                    <ErrorBoundary>
+                      <Stack
+                        direction="column"
+                        spacing={1}
+                        alignItems="center"
+                        marginTop="2em"
                       >
-                        Not Staked To Any Non-delegate Keys
-                      </Typography>
-                    )}
-                  </Stack>
-                </ErrorBoundary>
-              )}
-            </Box>
-          </Box>
-        </React.Fragment>
-      )}
+                        {!!stakeDataNoDelegates.length &&
+                          stakeDataNoDelegates.map((stakeInfo: StakeInfo) => {
+                            return (
+                              <StakeRow
+                                refreshMeta={refreshMeta}
+                                expanded={!!expanded ? expanded.slice(1) : expanded}
+                                onChange={() =>
+                                  handleChange("0" + stakeInfo["hotkey"])
+                                }
+                                unit={unit}
+                                key={`row-${stakeInfo.hotkey}-${stakeInfo.netuid}`}
+                                row={stakeInfo}
+                                columns={columns}
+                              />
+                            );
+                          })}
+                        {!!!stakeDataNoDelegates.length && (
+                          <Typography
+                            variant="body2"
+                            className={classes.no_neurons_error}
+                          >
+                            Not Staked To Any Non-delegate Keys
+                          </Typography>
+                        )}
+                      </Stack>
+                    </ErrorBoundary>
+                  )}
+                </Box>
+              </Box>
+            </React.Fragment>
+          )}
+          
+        </SubnetSelector>
+      </SubnetProvider>
     </Stack>
   );
 }

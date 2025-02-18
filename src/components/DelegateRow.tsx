@@ -23,6 +23,7 @@ interface Props {
     onChange?: () => void
     refreshMeta: () => void
     delegateExtra: DelegateExtra | undefined
+    netuid: number
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   }))
 
-export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegateExtra }: Props) {
+export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegateExtra, netuid }: Props) {
     const [delegate_row, setDelegateRow] = React.useState<DelegateInfoRow>({} as DelegateInfoRow)
     const classes = useStyles()
 
@@ -223,7 +224,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                     </Stack>
                     <Box justifyContent="flex-end" flexDirection="row" alignItems="center">
                         <ErrorBoundary>
-                        <StakeForm hotkeyAddr={delegate_row.delegate_ss58} stake={delegate_row.stake} refreshMeta={refreshMeta} netuid={0} />
+                        <StakeForm hotkeyAddr={delegate_row.delegate_ss58} stake={delegate_row.stake} refreshMeta={refreshMeta} netuid={netuid} />
                         </ErrorBoundary>
                     </Box>
                     </AccordionDetails>

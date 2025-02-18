@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Theme, alpha as fade } from "@mui/material";
 
@@ -23,8 +23,8 @@ import Paper from "@mui/material/Paper";
 import Pagination from "@mui/material/Pagination";
 import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
-import Subnet from "./Subnet";
 import DelegateRow from "./DelegateRow";
+import SubnetSelector, { useSubnet, SubnetProvider } from "./SubnetSelector";
 
 const columns: StakeColumn[] = [
   { id: "hotkey", label: "Hotkey", width: 160 },
@@ -90,6 +90,7 @@ interface PropsStakeTab {
   delegateLoader: boolean;
   refreshMeta: () => void;
   delegatesExtras: DelegateExtras;
+  subnets: number[];
 }
 
 export default function StakeTab({
@@ -97,14 +98,36 @@ export default function StakeTab({
   loader,
   delegateLoader,
   refreshMeta,
-  delegateInfo,
+  delegateInfo: delegateInfo_raw,
   delegatesExtras,
+  subnets,
 }: PropsStakeTab) {
   const classes = useStyles();
   const { account } = useContext(AccountContext);
   const balanceArr = useBalance(account?.accountAddress || "");
   const unit = balanceArr[3];
   const [page, setPage] = useState(1);
+  const { state: { netuid } } = useSubnet();
+  const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
+
+  useEffect(() => {
+    const stakeMap = new Map<string, StakeInfo>();
+    const newDelegateInfo = [...delegateInfo_raw];
+    console.log("refreshing delegate info");
+    stakeData.forEach((stake) => {
+      if (stake.netuid === netuid) {
+        stakeMap.set(stake.hotkey, stake);
+      }
+    });
+    newDelegateInfo.forEach((delegate) => {
+      delegate.total_stake = delegate.total_stake;
+      delegate.stake = Number(stakeMap.get(delegate.delegate_ss58)?.stake || 0);
+    });
+    console.log("newDelegateInfo", newDelegateInfo, stakeMap);
+    newDelegateInfo.sort((a, b) => b.stake - a.stake || b.total_stake - a.total_stake);
+
+    setDelegateInfo(newDelegateInfo);
+  }, [netuid, delegateInfo_raw, stakeData]);
 
   const handleChange = (panel: string) => {
     setExpanded(expanded === panel ? false : panel);
@@ -118,13 +141,6 @@ export default function StakeTab({
   };
 
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [expandedDelegate, setExpandedDelegate] =
-    React.useState<boolean>(false);
-
-  const delegates_ss58 = delegateInfo.map((delegate) => delegate.delegate_ss58);
-  const stakeDataNoDelegates = stakeData.filter(
-    (stakeInfo: StakeInfo) => delegates_ss58.includes(stakeInfo.hotkey) === false
-  );
 
   return (
     <Stack
@@ -132,121 +148,126 @@ export default function StakeTab({
       direction="column"
       divider={<Divider orientation="vertical" flexItem />}
     >
-      {loader ? (
-        <Paper className={classes.loadingPaper}>
-          <Stack spacing={2} direction="column" justifyContent="center">
-            <Box>
-              <CircularProgress color="primary" />
-            </Box>
-            <Typography variant="body2">Syncing the Metagraph</Typography>
-          </Stack>
-        </Paper>
-      ) : (
-        <React.Fragment>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            className={classes.table}
-          >
-            {columns.map((column) => (
-              <Typography
-                key={column.id}
-                align={column.align}
-                style={{
-                  width: column.width,
-                  minWidth: column.minWidth,
-                  maxWidth: column.maxWidth,
-                }}
+      <SubnetProvider defaultNetuid={0}>
+        <SubnetSelector subnets={subnets} >
+          {loader ? (
+            <Paper className={classes.loadingPaper}>
+              <Stack spacing={2} direction="column" justifyContent="center">
+                <Box>
+                  <CircularProgress color="primary" />
+                </Box>
+                <Typography variant="body2">Syncing the Metagraph</Typography>
+              </Stack>
+            </Paper>
+          ) : (
+            <React.Fragment>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                className={classes.table}
               >
-                {column.label}
-              </Typography>
-            ))}
-          </Stack>
-          <Box>
-            <Stack
-              direction="column"
-              spacing={1}
-              alignItems="center"
-              marginTop="2em"
-            >
-              <Typography
-                variant="h2"
-                style={{
-                  fontWeight: "bold",
-                }}
-              >
-                Delegates
-              </Typography>
-              {delegateLoader ? (
-                <Paper className={classes.subLoadingPaper}>
-                  <Stack spacing={2} direction="column" justifyContent="center">
-                    <Box>
-                      <CircularProgress color="primary" />
-                    </Box>
-                    <Typography variant="body2">
-                      Syncing Delegates...
-                    </Typography>
-                  </Stack>
-                </Paper>
-              ) : (
-                <ErrorBoundary>
-                  {!!delegateInfo.length && (
-                    <Stack
-                      direction="column"
-                      spacing={1}
-                      alignItems="center"
-                      marginTop="2em"
-                    >
-                      <List
-                        style={{
-                          minHeight: "400px",
-                          padding: "0.5em",
-                        }}
-                      >
-                        {delegateInfo
-                          .slice((page - 1) * 5, page * 5)
-                          .map((delegate) => {
-                            return (
-                              <DelegateRow
-                                coldkey_ss58={account.accountAddress}
-                                refreshMeta={refreshMeta}
-                                expanded={expanded}
-                                onChange={() =>
-                                  handleChange(delegate.delegate_ss58)
-                                }
-                                unit={unit}
-                                key={`row-${delegate.delegate_ss58}`}
-                                delegate={delegate}
-                                columns={delegateInfoColumns}
-                                delegateExtra={
-                                  delegatesExtras[delegate.delegate_ss58]
-                                }
-                              />
-                            );
-                          })}
-                      </List>
-                      <Pagination
-                        count={Math.ceil(delegateInfo.length / 5)}
-                        shape="rounded"
-                        onChange={handlePageChange}
-                        page={page}
-                      />
-                    </Stack>
+                {columns.map((column) => (
+                  <Typography
+                    key={column.id}
+                    align={column.align}
+                    style={{
+                      width: column.width,
+                      minWidth: column.minWidth,
+                      maxWidth: column.maxWidth,
+                    }}
+                  >
+                    {column.label}
+                  </Typography>
+                ))}
+              </Stack>
+              <Box>
+                <Stack
+                  direction="column"
+                  spacing={1}
+                  alignItems="center"
+                  marginTop="2em"
+                >
+                  <Typography
+                    variant="h2"
+                    style={{
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Delegates
+                  </Typography>
+                  {delegateLoader ? (
+                    <Paper className={classes.subLoadingPaper}>
+                      <Stack spacing={2} direction="column" justifyContent="center">
+                        <Box>
+                          <CircularProgress color="primary" />
+                        </Box>
+                        <Typography variant="body2">
+                          Syncing Delegates...
+                        </Typography>
+                      </Stack>
+                    </Paper>
+                  ) : (
+                    <ErrorBoundary>
+                      {!!delegateInfo.length && (
+                        <Stack
+                          direction="column"
+                          spacing={1}
+                          alignItems="center"
+                          marginTop="2em"
+                        >
+                          <List
+                            style={{
+                              minHeight: "400px",
+                              padding: "0.5em",
+                            }}
+                          >
+                            {delegateInfo
+                              .slice((page - 1) * 5, page * 5)
+                              .map((delegate) => {
+                                return (
+                                  <DelegateRow
+                                    coldkey_ss58={account.accountAddress}
+                                    refreshMeta={refreshMeta}
+                                    expanded={expanded}
+                                    onChange={() =>
+                                      handleChange(delegate.delegate_ss58)
+                                    }
+                                    unit={unit}
+                                    key={`row-${delegate.delegate_ss58}`}
+                                    delegate={delegate}
+                                    columns={delegateInfoColumns}
+                                    delegateExtra={
+                                      delegatesExtras[delegate.delegate_ss58]
+                                    }
+                                    netuid={netuid || 0}
+                                  />
+                                );
+                              })}
+                          </List>
+                          <Pagination
+                            count={Math.ceil(delegateInfo.length / 5)}
+                            shape="rounded"
+                            onChange={handlePageChange}
+                            page={page}
+                          />
+                        </Stack>
+                      )}
+                      {!!!delegateInfo.length && (
+                        <Typography
+                          variant="body2"
+                          className={classes.no_neurons_error}
+                        >
+                          No Delegates exist
+                        </Typography>
+                      )}
+                    </ErrorBoundary>
                   )}
-                  {!!!delegateInfo.length && (
-                    <Typography
-                      variant="body2"
-                      className={classes.no_neurons_error}
-                    >
-                      No Delegates exist
-                    </Typography>
-                  )}
-                </ErrorBoundary>
-              )}
-            </Stack>
-          </Box>
-        </React.Fragment>
-      )}
+                </Stack>
+              </Box>
+            </React.Fragment>
+          )}
+        </SubnetSelector>
+      </SubnetProvider>
     </Stack>
   );
 }

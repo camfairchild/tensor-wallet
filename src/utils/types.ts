@@ -235,6 +235,7 @@ export interface DelegateInfo {
   nominators: Array<[string, number]>,
   owner_ss58: string,
   total_stake: number,
+  stake: number, // user stake on this delegate
 }
 
 export interface NeuronInfo {
