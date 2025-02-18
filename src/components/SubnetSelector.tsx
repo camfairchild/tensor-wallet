@@ -13,6 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import { DynamicInfo, SubnetState as SubnetStateInfo } from "../utils/types";
+import SubnetHeader from "./SubnetHeader";
 
 export const SubnetProvider = ({
   defaultNetuid,
@@ -68,7 +69,7 @@ export default function SubnetSelector({
     <Stack direction="column" spacing={2}>
       {netuid !== undefined && (
         <React.Fragment>
-          <Typography variant="h6">{netuid !== null && `Subnet ${netuid} ${dynamicInfo ? `(${dynamicInfo.subnetName})` : ""}`}</Typography>
+          <SubnetHeader dynamicInfo={dynamicInfo} subnetState={subnetState} netuid={netuid} />
           <Box sx={{ minWidth: 120 }}>
             <FormControl style={{ width: "50%" }}>
               <InputLabel variant="outlined" htmlFor="uncontrolled-native">

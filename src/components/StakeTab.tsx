@@ -108,8 +108,8 @@ export default function StakeTab({
 }: PropsStakeTab) {
   const classes = useStyles();
   const { account } = useContext(AccountContext);
-  const balanceArr = useBalance(account?.accountAddress || "");
-  const unit = balanceArr[3];
+
+  const [unit, setUnit] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const { state: { netuid } } = useSubnet();
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
@@ -154,7 +154,7 @@ export default function StakeTab({
       setSubnetState(subnetState);
       console.debug("dynamicInfo", dynamicInfo);
       console.debug("subnetState", subnetState);
-
+      setUnit(dynamicInfo?.tokenSymbol || "TAO");
       return { dynamicInfo, subnetState };
     }
 
@@ -288,7 +288,7 @@ export default function StakeTab({
                                     onChange={() =>
                                       handleChange(delegate.delegateSs58)
                                     }
-                                    unit={unit}
+                                    unit={unit || "TAO"}
                                     key={`row-${delegate.delegateSs58}`}
                                     delegate={delegate}
                                     columns={delegateInfoColumns}
