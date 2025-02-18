@@ -6,19 +6,22 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import { Theme } from "@mui/material/styles";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import Paper from "@mui/material/Paper";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import SwapHorizSharpIcon from "@material-ui/icons/SwapHorizSharp";
-import CallMadeSharpIcon from "@material-ui/icons/CallMadeSharp";
-import CallReceivedSharpIcon from "@material-ui/icons/CallReceivedSharp";
+import SwapHorizSharpIcon from "@mui/icons-material/SwapHorizSharp";
+import CallMadeSharpIcon from "@mui/icons-material/CallMadeSharp";
+import CallReceivedSharpIcon from "@mui/icons-material/CallReceivedSharp";
 import TollIcon from "@mui/icons-material/Toll";
+import HubIcon from "@mui/icons-material/Hub";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import {
@@ -36,14 +39,17 @@ import {
   BurnrDivider,
   HistoryTable,
   StakeTab,
+  NeuronsTab,
   ErrorBoundary,
 } from ".";
 
 import { useApi } from "../hooks";
 import { AccountContext } from "../utils/contexts";
-import { CreateAccountCtx, StakeData } from "../utils/types";
+import { CreateAccountCtx } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
-import { getDelegateInfo, getDelegatesJson, getMetagraph, getStakeInfoForColdkey } from "../utils/api";
+import { getAllSubnets, getDelegateInfo, getDelegatesJson, getStakeInfoForColdkey } from "../utils/api";
+import { SubnetProvider } from "./SubnetSelector";
+import { sortDelegatesRows } from "../utils/utils";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -57,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderTopRightRadius: 0,
     borderTopLeftRadius: 0,
 
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       minHeight: "calc(100vh - 320px)",
     },
     backgroundColor: theme.palette.background.paper,
@@ -112,20 +118,14 @@ const NavTabs: FunctionComponent = () => {
   const [value, setValue] = useState(0);
   const { account } = useContext<CreateAccountCtx>(AccountContext);
   const mountedRef = useIsMountedRef();
-  // for first load of page
-  const [loaded, setLoaded] = useState(false);
 
   const apiCtx = useApi();
 
   const handleChange = (event: ChangeEvent<unknown>, newValue: number) => {
-    if (newValue === 3 && !loaded) {
+    if (newValue === 3) {
       // refresh the page when the tab is clicked
       // but only do this once
       refreshMeta();
-      getDelegateInfo(apiCtx.api).then((delegateInfo: DelegateInfo[]) => {
-        setDelegateInfo(delegateInfo);
-      });
-      setLoaded(true);
     }
     setValue(newValue);
   };
@@ -137,13 +137,22 @@ const NavTabs: FunctionComponent = () => {
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
   const [delegateRows, setDelegateRows] = useState<DelegateInfo[]>([]);
   const [delegatesExtras, setDelegatesExtras] = useState<DelegateExtras>({});
+  const [subnets, setSubnets] = useState<number[]>([]);
 
   const getRows = async (account: LocalStorageAccountCtx) => {
     const stakeInfo = await getStakeInfoForColdkey (apiCtx.api, account.accountAddress);
     setStakeData(stakeInfo);
   };
 
+  const getSubnets = async (): Promise<number[]> => {
+    const subnets = await getAllSubnets(apiCtx.api);
+    return subnets;
+  };
+
   const refreshMeta = async () => {
+    setDelegateLoader(true);
+    setRowLoader(true);
+  
     const _getDelegateInfo = async (): Promise<[DelegateInfo[], DelegateExtras]> => {
       const delegates_json = await getDelegatesJson();
       const delegateInfo = await getDelegateInfo(apiCtx.api);
@@ -163,6 +172,10 @@ const NavTabs: FunctionComponent = () => {
       setLoader(false);
       setDelegateLoader(false);
     });
+    
+    getSubnets().then((subnets) => {
+      setSubnets(subnets);
+    });
   };
 
   useEffect(() => {
@@ -180,25 +193,7 @@ const NavTabs: FunctionComponent = () => {
 
   useEffect(() => {
     const prepareDelegateRows = (delegateInfo: DelegateInfo[], delegatesExtras: DelegateExtras, account_addr: string) => {
-      delegateInfo.sort((a, b) => {
-        let nom_idx_a = a.nominators.findIndex(
-          (nom) => nom[0] === account_addr
-        );
-        let nom_idx_b = b.nominators.findIndex(
-          (nom) => nom[0] === account_addr
-        );
-        let amt_a: number = a.nominators[nom_idx_a]?.[1] || 0;
-        let amt_b: number = b.nominators[nom_idx_b]?.[1] || 0;
-
-        return (
-          amt_b - amt_a ||
-          (a.delegate_ss58 ===
-          "5CoZxgtfhcJKX2HmkwnsN18KbaT9aih9eF3b6qVPTgAUbifj"
-            ? -1
-            : 0) ||
-          b.total_stake - a.total_stake
-        );
-      });
+      sortDelegatesRows(delegateInfo);
       
       setDelegateRows(delegateInfo);
     };
@@ -249,6 +244,15 @@ const NavTabs: FunctionComponent = () => {
               textColorPrimary: classes.selectedTab
             }}
           />
+          <Tab
+            label="Neurons"
+            icon={<HubIcon fontSize="small" className={classes.icon} />} 
+            disabled={true}
+            className={classes.paper}
+            classes={{
+              textColorPrimary: classes.selectedTab
+            }}
+          />
         </Tabs>
       </Paper>
 
@@ -290,14 +294,37 @@ const NavTabs: FunctionComponent = () => {
                 startIcon={<RefreshIcon />}
               />
             </Stack>
-            <StakeTab
-              delegateInfo={delegateRows}
+            <SubnetProvider defaultNetuid={null}>
+              <StakeTab
+                delegateInfo={delegateRows}
+                stakeData={stakeData}
+                loader={loader}
+                delegateLoader={delegateLoader}
+                refreshMeta={refreshMeta}
+                delegatesExtras={delegatesExtras}
+                subnets={subnets}
+              />
+            </SubnetProvider>
+          </ErrorBoundary>
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <ErrorBoundary>
+            <Stack spacing={2} direction="row">
+              <Typography variant="h6" className={classes.rootHeading}>
+                Neurons
+              </Typography>
+              <Button
+                onClick={() => refreshMeta()}
+                startIcon={<RefreshIcon />}
+              />
+            </Stack>
+            <NeuronsTab
               stakeData={stakeData}
               loader={loader}
               rowLoader={rowLoader}
-              delegateLoader={delegateLoader}
               refreshMeta={refreshMeta}
-              delegatesExtras={delegatesExtras}
+              delegateInfo={delegateRows}
+              subnets={subnets}
             />
           </ErrorBoundary>
         </TabPanel>

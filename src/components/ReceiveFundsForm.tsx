@@ -1,13 +1,13 @@
 import { FunctionComponent, useContext } from "react"
 
 import Stack from "@mui/material/Stack"
-import QRCode from "qrcode.react"
+import {QRCodeCanvas as QRCode} from "qrcode.react"
 import { AccountContext } from "../utils/contexts"
 import CopyAddressButton from "./CopyAddressButton"
   
-import Paper from "@material-ui/core/Paper"
-import { makeStyles, useTheme } from "@material-ui/styles"
-import { Theme } from "@material-ui/core"
+import Paper from "@mui/material/Paper"
+import { makeStyles, useTheme } from "@mui/styles"
+import { Theme } from "@mui/material"
 
 const useStyles = makeStyles((theme: Theme) => ({
   qrParent: {

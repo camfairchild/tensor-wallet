@@ -3,12 +3,13 @@ import { DelegateColumn, DelegateInfo, DelegateInfoRow, DelegateExtra } from "..
 import { BN } from "@polkadot/util"
 import { Balance } from "@polkadot/types/interfaces"
 import StakeForm from "./StakeForm"
-    
+
 import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion"
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import React, { useEffect } from "react"
-import { Theme, Typography, makeStyles } from "@material-ui/core"
+import { Theme, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import '../assets/styles/DelegateRow.css'
 import { getOnChainIdentity } from "../utils/api"
 import { useApi } from "../hooks"
@@ -22,6 +23,7 @@ interface Props {
     onChange?: () => void
     refreshMeta: () => void
     delegateExtra: DelegateExtra | undefined
+    netuid: number
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   }))
 
-export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegateExtra }: Props) {
+export default function DelegateRow({columns, unit, delegate, expanded, onChange, refreshMeta, coldkey_ss58, delegateExtra, netuid }: Props) {
     const [delegate_row, setDelegateRow] = React.useState<DelegateInfoRow>({} as DelegateInfoRow)
     const classes = useStyles()
 
@@ -39,8 +41,8 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
 
     useEffect(() => {
         const getIdentity = async () => {
-            const identity = await getOnChainIdentity(apiCtx.api, delegate.delegate_ss58);
-            console.log("identity", identity);
+            const identity = await getOnChainIdentity(apiCtx.api, delegate.delegateSs58);
+
             if (identity.name || identity.image) {
                 if (!!delegateExtra) {
                     delegateExtra = {
@@ -52,7 +54,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                     }
                 } else {
                     delegateExtra = {
-                        name: identity.name || delegate.delegate_ss58,
+                        name: identity.name || delegate.delegateSs58,
                         url: "",
                         description: "",
                         signature: "",
@@ -65,11 +67,11 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
         getIdentity();
       
         let _row: DelegateInfoRow = {
-            stake: 0,
+            stake: delegate.stake,
             take: delegate.take,
-            owner_ss58: delegate.owner_ss58,
-            delegate_ss58: delegate.delegate_ss58,
-            total_stake: delegate.total_stake,
+            ownerSs58: delegate.ownerSs58,
+            delegateSs58: delegate.delegateSs58,
+            totalStake: delegate.totalStake,
             nominators: delegate.nominators.length
         };
         delegate.nominators.filter(([nom, staked]: [string, number]) => {
@@ -87,31 +89,33 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
             ..._row
         })
 
-    }, [delegate.delegate_ss58, delegate.total_stake, delegate.nominators.length, coldkey_ss58])
+    }, [delegate.delegateSs58, delegate.totalStake, delegate.nominators.length, coldkey_ss58])
 
     return (
     <React.Fragment>
         <ErrorBoundary>
             {!!Object.keys(delegate_row).length && (
-                <Accordion expanded={expanded === delegate_row.delegate_ss58} onChange={onChange} id="delegates" >
+                <Accordion expanded={expanded === delegate_row.delegateSs58} onChange={onChange} id="delegates" >
                     <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                     <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
                         {columns.map((column) => {
-                            if (!["delegate_ss58"].includes(column.id)) {
+                            if (!["delegateSs58"].includes(column.id)) {
                                 return null;
                             }
                             const value: string | number = delegate_row[column.id];
                             return (
                             <React.Fragment key={column.id}>
-                                {column.id === "delegate_ss58" && (
-                                <AccountCard account={{ address: value.toString(), name: delegateExtra?.name || ""  }} addressFormat="Compact" />
-                                )}
+                                <Box flex={2}>
+                                    {column.id === "delegateSs58" && (
+                                    <AccountCard account={{ address: value.toString(), name: delegateExtra?.name || ""  }} addressFormat="Compact" />
+                                    )}
+                                </Box>
                             </React.Fragment>
                             )
                         })}
-                        <Stack direction="column" className="delegatestats-headings" >
+                        <Stack direction="column" className="delegatestats-headings" flex={3} >
                             {columns.map((column) => {
-                                if (!["total_stake"].includes(column.id)) {
+                                if (!["totalStake"].includes(column.id)) {
                                     return null;
                                 }
                                 const value: string | number = delegate_row[column.id];
@@ -156,13 +160,13 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                     <AccordionDetails>
                     <Stack direction="row" justifyContent="space-between" alignItems="center" width="100%">
                         {columns.map((column) => {
-                            if (!["owner_ss58"].includes(column.id)) {
+                            if (!["ownerSs58"].includes(column.id)) {
                                 return null;
                             }
                             const value: string | number = delegate_row[column.id];
                             return (
                             <React.Fragment key={column.id}>
-                                {column.id === "owner_ss58" && (
+                                {column.id === "ownerSs58" && (
                                 <Box flex={3} >
                                     <AccountCard account={{ address: value.toString(), name: "Delegate Coldkey" }} addressFormat="Short" />
                                 </Box>
@@ -170,7 +174,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                             </React.Fragment>
                             )
                         })}
-                        <Stack direction="column" justifyContent="space-between" alignItems="center" width="100%" flex={2} >
+                        <Stack direction="column" justifyContent="space-between" alignItems="center" width="100%" flex={3} >
                         {columns.map((column) => {
                             if (!["stake", "nominators"].includes(column.id)) {
                                 return null;
@@ -185,7 +189,14 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                                             <Typography style={{
                                                 fontWeight: "bold",
                                             }} >Nominators:</Typography>
-                                            <Typography>{value.toString() }</Typography>
+                                            <Typography
+                                                style={{
+                                                    width: "100%",
+                                                    justifyContent: "flex-end",
+                                                    display: "flex",
+                                                    paddingRight: "0.5em"
+                                                }}
+                                            >{value.toString() }</Typography>
                                         </Stack>
                                     </React.Fragment>
                                 )}
@@ -202,6 +213,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                                                 unit={unit}
                                                 size="small"
                                                 style={{ width: "100%", justifyContent: "flex-end" }}
+                                                round={false}
                                             />
                                         </Stack>
                                     </React.Fragment>
@@ -213,7 +225,7 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
                     </Stack>
                     <Box justifyContent="flex-end" flexDirection="row" alignItems="center">
                         <ErrorBoundary>
-                        <StakeForm hotkeyAddr={delegate_row.delegate_ss58} stake={delegate_row.stake} refreshMeta={refreshMeta} />
+                        <StakeForm hotkeyAddr={delegate_row.delegateSs58} stake={delegate_row.stake} refreshMeta={refreshMeta} netuid={netuid} />
                         </ErrorBoundary>
                     </Box>
                     </AccordionDetails>

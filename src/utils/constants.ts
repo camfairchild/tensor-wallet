@@ -7,7 +7,7 @@ export const NETWORKS: SimpleProvider[] = [{
   id: "bittensor",
   client: "Sync Node",
   endpoints: [
-    "wss://lite.chain.opentensor.ai:443",
+    "wss://lite.sub.latent.to:443",
   ],
 }]
 

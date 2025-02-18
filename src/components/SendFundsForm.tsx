@@ -6,16 +6,8 @@ import React, {
   FunctionComponent,
 } from "react"
 import { BN } from "@polkadot/util"
-import {
-  makeStyles,
-  Theme,
-  Button,
-  Typography,
-  LinearProgress,
-  Table,
-  Grid,
-  Box,
-} from "@material-ui/core"
+import { Theme, Button, Typography, LinearProgress, Table, Grid, Box } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import Stack from "@mui/material/Stack"
 import { Balance, Hash } from "@polkadot/types/interfaces"
 import { Keyring } from "@polkadot/keyring"
@@ -274,7 +266,7 @@ const SendFundsForm: FunctionComponent = () => {
         <Structure
           fee={fee}
           name="Fees"
-          rest={fee ? `${prettyBalance(fee, api)} ${unit}` : ""}
+          rest={fee ? `${prettyBalance(fee, api, false)} ${unit}` : ""}
         />
         <Structure
           fee={fee}
@@ -283,7 +275,8 @@ const SendFundsForm: FunctionComponent = () => {
             fee
               ? `${prettyBalance(
                   new BN(maxAmountFull).sub(new BN(amount)).sub(fee),
-                  api
+                  api,
+                  false
                 )} ${unit}`
               : ""
           }

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 
-import { Typography, Box, Link, Grid } from "@material-ui/core"
+import { Typography, Box, Link, Grid } from "@mui/material"
 
 const AppFooter: FunctionComponent = () => (
   <Box paddingBottom={2}>

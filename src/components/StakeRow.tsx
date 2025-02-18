@@ -28,7 +28,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
             return (
               <React.Fragment key={column.id}>
                 {column.id === "hotkey" && (
-                  <AccountCard account={{ address: value.toString(), name: "" }} addressFormat="Full" />
+                  <AccountCard account={{ address: value.toString(), name: "" }} addressFormat="Compact" />
                 )}
                 {column.id === "stake" && // This may look overwhelming but is just for "dump" data until page is fixed
                   (typeof value === "number" || typeof value === "string") && (
@@ -48,7 +48,7 @@ export default function StakeRow({columns, unit, row, expanded, onChange, refres
         <AccordionDetails>
           <Box justifyContent="flex-end" flexDirection="row" alignItems="flex-start">
             <ErrorBoundary>
-              <StakeForm hotkeyAddr={row['hotkey']} stake={row.stake} refreshMeta={() => {}} />
+              <StakeForm hotkeyAddr={row['hotkey']} stake={row.stake} refreshMeta={() => {}} netuid={0} />
             </ErrorBoundary>
           </Box>
         </AccordionDetails>

@@ -1,9 +1,11 @@
 import { FunctionComponent } from "react"
 
-import { IconButton, IconButtonProps, makeStyles } from "@material-ui/core"
+import { IconButton, IconButtonProps } from "@mui/material";
 
-import Brightness3Icon from "@material-ui/icons/Brightness3"
-import Brightness7Icon from "@material-ui/icons/Brightness7"
+import makeStyles from '@mui/styles/makeStyles';
+
+import Brightness3Icon from "@mui/icons-material/Brightness3"
+import Brightness7Icon from "@mui/icons-material/Brightness7"
 
 interface Props extends IconButtonProps {
   theme: boolean
@@ -18,10 +20,10 @@ const useStyles = makeStyles((theme) => ({
 const ThemeButton: FunctionComponent<Props> = ({ theme, ...props }: Props) => {
   const classes = useStyles()
   return (
-    <IconButton {...props} className={classes.root}>
+    (<IconButton {...props} className={classes.root} size="large">
       {theme ? <Brightness3Icon /> : <Brightness7Icon />}
-    </IconButton>
-  )
+    </IconButton>)
+  );
 }
 
 export default ThemeButton

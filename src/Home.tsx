@@ -1,7 +1,5 @@
 import { useState, useEffect, FunctionComponent, useContext } from "react"
-import {
-  makeStyles
-} from "@material-ui/core/styles"
+import makeStyles from '@mui/styles/makeStyles';
 
 import Paper from "@mui/material/Paper"
 import Box from "@mui/material/Box"
@@ -108,11 +106,12 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
                 size="large"
                 style={{ width: "100%", justifyContent: "flex-end" }}
                 colored
+                round={false}
               />
               <IconButton
                 style={{ borderRadius: 4 }}
                 onClick={() => setBalanceVisibility(!balanceVisibility)}
-              >
+                size="large">
                 {balanceVisibility ? <VisibilityIcon /> : <VisibilityOffIcon />}
               </IconButton>
             </Box>
@@ -122,7 +121,7 @@ const Home: FunctionComponent<Props> = ({ loader, accounts }: Props) => {
         <NavTabs />
       </BalanceVisibleContext.Provider>
     )
-  )
+  );
 }
 
 export default Home

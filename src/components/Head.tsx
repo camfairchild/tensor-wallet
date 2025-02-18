@@ -1,11 +1,12 @@
 import { FunctionComponent } from "react"
 
-import { Box, Grid, makeStyles, Theme, Typography } from "@material-ui/core"
+import { Box, Grid, Theme, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { NodeConnected } from "."
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down('md')]: {
       paddingTop: theme.spacing(7),
     },
   },

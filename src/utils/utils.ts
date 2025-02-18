@@ -1,6 +1,6 @@
 import React from "react";
 import { ApiPromise } from "@polkadot/api/promise/Api";
-import { Account, LocalStorageAccountCtx } from "./types";
+import { Account, DelegateInfo, LocalStorageAccountCtx } from "./types";
 import { Keyring, decodeAddress, encodeAddress } from "@polkadot/keyring";
 import { hexToU8a, isHex, formatBalance, BN } from "@polkadot/util";
 import type { Balance } from "@polkadot/types/interfaces";
@@ -68,11 +68,8 @@ export const isValidAddressPolkadotAddress = (address = ""): boolean => {
   }
 };
 
-/*
- * format once with @polkadot/util formatBalance,
- * then strip the trailing Unit and make it to 2 decimal points
- */
-export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise): string => {
+
+export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise, round: boolean = true): string => {
   if ((typeof rawBalance === "number" && rawBalance === 0) || !rawBalance) {
     return "0";
   } else if (rawBalance.toString() === "0") {
@@ -83,17 +80,26 @@ export const prettyBalance = (rawBalance: Balance | BN | number, api: ApiPromise
     rawBalance = rawBalance.toNumber();
   } 
 
-  const firstPass = humanReadable(rawBalance, api);
+  const firstPass = humanReadable(rawBalance, api, round);
 
   return firstPass;
 };
 
-export const humanReadable = (amnt: number, api: ApiPromise): string => {
+
+export const humanReadable = (amnt: number, api: ApiPromise, round: boolean = true): string => {
   const decimals = api.registry.chainDecimals[0];
-  const asString = amnt.toString();
-  const addDecimal = Math.max(asString.length - decimals, 0);
-  const firstPass = (asString.slice(0, addDecimal) || "0") + "." + asString.slice(addDecimal).padStart(decimals, "0");
-  return firstPass;
+  
+  let options: any = { notation: 'compact', compactDisplay: 'short', minimumFractionDigits: 3, maximumFractionDigits: 3 };
+  if (!round) {
+    options = { maximumFractionDigits: 9 };
+  }
+  const formatter = Intl.NumberFormat('en', options);
+
+  
+  const normalized = amnt / Math.pow(10, decimals);
+  const compacted = formatter.format(normalized);
+
+  return compacted;
 }
 
 export const validateLocalstorage = (): void => {
@@ -118,3 +124,16 @@ export const validateLocalstorage = (): void => {
     }
   });
 };
+
+export function sortDelegatesRows(delegateInfo: DelegateInfo[]) {
+  const latent_delegate_hotkey =
+    "5CoZxgtfhcJKX2HmkwnsN18KbaT9aih9eF3b6qVPTgAUbifj";
+  delegateInfo.sort((a, b) => {
+    return (
+      b.stake - a.stake ||
+      (a.delegateSs58 === latent_delegate_hotkey ? -1 : 0) ||
+      (b.delegateSs58 === latent_delegate_hotkey ? 1 : 0) ||
+      b.totalStake - a.totalStake
+    );
+  });
+}

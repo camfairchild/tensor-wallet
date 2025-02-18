@@ -1,10 +1,10 @@
-import { FunctionComponent, memo } from "react"
+import { CSSProperties, FunctionComponent, memo } from "react"
 
-import { makeStyles, Theme } from "@material-ui/core/styles"
-import { Box, Typography } from "@material-ui/core"
+import { Theme } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import { Box, Typography } from "@mui/material"
 import { SizeScale } from "../utils/types"
 import { prettyBalance } from "../utils/utils"
-import { CSSProperties } from "@material-ui/core/styles/withStyles"
 import { Balance } from "@polkadot/types/interfaces"
 import { bnToBn } from "@polkadot/util"
 import { useApi } from "../hooks"
@@ -15,6 +15,7 @@ interface Props extends SizeScale {
   unit?: string
   style?: CSSProperties
   colored?: boolean
+  round?: boolean
 }
 interface StyleProps {
   colored?: boolean
@@ -54,10 +55,11 @@ const BalanceValue: FunctionComponent<Props> = ({
   size,
   style,
   colored = false,
+  round = true,
 }: Props) => {
   const apiCtx = useApi()
   const value_bn = bnToBn(value)
-  const fBalance = prettyBalance(value_bn, apiCtx.api)
+  const fBalance = prettyBalance(value_bn, apiCtx.api, round)
   const classes = useStyles({ colored, visible: isVisible })
 
   const TypographyVariant = size === "large" ? "subtitle1" : "subtitle2"
