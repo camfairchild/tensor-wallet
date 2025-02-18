@@ -8,9 +8,11 @@ import {
   InputLabel,
   FormControl,
   Box,
-  Pagination,
   Typography,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
+import { DynamicInfo, SubnetState as SubnetStateInfo } from "../utils/types";
 
 export const SubnetProvider = ({
   defaultNetuid,
@@ -48,10 +50,15 @@ export function useSubnet(): { state: SubnetState; actions: SubnetActions } {
 export default function SubnetSelector({
   children,
   subnets,
+  dynamicInfo,
+  subnetState,
 }: {
   children: React.ReactNode;
   subnets: number[];
+  dynamicInfo: DynamicInfo | null;
+  subnetState: SubnetStateInfo | null;
 }) {
+
   const {
     state: { netuid },
     actions: { setNetuid },
@@ -61,24 +68,24 @@ export default function SubnetSelector({
     <Stack direction="column" spacing={2}>
       {netuid !== undefined && (
         <React.Fragment>
-          <Typography variant="h6">Subnet {netuid}</Typography>
+          <Typography variant="h6">{netuid !== null && `Subnet ${netuid} ${dynamicInfo ? `(${dynamicInfo.subnetName})` : ""}`}</Typography>
           <Box sx={{ minWidth: 120 }}>
             <FormControl style={{ width: "50%" }}>
-              <InputLabel variant="standard" htmlFor="uncontrolled-native">
+              <InputLabel variant="outlined" htmlFor="uncontrolled-native">
                 Subnet
               </InputLabel>
-              <NativeSelect
-                defaultValue={netuid}
-                onChange={(e) => setNetuid(parseInt(e.target.value))}
-                inputProps={{
-                  name: "netuid",
-                  id: "uncontrolled-native",
-                }}
-              >
-                {subnets.map((subnet) => (
-                  <option value={subnet} key={subnet}>{subnet}</option>
-                ))}
-              </NativeSelect>
+              <Autocomplete
+                disablePortal
+                sx={{ width: 300 }}
+                options={
+                  subnets.map((subnet) => ({
+                    label: `Subnet ${subnet}`,
+                    value: subnet,
+                  }))
+                }
+                onChange={(e, value) => setNetuid(value?.value !== undefined ? value.value : null)}
+                renderInput={(params) => <TextField {...params} label="Subnet" />}
+              />
             </FormControl>
           </Box>
         </React.Fragment>

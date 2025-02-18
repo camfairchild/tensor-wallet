@@ -11,11 +11,11 @@ import {
 
 const BalanceVisibleContext = createContext<BalanceVisibilityCtx>({
   balanceVisibility: true,
-  setBalanceVisibility: () => console.log(),
+  setBalanceVisibility: () => console.debug(),
 })
 const AccountContext = createContext<CreateAccountCtx>({
   account: {} as LocalStorageAccountCtx,
-  setCurrentAccount: (t: LocalStorageAccountCtx) => console.log(t),
+  setCurrentAccount: (t: LocalStorageAccountCtx) => console.debug(t),
 })
 const AdminContext = createContext<AdminCtx>({} as AdminCtx)
 const ApiContext = createContext<ApiCtx>({} as ApiCtx)

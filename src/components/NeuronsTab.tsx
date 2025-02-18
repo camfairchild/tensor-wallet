@@ -100,7 +100,7 @@ export default function NeuronsTab({
 
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
-  const delegates_ss58 = delegateInfo.map((delegate) => delegate.delegate_ss58);
+  const delegates_ss58 = delegateInfo.map((delegate) => delegate.delegateSs58);
   const stakeDataNoDelegates = stakeData.filter(
     (stakeInfo: StakeInfo) => delegates_ss58.includes(stakeInfo.hotkey) === false
   ).filter((stakeInfo: StakeInfo) => stakeInfo.netuid === netuid);
@@ -111,7 +111,7 @@ export default function NeuronsTab({
       direction="column"
       divider={<Divider orientation="vertical" flexItem />}
     >
-      <SubnetProvider defaultNetuid={netuid}>
+      <SubnetProvider defaultNetuid={null}>
         <SubnetSelector subnets={subnets} >
           
           {loader ? (

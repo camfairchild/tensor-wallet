@@ -156,10 +156,10 @@ export interface StakeColumn {
 
 export interface DelegateColumn {
   id:
-    | "delegate_ss58"
-    | "owner_ss58"
+    | "delegateSs58"
+    | "ownerSs58"
     | "nominators"
-    | "total_stake"
+    | "totalStake"
     | "take"
     | "stake";
   label: string;
@@ -170,10 +170,10 @@ export interface DelegateColumn {
 }
 
 export interface DelegateInfoRow {
-  delegate_ss58: string;
-  owner_ss58: string;
+  delegateSs58: string;
+  ownerSs58: string;
   nominators: number;
-  total_stake: number;
+  totalStake: number;
   take: number;
   stake: number;
 }
@@ -197,88 +197,92 @@ export interface SubnetState {
   hotkeys: string[];
   coldkeys: string[];
   active: boolean[];
-  validator_permit: boolean[];
-  pruning_score: number[];
-  last_update: number[];
+  validatorPermit: boolean[];
+  pruningScore: number[];
+  lastUpdate: number[];
   emission: number[];
   dividends: number[];
   incentives: number[];
   consensus: number[];
   trust: number[];
   rank: number[];
-  block_at_registration: number[];
-  alpha_stake: number[];
-  tao_stake: number[];
-  total_stake: number[];
-  emission_history: number[][];
+  blockAtRegistration: number[];
+  alphaStake: number[];
+  taoStake: number[];
+  totalStake: number[];
+  emissionHistory: number[][];
 }
 
 export interface SubnetIdentityV2Raw {
-  subnet_name: number[];
-  github_repo: number[];
-  subnet_contact: number[];
-  subnet_url: number[];
+  subnetName: number[];
+  githubRepo: number[];
+  subnetContact: number[];
+  subnetUrl: number[];
   discord: number[];
   description: number[];
   additional: number[];
 }
 
 export interface SubnetIdentityV2 {
-  subnet_name: string;
-  github_repo: string;
-  subnet_contact: string;
-  subnet_url: string;
+  subnetName: string;
+  githubRepo: string;
+  subnetContact: string;
+  subnetUrl: string;
   discord: string;
   description: string;
   additional: string;
 }
 
+export interface FixedInt {
+  bits: number;
+}
+
 export interface DynamicInfoRaw {
   netuid: number;
-  owner_hotkey: AccountId;
-  owner_coldkey: AccountId;
-  subnet_name: number[];
-  token_symbol: number[];
+  ownerHotkey: AccountId;
+  ownerColdkey: AccountId;
+  subnetName: number[];
+  tokenSymbol: number[];
   tempo: number;
-  last_step: number;
-  blocks_since_last_step: number;
+  lastStep: number;
+  blocksSinceLastStep: number;
   emission: number;
-  alpha_in: number;
-  alpha_out: number;
-  tao_in: number;
-  alpha_out_emission: number;
-  alpha_in_emission: number;
-  tao_in_emission: number;
-  pending_alpha_emission: number;
-  pending_root_emission: number;
-  subnet_volume: number;
-  network_registered_at: number;
-  subnet_identity: SubnetIdentityV2Raw | null;
-  moving_price: FixedI128; // float
+  alphaIn: number;
+  alphaOut: number;
+  taoIn: number;
+  alphaOutEmission: number;
+  alphaInEmission: number;
+  taoInEmission: number;
+  pendingAlphaEmission: number;
+  pendingRootEmission: number;
+  subnetVolume: number;
+  networkRegisteredAt: number;
+  subnetIdentity: SubnetIdentityV2Raw | null;
+  movingPrice: FixedInt; // float
 }
 
 export interface DynamicInfo {
   netuid: number;
-  owner_hotkey: AccountId;
-  owner_coldkey: AccountId;
-  subnet_name: string; // from bytes, UTF-8
-  token_symbol: string; // from bytes, UTF-8
+  ownerHotkey: AccountId;
+  ownerColdkey: AccountId;
+  subnetName: string; // from bytes, UTF-8
+  tokenSymbol: string; // from bytes, UTF-8
   tempo: number;
-  last_step: number;
-  blocks_since_last_step: number;
+  lastStep: number;
+  blocksSinceLastStep: number;
   emission: number;
-  alpha_in: number;
-  alpha_out: number;
-  tao_in: number;
-  alpha_out_emission: number;
-  alpha_in_emission: number;
-  tao_in_emission: number;
-  pending_alpha_emission: number;
-  pending_root_emission: number;
-  subnet_volume: number;
-  network_registered_at: number;
-  subnet_identity: SubnetIdentityV2 | null;
-  moving_price: number; // float
+  alphaIn: number;
+  alphaOut: number;
+  taoIn: number;
+  alphaOutEmission: number;
+  alphaInEmission: number;
+  taoInEmission: number;
+  pendingAlphaEmission: number;
+  pendingRootEmission: number;
+  subnetVolume: number;
+  networkRegisteredAt: number;
+  subnetIdentity: SubnetIdentityV2 | null;
+  movingPrice: number; // float
 }
 
 export interface AxonInfo {
@@ -286,7 +290,7 @@ export interface AxonInfo {
   version: number; // --- Axon version
   ip: string; // --- Axon u128 encoded ip address of type v6 or v4. serialized to string.
   port: number; // --- Axon u16 encoded port.
-  ip_type: number; // --- Axon ip type, 4 for ipv4 and 6 for ipv6.
+  ipType: number; // --- Axon ip type, 4 for ipv4 and 6 for ipv6.
   protocol: number; // --- Axon protocol. TCP, UDP, other.
   placeholder1: number; // --- Axon proto placeholder 1.
   placeholder2: number; // --- Axon proto placeholder 1.
@@ -297,7 +301,7 @@ export interface PrometheusInfo {
   version: number; // --- Prometheus version.
   ip: string; // --- Prometheus u128 encoded ip address of type v6 or v4. serialized to string.
   port: number; // --- Prometheus u16 encoded port.
-  ip_type: number; // --- Prometheus ip type, 4 for ipv4 and 6 for ipv6.
+  ipType: number; // --- Prometheus ip type, 4 for ipv4 and 6 for ipv6.
 }
 
 export interface SubnetInfo {
@@ -305,23 +309,23 @@ export interface SubnetInfo {
   rho: number;
   kappa: number;
   difficulty: number;
-  immunity_period: number;
-  validator_batch_size: number;
-  validator_sequence_length: number;
-  validator_epochs_per_reset: number;
-  validator_epoch_length: number;
-  max_allowed_validators: number;
-  min_allowed_weights: number;
-  max_weights_limit: number;
-  scaling_law_power: number;
-  synergy_scaling_law_power: number;
-  subnetwork_n: number;
-  max_allowed_uids: number;
-  blocks_since_last_step: number;
+  immunityPeriod: number;
+  validatorBatchSize: number;
+  validatorSequenceLength: number;
+  validatorEpochsPerReset: number;
+  validatorEpochLength: number;
+  maxAllowedValidators: number;
+  minAllowedWeights: number;
+  maxWeightsLimit: number;
+  scalingLawPower: number;
+  synergyScalingLawPower: number;
+  subnetworkN: number;
+  maxAllowedUids: number;
+  blocksSinceLastStep: number;
   tempo: number;
-  network_modality: number;
-  network_connect: Array<number>;
-  emission_values: number;
+  networkModality: number;
+  networkConnect: Array<number>;
+  emissionValues: number;
 }
 
 export interface DelegateInfoRaw {
@@ -332,11 +336,11 @@ export interface DelegateInfoRaw {
 }
 
 export interface DelegateInfo {
-  delegate_ss58: string;
+  delegateSs58: string;
   take: number;
   nominators: Array<[string, number]>;
-  owner_ss58: string;
-  total_stake: number;
+  ownerSs58: string;
+  totalStake: number;
   stake: number; // user stake on this delegate
 }
 
@@ -346,22 +350,22 @@ export interface NeuronInfo {
   uid: number;
   netuid: number;
   active: Boolean;
-  axon_info: AxonInfo;
-  prometheus_info: PrometheusInfo;
+  axonInfo: AxonInfo;
+  prometheusInfo: PrometheusInfo;
   stake: Array<[AccountId, number]>; // map of coldkey to stake on this neuron/hotkey (includes delegations)
   rank: number;
   emission: number;
   incentive: number;
   consensus: number;
-  weight_consensus: number;
+  weightConsensus: number;
   trust: number;
-  validator_trust: number;
+  validatorTrust: number;
   dividends: number;
-  last_update: number;
-  validator_permit: Boolean;
+  lastUpdate: number;
+  validatorPermit: Boolean;
   weights: Array<[number, number]>; // map of uid to weight
   bonds: Array<[number, number]>; // map of uid to bond
-  pruning_score: number;
+  pruningScore: number;
 }
 
 export interface NeuronInfoLite {
@@ -370,20 +374,20 @@ export interface NeuronInfoLite {
   uid: number;
   netuid: number;
   active: Boolean;
-  axon_info: AxonInfo;
-  prometheus_info: PrometheusInfo;
+  axonInfo: AxonInfo;
+  prometheusInfo: PrometheusInfo;
   stake: Array<[AccountId, number]>; // map of coldkey to stake on this neuron/hotkey (includes delegations)
   rank: number;
   emission: number;
   incentive: number;
   consensus: number;
-  weight_consensus: number;
+  weightConsensus: number;
   trust: number;
-  validator_trust: number;
+  validatorTrust: number;
   dividends: number;
-  last_update: number;
-  validator_permit: Boolean;
-  pruning_score: number;
+  lastUpdate: number;
+  validatorPermit: Boolean;
+  pruningScore: number;
 }
 
 export interface RawMetagraph {

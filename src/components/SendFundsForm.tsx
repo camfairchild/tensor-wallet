@@ -266,7 +266,7 @@ const SendFundsForm: FunctionComponent = () => {
         <Structure
           fee={fee}
           name="Fees"
-          rest={fee ? `${prettyBalance(fee, api)} ${unit}` : ""}
+          rest={fee ? `${prettyBalance(fee, api, false)} ${unit}` : ""}
         />
         <Structure
           fee={fee}
@@ -275,7 +275,8 @@ const SendFundsForm: FunctionComponent = () => {
             fee
               ? `${prettyBalance(
                   new BN(maxAmountFull).sub(new BN(amount)).sub(fee),
-                  api
+                  api,
+                  false
                 )} ${unit}`
               : ""
           }

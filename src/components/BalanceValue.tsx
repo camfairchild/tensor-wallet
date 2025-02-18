@@ -15,6 +15,7 @@ interface Props extends SizeScale {
   unit?: string
   style?: CSSProperties
   colored?: boolean
+  round?: boolean
 }
 interface StyleProps {
   colored?: boolean
@@ -54,10 +55,11 @@ const BalanceValue: FunctionComponent<Props> = ({
   size,
   style,
   colored = false,
+  round = true,
 }: Props) => {
   const apiCtx = useApi()
   const value_bn = bnToBn(value)
-  const fBalance = prettyBalance(value_bn, apiCtx.api)
+  const fBalance = prettyBalance(value_bn, apiCtx.api, round)
   const classes = useStyles({ colored, visible: isVisible })
 
   const TypographyVariant = size === "large" ? "subtitle1" : "subtitle2"

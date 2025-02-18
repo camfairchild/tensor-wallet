@@ -15,10 +15,12 @@ import {
   SubnetState,
   DynamicInfo,
   DynamicInfoRaw,
+  FixedInt,
 } from "./types";
 import { AccountId } from "@polkadot/types/interfaces";
 import { Option } from "@polkadot/types";
 import { HexString } from "@polkadot/util/types";
+import { hexToU8a, u8aToHex } from "@polkadot/util";
 
 export async function getNeurons(
   api: ApiPromise,
@@ -81,8 +83,6 @@ export async function getOnChainIdentity(
       .unwrap()
       .toHuman() as PalletSubtensorChainIdentity;
 
-    console.log("identity_result sub", identity);
-
     return {
       name: identity.name === "None" ? null : identity.name || null,
       image: identity.image === "None" ? null : identity.image || null,
@@ -96,7 +96,6 @@ export async function getOnChainIdentity(
       .unwrap()
       .toHuman() as PalletRegistryRegistration;
 
-    console.log("identity_result", identity);
     extractInnerFields(identity.info);
 
     return {
@@ -118,11 +117,11 @@ export async function queryRuntimeApi(
   const api_name = method.slice(0, split_idx);
   const method_name = method.slice(split_idx + 1);
 
-  console.log(api, api_name, method_name);
+  console.debug(api, api_name, method_name);
   const api_def = api.runtimeMetadata.asV15.apis.find(
     (api: any) => api.name.toHuman() === api_name
   );
-  console.log(api_def);
+  console.debug(api_def);
   const call_def = api_def?.methods.find(
     (method: any) => method.name.toHuman() === method_name
   );
@@ -134,18 +133,22 @@ export async function queryRuntimeApi(
   }
 
   const param_types = call_def?.inputs.map((input: any) => input.type);
-  console.log(param_types);
+  console.debug(param_types);
 
-  const params_bytes_hex: HexString = params
+  const params_bytes_hex: HexString = u8aToHex(params
     .map((param, idx) => {
       const typeDef = api.registry.createLookupType(param_types[idx]);
-      return api.createType(typeDef, param).toHex();
+      return api.createType(typeDef, param).toU8a();
     })
-    .reduce((acc: HexString, curr: HexString) => {
-      return acc.concat(curr.slice(2)) as HexString;
-    }, "0x");
+    .reduce((acc: Uint8Array, curr: Uint8Array) => {
+      return new Uint8Array([...acc, ...curr]);
+    }, new Uint8Array()));
+    
+
+  // console.debug("params_bytes_hex", params_bytes_hex);
 
   const result_bytes = await api.rpc.state.call(method, params_bytes_hex);
+  // console.debug("result_bytes", result_bytes);
 
   const typeDef = api.registry.createLookupType(output_type);
   const result = api.createType(typeDef, result_bytes);
@@ -161,7 +164,7 @@ export async function getDelegateInfo(
     "DelegateInfoRuntimeApi_get_delegates",
     []
   );
-  console.log(result);
+  console.debug(result);
 
   const delegate_info_raw: DelegateInfoRaw[] =
     result.toJSON() as any[] as DelegateInfoRaw[];
@@ -177,12 +180,12 @@ export async function getDelegateInfo(
     }
     return {
       take: delegate.take / (2 ** 16 - 1), // Normalize take, which is a u16
-      delegate_ss58: delegate.delegateSs58.toString(),
-      owner_ss58: delegate.ownerSs58.toString(),
+      delegateSs58: delegate.delegateSs58.toString(),
+      ownerSs58: delegate.ownerSs58.toString(),
       nominators,
-      total_stake,
+      totalStake: total_stake,
       stake: 0,
-    };
+    } as DelegateInfo;
   });
 
   return delegate_info;
@@ -212,7 +215,7 @@ export async function getStakeInfoForColdkey(
 
   const stake_info_json = stake_info_result.toJSON() as any[] as StakeInfo[];
 
-  console.log("stake_info_json", stake_info_json);
+  console.debug("stake_info_json", stake_info_json, "for coldkey", coldkey_ss58);
 
   const clean_result = stake_info_json.filter((stake_info: StakeInfo) => {
     return Number(stake_info.stake) > 0;
@@ -236,7 +239,7 @@ export async function getMetagraph(api: ApiPromise): Promise<Metagraph> {
     "SubnetInfoRuntimeApi_get_subnets_info",
     []
   );
-  console.log("subnets_info", subnets_info);
+  console.debug("subnets_info", subnets_info);
 
   const netuids: Array<number> = (subnets_info as any)
     .toJSON()
@@ -278,7 +281,8 @@ export async function getSubnetState(
     "SubnetInfoRuntimeApi_get_subnet_state",
     [netuid]
   );
-  if (!!!subnet_info_result_option) {
+  console.debug("subnet_info_result_option", subnet_info_result_option);
+  if (subnet_info_result_option.isNone) {
     return null;
   }
   const subnet_info_json =
@@ -296,35 +300,49 @@ export async function getDynamicInfo(
     "SubnetInfoRuntimeApi_get_dynamic_info",
     [netuid]
   );
-  if (!!!dynamic_info_result_option) {
+  console.debug("dynamic_info_result_option", netuid, dynamic_info_result_option);
+  if (dynamic_info_result_option.isNone) {
     return null;
   }
   let utf8decoder = new TextDecoder();
 
   const dynamic_info_json =
     dynamic_info_result_option.toJSON() as any as DynamicInfoRaw;
+
+  console.debug("dynamic_info_json", dynamic_info_json);
   const dynamic_info = {
     ...dynamic_info_json,
-    subnet_name: utf8decoder.decode(
-      new Uint8Array(dynamic_info_json.subnet_name)
+    subnetName: utf8decoder.decode(
+      new Uint8Array(dynamic_info_json.subnetName)
     ),
-    token_symbol: utf8decoder.decode(
-      new Uint8Array(dynamic_info_json.token_symbol)
+    tokenSymbol: utf8decoder.decode(
+      new Uint8Array(dynamic_info_json.tokenSymbol)
     ),
-    subnet_identity: dynamic_info_json.subnet_identity
+    subnetIdentity: dynamic_info_json.subnetIdentity
       ? Object.fromEntries(
-          Object.entries(dynamic_info_json.subnet_identity).map(
+          Object.entries(dynamic_info_json.subnetIdentity).map(
             ([key, value]) => {
               if (value === null) {
                 return [key, null];
               }
-              return [key, utf8decoder.decode(new Uint8Array(value))];
+              return [key, utf8decoder.decode(new Uint8Array(
+                hexToU8a(value)
+              ))];
             }
           )
         )
       : null,
-    moving_price: dynamic_info_json.moving_price.toNumber(),
+    movingPrice: fixedToFloat(dynamic_info_json.movingPrice, 96, true)
   } as DynamicInfo;
 
   return dynamic_info;
+}
+
+export function fixedToFloat(fixed: FixedInt, bits: number, signed: boolean): number {
+  const value = fixed.bits;
+  const first_bits = value >>> bits;
+  const frac_bit_count = 128 - bits;
+  const last_bits = value & (1 << frac_bit_count - 1);
+
+  return (first_bits) + (last_bits / (2 ** frac_bit_count));
 }

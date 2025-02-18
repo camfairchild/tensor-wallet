@@ -71,7 +71,7 @@ const AccountCard: FunctionComponent<Props> = ({
           className={classes.root}
         >
           {account.name !== "" && (
-            <Typography variant="h6" className={classes.typo} >{account.name}</Typography>
+            <Typography variant="h2" sx={{ fontWeight: "bold", fontSize: "1.2em", whiteSpace: "wrap", width: "10em" }} className={classes.typo} >{account.name}</Typography>
           )}
           <Typography variant="caption" className={classes.typo} sx={addressFormat === "Full" ? {} : (addressFormat === "Short" ? {
             textOverflow: "ellipsis",

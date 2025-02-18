@@ -13,8 +13,10 @@ import {
   DelegateColumn,
   DelegateExtras,
   StakeInfo,
+  DynamicInfo,
+  SubnetState,
 } from "../utils/types";
-import { useBalance } from "../hooks";
+import { useApi, useBalance } from "../hooks";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -24,7 +26,9 @@ import Pagination from "@mui/material/Pagination";
 import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
 import DelegateRow from "./DelegateRow";
-import SubnetSelector, { useSubnet, SubnetProvider } from "./SubnetSelector";
+import SubnetSelector, { useSubnet } from "./SubnetSelector";
+import { getSubnetState, getDynamicInfo } from "../utils/api";
+import { sortDelegatesRows } from "../utils/utils";
 
 const columns: StakeColumn[] = [
   { id: "hotkey", label: "Hotkey", width: 160 },
@@ -32,10 +36,10 @@ const columns: StakeColumn[] = [
 ];
 
 const delegateInfoColumns: DelegateColumn[] = [
-  { id: "delegate_ss58", label: "Delegate Hotkey", width: 160 },
-  { id: "owner_ss58", label: "Owner Coldkey", width: 160 },
+  { id: "delegateSs58", label: "Delegate Hotkey", width: 160 },
+  { id: "ownerSs58", label: "Owner Coldkey", width: 160 },
   { id: "nominators", label: "Nominators" },
-  { id: "total_stake", label: "Total Stake" },
+  { id: "totalStake", label: "Total Stake" },
   { id: "take", label: "Take" },
   { id: "stake", label: "Stake" },
 ];
@@ -109,24 +113,71 @@ export default function StakeTab({
   const [page, setPage] = useState(1);
   const { state: { netuid } } = useSubnet();
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
+  const [dynamicInfo, setDynamicInfo] = useState<DynamicInfo | null>(null);
+  const [subnetState, setSubnetState] = useState<SubnetState | null>(null);
+
+  const [infoLoader, setInfoLoader] = useState(true);
+
+  const apiCtx = useApi();
 
   useEffect(() => {
+    setInfoLoader(true);
+
+    console.debug("Stake Tab useEffect");
+    if (netuid === null) {
+      console.debug(`No subnet selected ${netuid}`);
+      setDynamicInfo(null);
+      setSubnetState(null);
+      return;
+    }
+
+    console.debug(`Pulling subnet info for ${netuid}`);
+
     const stakeMap = new Map<string, StakeInfo>();
-    const newDelegateInfo = [...delegateInfo_raw];
-    console.log("refreshing delegate info");
+    const totalStakeMap = new Map<string, number>();
+    let newDelegateInfo = [...delegateInfo_raw];
+
+    console.debug("stakeData", stakeData);
     stakeData.forEach((stake) => {
+      console.debug("stake", stake, "stake.netuid", stake.netuid, "netuid", netuid);
       if (stake.netuid === netuid) {
+        console.debug("stake.hotkey", stake.hotkey);
         stakeMap.set(stake.hotkey, stake);
       }
     });
-    newDelegateInfo.forEach((delegate) => {
-      delegate.total_stake = delegate.total_stake;
-      delegate.stake = Number(stakeMap.get(delegate.delegate_ss58)?.stake || 0);
-    });
-    console.log("newDelegateInfo", newDelegateInfo, stakeMap);
-    newDelegateInfo.sort((a, b) => b.stake - a.stake || b.total_stake - a.total_stake);
 
-    setDelegateInfo(newDelegateInfo);
+    const pullInfo = async (netuid: number) => {
+      let dynamicInfo = await getDynamicInfo(apiCtx.api, netuid);
+      let subnetState = await getSubnetState(apiCtx.api, netuid);
+
+      setDynamicInfo(dynamicInfo);
+      setSubnetState(subnetState);
+      console.debug("dynamicInfo", dynamicInfo);
+      console.debug("subnetState", subnetState);
+
+      return { dynamicInfo, subnetState };
+    }
+
+    netuid !== null && pullInfo(netuid).then(({ dynamicInfo, subnetState }) => {
+      if (dynamicInfo && subnetState) {
+        subnetState.hotkeys.forEach((hotkey, index) => {
+          totalStakeMap.set(hotkey, subnetState.totalStake[index]);
+        });
+
+        newDelegateInfo = newDelegateInfo.map((delegate) => {
+          delegate.totalStake = totalStakeMap.get(delegate.delegateSs58) || 0;
+          delegate.stake = Number(stakeMap.get(delegate.delegateSs58)?.stake) || 0;
+
+          return delegate;
+        });
+        console.debug("newDelegateInfo", newDelegateInfo, stakeMap);
+      
+        sortDelegatesRows(newDelegateInfo);
+        setDelegateInfo(newDelegateInfo);
+      }
+
+      setInfoLoader(false);
+    });
   }, [netuid, delegateInfo_raw, stakeData]);
 
   const handleChange = (panel: string) => {
@@ -148,9 +199,14 @@ export default function StakeTab({
       direction="column"
       divider={<Divider orientation="vertical" flexItem />}
     >
-      <SubnetProvider defaultNetuid={0}>
-        <SubnetSelector subnets={subnets} >
-          {loader ? (
+      <SubnetSelector subnets={subnets} dynamicInfo={dynamicInfo} subnetState={subnetState} >
+        {netuid === null ? (
+          <React.Fragment>
+            <Typography variant="h6">Select a Subnet</Typography>
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+              {(infoLoader || loader || delegateLoader) ? (
             <Paper className={classes.loadingPaper}>
               <Stack spacing={2} direction="column" justifyContent="center">
                 <Box>
@@ -230,16 +286,16 @@ export default function StakeTab({
                                     refreshMeta={refreshMeta}
                                     expanded={expanded}
                                     onChange={() =>
-                                      handleChange(delegate.delegate_ss58)
+                                      handleChange(delegate.delegateSs58)
                                     }
                                     unit={unit}
-                                    key={`row-${delegate.delegate_ss58}`}
+                                    key={`row-${delegate.delegateSs58}`}
                                     delegate={delegate}
                                     columns={delegateInfoColumns}
                                     delegateExtra={
-                                      delegatesExtras[delegate.delegate_ss58]
+                                      delegatesExtras[delegate.delegateSs58]
                                     }
-                                    netuid={netuid || 0}
+                                    netuid={netuid}
                                   />
                                 );
                               })}
@@ -266,8 +322,9 @@ export default function StakeTab({
               </Box>
             </React.Fragment>
           )}
-        </SubnetSelector>
-      </SubnetProvider>
+          </React.Fragment>
+        )}
+      </SubnetSelector>
     </Stack>
   );
 }

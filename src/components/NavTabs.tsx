@@ -48,6 +48,8 @@ import { AccountContext } from "../utils/contexts";
 import { CreateAccountCtx } from "../utils/types";
 import { useIsMountedRef } from "../hooks/api/useIsMountedRef";
 import { getAllSubnets, getDelegateInfo, getDelegatesJson, getStakeInfoForColdkey } from "../utils/api";
+import { SubnetProvider } from "./SubnetSelector";
+import { sortDelegatesRows } from "../utils/utils";
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -116,20 +118,14 @@ const NavTabs: FunctionComponent = () => {
   const [value, setValue] = useState(0);
   const { account } = useContext<CreateAccountCtx>(AccountContext);
   const mountedRef = useIsMountedRef();
-  // for first load of page
-  const [loaded, setLoaded] = useState(false);
 
   const apiCtx = useApi();
 
   const handleChange = (event: ChangeEvent<unknown>, newValue: number) => {
-    if (newValue === 3 && !loaded) {
+    if (newValue === 3) {
       // refresh the page when the tab is clicked
       // but only do this once
       refreshMeta();
-      getDelegateInfo(apiCtx.api).then((delegateInfo: DelegateInfo[]) => {
-        setDelegateInfo(delegateInfo);
-      });
-      setLoaded(true);
     }
     setValue(newValue);
   };
@@ -154,6 +150,9 @@ const NavTabs: FunctionComponent = () => {
   };
 
   const refreshMeta = async () => {
+    setDelegateLoader(true);
+    setRowLoader(true);
+  
     const _getDelegateInfo = async (): Promise<[DelegateInfo[], DelegateExtras]> => {
       const delegates_json = await getDelegatesJson();
       const delegateInfo = await getDelegateInfo(apiCtx.api);
@@ -194,25 +193,7 @@ const NavTabs: FunctionComponent = () => {
 
   useEffect(() => {
     const prepareDelegateRows = (delegateInfo: DelegateInfo[], delegatesExtras: DelegateExtras, account_addr: string) => {
-      delegateInfo.sort((a, b) => {
-        let nom_idx_a = a.nominators.findIndex(
-          (nom) => nom[0] === account_addr
-        );
-        let nom_idx_b = b.nominators.findIndex(
-          (nom) => nom[0] === account_addr
-        );
-        let amt_a: number = a.nominators[nom_idx_a]?.[1] || 0;
-        let amt_b: number = b.nominators[nom_idx_b]?.[1] || 0;
-
-        return (
-          amt_b - amt_a ||
-          (a.delegate_ss58 ===
-          "5CoZxgtfhcJKX2HmkwnsN18KbaT9aih9eF3b6qVPTgAUbifj"
-            ? -1
-            : 0) ||
-          b.total_stake - a.total_stake
-        );
-      });
+      sortDelegatesRows(delegateInfo);
       
       setDelegateRows(delegateInfo);
     };
@@ -266,6 +247,7 @@ const NavTabs: FunctionComponent = () => {
           <Tab
             label="Neurons"
             icon={<HubIcon fontSize="small" className={classes.icon} />} 
+            disabled={true}
             className={classes.paper}
             classes={{
               textColorPrimary: classes.selectedTab
@@ -312,15 +294,17 @@ const NavTabs: FunctionComponent = () => {
                 startIcon={<RefreshIcon />}
               />
             </Stack>
-            <StakeTab
-              delegateInfo={delegateRows}
-              stakeData={stakeData}
-              loader={loader}
-              delegateLoader={delegateLoader}
-              refreshMeta={refreshMeta}
-              delegatesExtras={delegatesExtras}
-              subnets={subnets}
-            />
+            <SubnetProvider defaultNetuid={null}>
+              <StakeTab
+                delegateInfo={delegateRows}
+                stakeData={stakeData}
+                loader={loader}
+                delegateLoader={delegateLoader}
+                refreshMeta={refreshMeta}
+                delegatesExtras={delegatesExtras}
+                subnets={subnets}
+              />
+            </SubnetProvider>
           </ErrorBoundary>
         </TabPanel>
         <TabPanel value={value} index={4}>
