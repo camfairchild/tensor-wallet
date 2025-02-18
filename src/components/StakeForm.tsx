@@ -147,7 +147,7 @@ export default function StakeForm({ hotkeyAddr, stake, refreshMeta, netuid }: St
       const injector = await web3FromAddress(sender);
       setLastAction(false)
       await api.tx.subtensorModule
-        .addStake(hotkeyAddr, stakeAmount, netuid)
+        .addStake(hotkeyAddr, netuid, stakeAmount)
         .signAndSend( sender, { signer: injector.signer, withSignedTransaction: true }, (result) => {
           setMessage(`Current transaction status ${result.status}`)
           if (result.status.isInBlock) {
