@@ -36,11 +36,13 @@ export const isEmpty = (obj: unknown): boolean =>
   obj.constructor === Object;
 
 export const copyToClipboard = (text: string): void => {
-  if (window.isSecureContext) {
-    // copy to clipboard with fallback if not supported
-    navigator.clipboard.writeText(text).catch(() => {
-      console.error("Failed to copy to clipboard");
-    });
+  try {
+    if (window.isSecureContext) {
+      // copy to clipboard with fallback if not supported
+      navigator.clipboard.writeText(text);
+    }
+  } catch (error) {
+    console.error("Failed to copy to clipboard", error);
   }
 };
 
