@@ -167,7 +167,7 @@ export default function StakeTab({
         newDelegateInfo = newDelegateInfo.map((delegate) => {
           delegate.totalStake = totalStakeMap.get(delegate.delegateSs58) || 0;
           delegate.stake = Number(stakeMap.get(delegate.delegateSs58)?.stake) || 0;
-
+          console.debug("delegate.stake", delegate.stake);
           return delegate;
         });
         console.debug("newDelegateInfo", newDelegateInfo, stakeMap);

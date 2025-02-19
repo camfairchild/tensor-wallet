@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import Identicon from "@polkadot/react-identicon";
 
 import { makeStyles } from "@mui/styles";
@@ -14,11 +14,11 @@ import { Theme } from "@mui/material";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: 'transparent'
+    backgroundColor: "transparent",
   },
   typo: {
     color: theme.palette.text.secondary,
-  }
+  },
 }));
 
 interface Props {
@@ -34,20 +34,10 @@ const AccountCard: FunctionComponent<Props> = ({
   account,
   addressFormat,
 }: Props) => {
-  const [showCopied, setShowCopied] = useState<boolean>(false);
   const classes = useStyles();
 
   return (
-    <>
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          open={showCopied}
-          autoHideDuration={2000}
-          onClose={() => setShowCopied(false)}
-          className={classes.root}
-        >
-          <Alert severity="success">Copied!</Alert>
-        </Snackbar>
+    <React.Fragment>
       <Stack
         spacing={1}
         direction={addressFormat === "Full" ? "column" : "row"}
@@ -58,7 +48,6 @@ const AccountCard: FunctionComponent<Props> = ({
           theme="polkadot"
           value={account.address}
           onCopy={() => {
-            setShowCopied(true);
             copyToClipboard(account.address);
           }}
         />
@@ -71,22 +60,43 @@ const AccountCard: FunctionComponent<Props> = ({
           className={classes.root}
         >
           {account.name !== "" && (
-            <Typography variant="h2" sx={{ fontWeight: "bold", fontSize: "1.2em", whiteSpace: "wrap", width: "10em" }} className={classes.typo} >{account.name}</Typography>
+            <Typography
+              variant="h2"
+              sx={{
+                fontWeight: "bold",
+                fontSize: "1.2em",
+                whiteSpace: "wrap",
+                width: "10em",
+              }}
+              className={classes.typo}
+            >
+              {account.name}
+            </Typography>
           )}
-          <Typography variant="caption" className={classes.typo} sx={addressFormat === "Full" ? {} : (addressFormat === "Short" ? {
-            textOverflow: "ellipsis",
-            overflowX: "clip",
-            width: "5em",
-          } : {
-            textOverflow: "ellipsis",
-            overflowX: "clip",
-            width: "10em",
-          })}>
+          <Typography
+            variant="caption"
+            className={classes.typo}
+            sx={
+              addressFormat === "Full"
+                ? {}
+                : addressFormat === "Short"
+                ? {
+                    textOverflow: "ellipsis",
+                    overflowX: "clip",
+                    width: "5em",
+                  }
+                : {
+                    textOverflow: "ellipsis",
+                    overflowX: "clip",
+                    width: "10em",
+                  }
+            }
+          >
             {account.address}
           </Typography>
         </Box>
       </Stack>
-    </>
+    </React.Fragment>
   );
 };
 
