@@ -74,22 +74,13 @@ export default function DelegateRow({columns, unit, delegate, expanded, onChange
             totalStake: delegate.totalStake,
             nominators: delegate.nominators.length
         };
-        delegate.nominators.filter(([nom, staked]: [string, number]) => {
-            if (nom === coldkey_ss58) {
-                _row = {
-                    ..._row,
-                    stake: staked
-                }
-            }
-
-        })
 
         setDelegateRow({
             ...delegate_row,
             ..._row
         })
 
-    }, [delegate.delegateSs58, delegate.totalStake, delegate.nominators.length, coldkey_ss58])
+    }, [netuid, delegate, coldkey_ss58])
 
     return (
     <React.Fragment>
