@@ -141,6 +141,57 @@ export interface StakeInfo {
   netuid: number;
   stake: number | string;
 }
+
+export interface SubnetStakeBreakdown {
+  netuid: number;
+  stake: number;
+  price: number;
+  taoValue: number;
+  delegates: StakeInfo[];
+  loading: boolean;
+  error?: string;
+}
+
+export interface StakeBreakdownData {
+  subnets: SubnetStakeBreakdown[];
+  totalTaoValue: number;
+  totalStake: number;
+  loading: boolean;
+}
+
+export interface SubnetStakeBreakdown {
+  netuid: number;
+  stake: number;
+  price: number;
+  taoValue: number;
+  delegates: StakeInfo[];
+  loading: boolean;
+  error?: string;
+}
+
+export interface StakeBreakdownData {
+  subnets: SubnetStakeBreakdown[];
+  totalTaoValue: number;
+  totalStake: number;
+  loading: boolean;
+}
+
+export interface SubnetStakeBreakdown {
+  netuid: number;
+  stake: number;
+  price: number;
+  taoValue: number;
+  delegates: StakeInfo[];
+  loading: boolean;
+  error?: string;
+}
+
+export interface StakeBreakdownData {
+  subnets: SubnetStakeBreakdown[];
+  totalTaoValue: number;
+  totalStake: number;
+  loading: boolean;
+}
 export interface StakeData {
   [key: string]: StakeInfo[];
 }

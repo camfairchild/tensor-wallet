@@ -5,7 +5,7 @@ import { Theme, alpha as fade } from "@mui/material";
 import makeStyles from '@mui/styles/makeStyles';
 
 import { AccountContext } from "../utils/contexts";
-import { ErrorBoundary, StakeRow } from ".";
+import { ErrorBoundary, StakeRow, StakeBreakdown } from ".";
 import {
   StakeData,
   StakeColumn,
@@ -26,7 +26,7 @@ import Pagination from "@mui/material/Pagination";
 import List from "@mui/material/List";
 import CircularProgress from "@mui/material/CircularProgress";
 import DelegateRow from "./DelegateRow";
-import SubnetSelector, { useSubnet } from "./SubnetSelector";
+// import SubnetSelector, { useSubnet } from "./SubnetSelector";
 import { getSubnetState, getDynamicInfo } from "../utils/api";
 import { sortDelegatesRows } from "../utils/utils";
 
@@ -111,7 +111,7 @@ export default function StakeTab({
 
   const [unit, setUnit] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const { state: { netuid } } = useSubnet();
+  // const { state: { netuid } } = useSubnet();
   const [delegateInfo, setDelegateInfo] = useState<DelegateInfo[]>([]);
   const [dynamicInfo, setDynamicInfo] = useState<DynamicInfo | null>(null);
   const [subnetState, setSubnetState] = useState<SubnetState | null>(null);
@@ -124,12 +124,11 @@ export default function StakeTab({
     setInfoLoader(true);
 
     console.debug("Stake Tab useEffect");
-    if (netuid === null) {
-      console.debug(`No subnet selected ${netuid}`);
-      setDynamicInfo(null);
-      setSubnetState(null);
-      return;
-    }
+    // Remove subnet-specific logic since we show all subnets now
+    setDynamicInfo(null);
+    setSubnetState(null);
+    setInfoLoader(false);
+  }, [stakeData, subnets]);
 
     console.debug(`Pulling subnet info for ${netuid}`);
 
@@ -199,12 +198,19 @@ export default function StakeTab({
       direction="column"
       divider={<Divider orientation="vertical" flexItem />}
     >
-      <SubnetSelector subnets={subnets} dynamicInfo={dynamicInfo} subnetState={subnetState} >
-        {netuid === null ? (
-          <React.Fragment>
-            <Typography variant="h6">Select a Subnet</Typography>
-          </React.Fragment>
-        ) : (
+      {/* Replace SubnetSelector with StakeBreakdown */}
+      <StakeBreakdown 
+        stakeData={stakeData}
+        subnets={subnets}
+        refreshMeta={refreshMeta}
+      />
+      
+      {/* Keep the existing delegate info section */}
+      {subnets.length === 0 ? (
+        <React.Fragment>
+          <Typography variant="h6">No subnets available</Typography>
+        </React.Fragment>
+      ) : (
           <React.Fragment>
               {(infoLoader || loader || delegateLoader) ? (
             <Paper className={classes.loadingPaper}>
@@ -324,7 +330,12 @@ export default function StakeTab({
           )}
           </React.Fragment>
         )}
-      </SubnetSelector>
+      </Stack>
     </Stack>
   );
+}
+
+// Update the main StakeTab component to use the new combined component
+export default function StakeTab(props: PropsStakeTab) {
+  return <StakeBreakdownWithDelegates {...props} />;
 }

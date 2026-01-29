@@ -18,5 +18,6 @@ export { default as ThemeButton } from "./ThemeButton"
 export { default as ThemeToggleProvider } from "./ThemeToggleProvider"
 export { default as ErrorBoundary } from "./ErrorBoundary"
 export { default as StakeTab } from "./StakeTab"
-export { default as StakeRow } from "./StakeRow"
+export { default as StakeRow } from "./StakeRow";
+export { default as StakeBreakdown } from "./StakeBreakdown"
 export { default as NeuronsTab } from "./NeuronsTab"

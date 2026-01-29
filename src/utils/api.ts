@@ -338,6 +338,47 @@ export async function getDynamicInfo(
   return dynamic_info;
 }
 
+export async function getSubnetPrice(
+  api: ApiPromise,
+  netuid: number
+): Promise<number> {
+  try {
+    const price_result = await queryRuntimeApi(
+      api,
+      "swapRuntimeApi_currentAlphaPrice",
+      [netuid]
+    );
+    
+    if (price_result.isNone) {
+      return 0;
+    }
+    
+    const price = price_result.toJSON() as number;
+    return price;
+  } catch (error) {
+    console.error(`Error fetching price for subnet ${netuid}:`, error);
+    return 0;
+  }
+}
+
+export async function getAllSubnetPrices(
+  api: ApiPromise,
+  netuids: number[]
+): Promise<{ [netuid: number]: number }> {
+  const prices: { [netuid: number]: number } = {};
+  
+  for (const netuid of netuids) {
+    try {
+      prices[netuid] = await getSubnetPrice(api, netuid);
+    } catch (error) {
+      console.error(`Error fetching price for subnet ${netuid}:`, error);
+      prices[netuid] = 0;
+    }
+  }
+  
+  return prices;
+}
+
 export function fixedToFloat(fixed: FixedInt, bits: number, signed: boolean): number {
   const value = fixed.bits;
   const first_bits = value >>> bits;
